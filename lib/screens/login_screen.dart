@@ -21,16 +21,24 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Row(
-              children:[ 
-                BackButton(style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(179, 63, 62, 62),),),
-                color: Colors.white,),
-                const SizedBox(width: 5,),
-                Text('Welcome back', style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
+              children: [
+                BackButton(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      const Color.fromARGB(179, 63, 62, 62),
+                    ),
+                  ),
+                  color: Colors.white,
                 ),
-              ),
+                const SizedBox(width: 5),
+                Text(
+                  'Welcome back',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
               ],
             ),
             Align(
@@ -64,14 +72,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       textCapitalization: TextCapitalization.none,
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
-    
                         fillColor: Colors.black,
                         label: Text(
                           'Enter Your Password',
                           style: TextStyle(color: Colors.white),
                         ),
                         prefixIcon: Icon(Icons.visibility, color: Colors.white),
-                        
+
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(50.0),
                         ),
@@ -90,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Remember Me',
                             style: TextStyle(color: Colors.white),
                           ),
-                          const SizedBox(width: 100,),
+                          const SizedBox(width: 100),
                           TextButton(
                             onPressed: () {},
                             child: Text(
@@ -101,14 +108,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                     SizedBox(
+                    SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(onPressed: (){}, 
-                      
-                      style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(255, 6, 40, 229)),
+                      child: ElevatedButton(
+                        onPressed: () {},
+
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            const Color.fromARGB(255, 6, 40, 229),
+                          ),
+                        ),
+                        child: Text(
+                          'Log in',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                      child: Text('Log in', style: TextStyle(color: Colors.white),
-                      ),),
                     ),
                     // const SizedBox(
                     //   height: 10,
@@ -128,7 +142,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             ElevatedButton.icon(
                               onPressed: () {},
-                              style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(115, 63, 62, 62))),
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                  const Color.fromARGB(115, 63, 62, 62),
+                                ),
+                              ),
                               icon: Image.asset(
                                 'assets/images/google.jpeg',
                                 height: 20,
@@ -144,7 +162,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(width: 20),
                             ElevatedButton.icon(
                               onPressed: () {},
-                              style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(const Color.fromARGB(115, 63, 62, 62))),
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                  const Color.fromARGB(115, 63, 62, 62),
+                                ),
+                              ),
                               icon: Image.asset(
                                 'assets/images/facebook.jpeg',
                                 height: 20,
@@ -161,8 +183,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10,),
-                    TextButton(onPressed: (){}, child: Text('Don\'t have an account? Sign up ', style: TextStyle(color: Colors.white),))
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Don\'t have an account? Sign up ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ),
