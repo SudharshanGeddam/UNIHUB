@@ -23,7 +23,8 @@ class StudyPlanModel {
   factory StudyPlanModel.fromJson(Map<String, dynamic> json) {
     return StudyPlanModel(
       recommendation: json['recommendation'] ?? 'Focus on your studies today!',
-      motivationalTip: json['motivational_tip'] ?? 'Stay consistent and you will succeed!',
+      motivationalTip:
+          json['motivational_tip'] ?? 'Stay consistent and you will succeed!',
       streakDays: json['streak_days'] ?? 1,
       weeklyTasks: (json['weekly_tasks'] as List<dynamic>?)
               ?.map((task) => StudyTaskModel.fromJson(task))
@@ -31,7 +32,8 @@ class StudyPlanModel {
           [],
       keyTopics: List<String>.from(json['key_topics'] ?? []),
       studyTechniques: List<String>.from(json['study_techniques'] ?? []),
-      breakRecommendation: json['break_recommendation'] ?? 'Take a 5-10 minute break every hour.',
+      breakRecommendation: json['break_recommendation'] ??
+          'Take a 5-10 minute break every hour.',
     );
   }
 
@@ -39,7 +41,7 @@ class StudyPlanModel {
     try {
       // Try to extract JSON from the response
       String jsonStr = response;
-      
+
       // Check if response contains markdown code blocks
       if (response.contains('```json')) {
         final startIndex = response.indexOf('```json') + 7;
@@ -54,11 +56,13 @@ class StudyPlanModel {
           jsonStr = response.substring(startIndex, endIndex).trim();
         }
       }
-      
+
       // Try to find JSON object in the string
       final jsonStartIndex = jsonStr.indexOf('{');
       final jsonEndIndex = jsonStr.lastIndexOf('}');
-      if (jsonStartIndex != -1 && jsonEndIndex != -1 && jsonEndIndex > jsonStartIndex) {
+      if (jsonStartIndex != -1 &&
+          jsonEndIndex != -1 &&
+          jsonEndIndex > jsonStartIndex) {
         jsonStr = jsonStr.substring(jsonStartIndex, jsonEndIndex + 1);
       }
 
@@ -77,7 +81,8 @@ class StudyPlanModel {
     required String focusType,
   }) {
     return StudyPlanModel(
-      recommendation: 'Focus on $subject today. You have $availableTime available - perfect for $focusType!',
+      recommendation:
+          'Focus on $subject today. You have $availableTime available - perfect for $focusType!',
       motivationalTip: 'Consistency is key. Keep up the great work!',
       streakDays: 1,
       weeklyTasks: [
@@ -88,9 +93,15 @@ class StudyPlanModel {
           chapters: 'Core concepts',
           priority: 'high',
           topics: [
-            TopicItem(name: 'Introduction to $subject', description: 'Basic concepts and overview'),
-            TopicItem(name: 'Core Fundamentals', description: 'Key principles and theories'),
-            TopicItem(name: 'Practice Examples', description: 'Worked examples and solutions'),
+            TopicItem(
+                name: 'Introduction to $subject',
+                description: 'Basic concepts and overview'),
+            TopicItem(
+                name: 'Core Fundamentals',
+                description: 'Key principles and theories'),
+            TopicItem(
+                name: 'Practice Examples',
+                description: 'Worked examples and solutions'),
           ],
         ),
         StudyTaskModel(
@@ -100,13 +111,20 @@ class StudyPlanModel {
           chapters: 'Revision',
           priority: 'medium',
           topics: [
-            TopicItem(name: 'Review Notes', description: 'Summarize key points'),
-            TopicItem(name: 'Practice Problems', description: 'Solve practice questions'),
+            TopicItem(
+                name: 'Review Notes', description: 'Summarize key points'),
+            TopicItem(
+                name: 'Practice Problems',
+                description: 'Solve practice questions'),
           ],
         ),
       ],
       keyTopics: ['Core Concepts', 'Practice Problems', 'Review Notes'],
-      studyTechniques: ['Active Recall', 'Spaced Repetition', 'Pomodoro Technique'],
+      studyTechniques: [
+        'Active Recall',
+        'Spaced Repetition',
+        'Pomodoro Technique'
+      ],
       breakRecommendation: 'Take a 5-10 minute break every 25 minutes.',
     );
   }
@@ -157,15 +175,20 @@ class StudyTaskModel {
   }
 
   IconData get icon {
-    if (title.toLowerCase().contains('math') || title.toLowerCase().contains('calculus')) {
+    if (title.toLowerCase().contains('math') ||
+        title.toLowerCase().contains('calculus')) {
       return Icons.calculate;
-    } else if (title.toLowerCase().contains('code') || title.toLowerCase().contains('programming')) {
+    } else if (title.toLowerCase().contains('code') ||
+        title.toLowerCase().contains('programming')) {
       return Icons.code;
-    } else if (title.toLowerCase().contains('review') || title.toLowerCase().contains('revision')) {
+    } else if (title.toLowerCase().contains('review') ||
+        title.toLowerCase().contains('revision')) {
       return Icons.psychology;
-    } else if (title.toLowerCase().contains('practice') || title.toLowerCase().contains('exercise')) {
+    } else if (title.toLowerCase().contains('practice') ||
+        title.toLowerCase().contains('exercise')) {
       return Icons.fitness_center;
-    } else if (title.toLowerCase().contains('read') || title.toLowerCase().contains('theory')) {
+    } else if (title.toLowerCase().contains('read') ||
+        title.toLowerCase().contains('theory')) {
       return Icons.auto_stories;
     } else {
       return Icons.menu_book;
