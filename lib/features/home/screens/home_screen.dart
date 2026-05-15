@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/data/bottom_nav.dart';
-import 'package:unihub/pages/study_planner.dart';
-import 'package:unihub/screens/agent_screen.dart';
-import 'package:unihub/screens/smart_reminders_screen.dart';
+import 'package:unihub/widgets/bottom_nav.dart';
+import 'package:unihub/features/study_planner/screens/study_planner_screen.dart';
+import 'package:unihub/features/chat/screens/agent_screen.dart';
+import 'package:unihub/features/reminders/screens/smart_reminders_screen.dart';
 import 'package:unihub/services/auth_service.dart';
-import 'package:unihub/screens/community_screen.dart';
+import 'package:unihub/features/community/screens/community_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _authService = AuthService();
-  
+
   String get _userName {
     final user = _authService.currentUser;
     return user?.displayName ?? user?.email?.split('@')[0] ?? 'User';
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? get _userPhoto {
     return _authService.currentUser?.photoURL;
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -55,7 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
-                        
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -74,7 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 4),
                           const Text(
                             'Dream Big, Study Smart',
-                            style: TextStyle(color: Colors.white70, fontSize: 14),
+                            style:
+                                TextStyle(color: Colors.white70, fontSize: 14),
                           ),
                         ],
                       ),
@@ -88,10 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const AgentScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const AgentScreen()),
                           );
                         },
-                        icon: const Icon(Icons.smart_toy_outlined, size: 28, color: Colors.white),
+                        icon: const Icon(Icons.smart_toy_outlined,
+                            size: 28, color: Colors.white),
                         tooltip: 'Chat with AI',
                       ),
                     ),
@@ -99,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            
+
             // Search bar
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -118,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            
+
             // Features grid
             Expanded(
               child: GridView.count(
@@ -135,7 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icons.calendar_month,
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const StudyPlanner()),
+                      MaterialPageRoute(
+                          builder: (context) => const StudyPlanner()),
                     ),
                   ),
                   _FeatureCard(
@@ -145,18 +148,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icons.smart_toy,
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const AgentScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const AgentScreen()),
                     ),
                   ),
                   _FeatureCard(
                     title: 'Smart Reminders',
-                    description: 'Never miss deadlines with smart notifications.',
+                    description:
+                        'Never miss deadlines with smart notifications.',
                     imagePath: 'assets/images/grid_3.png',
                     icon: Icons.notifications_active,
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const SmartRemindersScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const SmartRemindersScreen()),
                       );
                     },
                   ),
@@ -176,42 +182,38 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
 
             const SizedBox(height: 10),
-           
-             GestureDetector(
+
+            GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CommunityScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const CommunityScreen()),
                 );
               },
               child: Container(
                 width: double.infinity,
                 height: 80,
-
                 decoration: BoxDecoration(
                   color: const Color.fromARGB(175, 12, 66, 111),
                   borderRadius: BorderRadius.circular(35.0),
                 ),
-                child: 
-                    Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Center(
-                        child: Text(
-                        'Community',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                child: Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Center(
+                    child: Text(
+                      'Community',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    
+                  ),
+                ),
               ),
-                
-              ),
-            
-            
+            ),
+
             const BottomNav(),
           ],
         ),

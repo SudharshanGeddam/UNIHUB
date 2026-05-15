@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/screens/home_screen.dart';
+import 'package:unihub/features/home/screens/home_screen.dart';
 import 'package:unihub/services/auth_service.dart';
-
+import 'package:unihub/features/auth/widgets/auth_text_field.dart';
+import 'package:unihub/features/auth/widgets/social_login_buttons.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -18,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _collegeController = TextEditingController();
   final _courseController = TextEditingController();
   final _authService = AuthService();
-  
+
   bool _isLoading = false;
   bool _isSignUp = false;
   bool _obscurePassword = true;
@@ -50,15 +51,15 @@ class _LoginScreenState extends State<LoginScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
           name: _nameController.text.trim(),
-          phoneNumber: _phoneController.text.trim().isEmpty 
-              ? null 
+          phoneNumber: _phoneController.text.trim().isEmpty
+              ? null
               : _phoneController.text.trim(),
-          college: _collegeController.text.trim().isEmpty 
-              ? null 
+          college: _collegeController.text.trim().isEmpty
+              ? null
               : _collegeController.text.trim(),
           year: _selectedYear,
-          course: _courseController.text.trim().isEmpty 
-              ? null 
+          course: _courseController.text.trim().isEmpty
+              ? null
               : _courseController.text.trim(),
         );
       } else {
@@ -67,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
           _passwordController.text,
         );
       }
-      
+
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -101,10 +102,11 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       String errorMsg = e.toString();
       // Provide helpful message for common OAuth configuration issues
-      if (errorMsg.contains('oauth_client') || 
+      if (errorMsg.contains('oauth_client') ||
           errorMsg.contains('ID token is null') ||
           errorMsg.contains('10:')) {
-        errorMsg = 'Google Sign-In not configured. Please add SHA-1 fingerprint to Firebase Console:\nDA:F5:7D:DB:1C:71:74:48:D8:EE:6D:30:DD:17:BF:6F:5B:65:1D:4F';
+        errorMsg =
+            'Google Sign-In not configured. Please add SHA-1 fingerprint to Firebase Console:\nDA:F5:7D:DB:1C:71:74:48:D8:EE:6D:30:DD:17:BF:6F:5B:65:1D:4F';
       }
       if (mounted) {
         setState(() => _errorMessage = errorMsg);
@@ -139,7 +141,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        
         body: Stack(
           children: [
             Positioned.fill(
@@ -150,21 +151,18 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             // Header
             Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(179, 63, 62, 62),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(179, 63, 62, 62),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    const SizedBox(width: 12),
-                    
-                  ],
-                ),
-              
+                  ),
+                  const SizedBox(width: 12),
+                ],
+              ),
             ),
             // Form
             Align(
@@ -200,28 +198,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                           ),
-                        
+
                         // Email field
-                        TextFormField(
+                        AuthTextField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Enter Your Email',
-                            labelStyle: const TextStyle(color: Colors.white70),
-                            prefixIcon: const Icon(Icons.email_outlined, color: Colors.white),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(color: Colors.white54),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(color: Colors.blue),
-                            ),
-                          ),
+                          labelText: 'Enter Your Email',
+                          prefixIcon: Icons.email_outlined,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
@@ -233,28 +216,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Name field (only for sign up)
                         if (_isSignUp)
-                          TextFormField(
+                          AuthTextField(
                             controller: _nameController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'Full Name',
-                              labelStyle: const TextStyle(color: Colors.white70),
-                              prefixIcon: const Icon(Icons.person_outline, color: Colors.white),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.white54),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.blue),
-                              ),
-                            ),
+                            labelText: 'Full Name',
+                            prefixIcon: Icons.person_outline,
                             validator: _isSignUp
                                 ? (value) {
                                     if (value == null || value.isEmpty) {
@@ -265,84 +233,60 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : null,
                           ),
                         if (_isSignUp) const SizedBox(height: 16),
-                        
+
                         // Phone field (only for sign up)
                         if (_isSignUp)
-                          TextFormField(
+                          AuthTextField(
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'Phone Number (Optional)',
-                              labelStyle: const TextStyle(color: Colors.white70),
-                              prefixIcon: const Icon(Icons.phone_outlined, color: Colors.white),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.white54),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.blue),
-                              ),
-                            ),
+                            labelText: 'Phone Number (Optional)',
+                            prefixIcon: Icons.phone_outlined,
                           ),
                         if (_isSignUp) const SizedBox(height: 16),
-                        
+
                         // College field (only for sign up)
                         if (_isSignUp)
-                          TextFormField(
+                          AuthTextField(
                             controller: _collegeController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'College/University (Optional)',
-                              labelStyle: const TextStyle(color: Colors.white70),
-                              prefixIcon: const Icon(Icons.school_outlined, color: Colors.white),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.white54),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.blue),
-                              ),
-                            ),
+                            labelText: 'College/University (Optional)',
+                            prefixIcon: Icons.school_outlined,
                           ),
                         if (_isSignUp) const SizedBox(height: 16),
-                        
+
                         // Year dropdown (only for sign up)
                         if (_isSignUp)
                           DropdownButtonFormField<String>(
                             initialValue: _selectedYear,
                             decoration: InputDecoration(
                               labelText: 'Year (Optional)',
-                              labelStyle: const TextStyle(color: Colors.white70),
-                              prefixIcon: const Icon(Icons.calendar_today_outlined, color: Colors.white),
+                              labelStyle:
+                                  const TextStyle(color: Colors.white70),
+                              prefixIcon: const Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: Colors.white),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(50.0),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.white54),
+                                borderSide:
+                                    const BorderSide(color: Colors.white54),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.blue),
+                                borderSide:
+                                    const BorderSide(color: Colors.blue),
                               ),
                             ),
                             dropdownColor: const Color(0xFF0A022E),
                             style: const TextStyle(color: Colors.white),
-                            items: ['1st Year', '2nd Year', '3rd Year', '4th Year']
-                                .map((year) => DropdownMenuItem(
-                                      value: year,
-                                      child: Text(year),
-                                    ))
-                                .toList(),
+                            items:
+                                ['1st Year', '2nd Year', '3rd Year', '4th Year']
+                                    .map((year) => DropdownMenuItem(
+                                          value: year,
+                                          child: Text(year),
+                                        ))
+                                    .toList(),
                             onChanged: (value) {
                               setState(() {
                                 _selectedYear = value;
@@ -350,58 +294,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                           ),
                         if (_isSignUp) const SizedBox(height: 16),
-                        
+
                         // Course field (only for sign up)
                         if (_isSignUp)
-                          TextFormField(
+                          AuthTextField(
                             controller: _courseController,
-                            style: const TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              labelText: 'Course/Department (Optional)',
-                              labelStyle: const TextStyle(color: Colors.white70),
-                              prefixIcon: const Icon(Icons.book_outlined, color: Colors.white),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.white54),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide: const BorderSide(color: Colors.blue),
-                              ),
-                            ),
+                            labelText: 'Course/Department (Optional)',
+                            prefixIcon: Icons.book_outlined,
                           ),
                         if (_isSignUp) const SizedBox(height: 16),
-                        
+
                         // Password field
-                        TextFormField(
+                        AuthTextField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            labelText: 'Enter Your Password',
-                            labelStyle: const TextStyle(color: Colors.white70),
-                            prefixIcon: const Icon(Icons.lock_outline, color: Colors.white),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                                color: Colors.white,
-                              ),
-                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                          labelText: 'Enter Your Password',
+                          prefixIcon: Icons.lock_outline,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(color: Colors.white54),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(50.0),
-                              borderSide: const BorderSide(color: Colors.blue),
-                            ),
+                            onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -414,7 +331,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         const SizedBox(height: 8),
-                        
+
                         // Forgot password (only for login)
                         if (!_isSignUp)
                           Align(
@@ -428,7 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         const SizedBox(height: 16),
-                        
+
                         // Login/Signup button
                         SizedBox(
                           width: double.infinity,
@@ -436,7 +353,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleEmailAuth,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 6, 40, 229),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 6, 40, 229),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25),
                               ),
@@ -461,69 +379,28 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        
+
                         // Divider
                         const Text(
                           'or Continue with',
                           style: TextStyle(color: Colors.white70),
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Social login buttons
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: _isLoading ? null : _handleGoogleSignIn,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color.fromARGB(115, 63, 62, 62),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                icon: Image.asset(
-                                  'assets/images/google.jpeg',
-                                  height: 24,
-                                ),
-                                label: const Text(
-                                  'Google',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                        SocialLoginButtons(
+                          isLoading: _isLoading,
+                          onGoogleSignIn: _handleGoogleSignIn,
+                          onFacebookSignIn: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Facebook login coming soon!'),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Facebook login coming soon!'),
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color.fromARGB(115, 63, 62, 62),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                icon: Image.asset(
-                                  'assets/images/facebook.jpeg',
-                                  height: 24,
-                                ),
-                                label: const Text(
-                                  'Facebook',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                         const SizedBox(height: 20),
-                        
+
                         // Toggle signup/login
                         TextButton(
                           onPressed: () => setState(() {

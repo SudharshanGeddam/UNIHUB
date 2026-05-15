@@ -3,12 +3,14 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:unihub/data/bottom_nav.dart';
-import 'package:unihub/services/gemini_service.dart';
-import 'package:unihub/services/pdf_generator_service.dart';
-import 'package:flutter_markdown/flutter_markdown.dart' as md;
-import 'package:markdown/markdown.dart' as markdown;
-import 'package:flutter_math_fork/flutter_math.dart';
+import 'package:unihub/widgets/bottom_nav.dart';
+import 'package:unihub/features/notes_scanner/services/notes_conversion_service.dart';
+import 'package:unihub/features/notes_scanner/services/pdf_generator_service.dart';
+import 'package:unihub/features/notes_scanner/widgets/action_button.dart';
+import 'package:unihub/features/notes_scanner/widgets/export_button.dart';
+import 'package:unihub/features/notes_scanner/widgets/stat_chip.dart';
+import 'package:unihub/features/notes_scanner/widgets/math_markdown_widget.dart';
+import 'package:unihub/models/structured_notes.dart';
 
 class NotesScannerScreen extends StatefulWidget {
   const NotesScannerScreen({super.key});
@@ -20,19 +22,19 @@ class NotesScannerScreen extends StatefulWidget {
 class _NotesScannerScreenState extends State<NotesScannerScreen>
     with SingleTickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
-  final GeminiService _geminiService = GeminiService.getInstance();
-  
+  final NotesConversionService _notesConversionService = NotesConversionService();
+
   File? _selectedImage;
   Uint8List? _imageBytes;
   String? _transcription;
   StructuredNotes? _structuredNotes;
-  
+
   bool _isTranscribing = false;
   bool _isConverting = false;
   bool _isGeneratingPdf = false;
-  
+
   int _currentStep = 0; // 0: Select, 1: Transcribe, 2: Convert, 3: Export
-  
+
   late AnimationController _animController;
   late Animation<double> _pulseAnimation;
 
@@ -43,7 +45,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
     );
@@ -63,7 +65,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         maxHeight: 2048,
         imageQuality: 90,
       );
-      
+
       if (pickedFile != null) {
         final bytes = await pickedFile.readAsBytes();
         setState(() {
@@ -81,18 +83,19 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
 
   Future<void> _transcribeImage() async {
     if (_imageBytes == null) return;
-    
+
     setState(() => _isTranscribing = true);
-    
+
     try {
       final extension = _selectedImage!.path.split('.').last.toLowerCase();
       String mimeType = 'image/jpeg';
       if (extension == 'png') {
         mimeType = 'image/png';
       } else if (extension == 'webp') mimeType = 'image/webp';
-      
-      final result = await _geminiService.transcribeHandwriting(_imageBytes!, mimeType);
-      
+
+      final result =
+          await _notesConversionService.transcribeHandwriting(_imageBytes!, mimeType);
+
       setState(() {
         _transcription = result;
         _currentStep = 2;
@@ -106,12 +109,13 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
 
   Future<void> _convertToStructuredNotes() async {
     if (_transcription == null || _transcription!.isEmpty) return;
-    
+
     setState(() => _isConverting = true);
-    
+
     try {
-      final result = await _geminiService.convertToStructuredNotes(_transcription!);
-      
+      final result =
+          await _notesConversionService.convertToStructuredNotes(_transcription!);
+
       // Parse JSON
       String jsonStr = result.trim();
       if (jsonStr.startsWith('```json')) {
@@ -123,7 +127,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         jsonStr = jsonStr.substring(0, jsonStr.length - 3);
       }
       jsonStr = jsonStr.trim();
-      
+
       Map<String, dynamic> json;
       try {
         json = jsonDecode(jsonStr);
@@ -138,9 +142,9 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           throw e;
         }
       }
-      
+
       final notes = StructuredNotes.fromJson(json);
-      
+
       setState(() {
         _structuredNotes = notes;
         _currentStep = 3;
@@ -158,12 +162,13 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
 
   Future<void> _generateAndExportPdf() async {
     if (_structuredNotes == null) return;
-    
+
     setState(() => _isGeneratingPdf = true);
-    
+
     try {
-      final pdfBytes = await PdfGeneratorService.generateNotesPdf(_structuredNotes!);
-      
+      final pdfBytes =
+          await PdfGeneratorService.generateNotesPdf(_structuredNotes!);
+
       // Show export options
       _showExportOptions(pdfBytes);
     } catch (e) {
@@ -212,7 +217,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             Row(
               children: [
                 Expanded(
-                  child: _ExportButton(
+                  child: ExportButton(
                     icon: Icons.preview_rounded,
                     label: 'Preview',
                     color: const Color(0xFF6366F1),
@@ -224,13 +229,15 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _ExportButton(
+                  child: ExportButton(
                     icon: Icons.share_rounded,
                     label: 'Share',
                     color: const Color(0xFF10B981),
                     onTap: () async {
                       Navigator.pop(context);
-                      final fileName = _structuredNotes?.title.replaceAll(' ', '_') ?? 'notes';
+                      final fileName =
+                          _structuredNotes?.title.replaceAll(' ', '_') ??
+                              'notes';
                       await PdfGeneratorService.sharePdf(pdfBytes, fileName);
                     },
                   ),
@@ -238,15 +245,17 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
               ],
             ),
             const SizedBox(height: 12),
-            _ExportButton(
+            ExportButton(
               icon: Icons.save_rounded,
               label: 'Save to Device',
               color: const Color(0xFF2B34E3),
               fullWidth: true,
               onTap: () async {
                 Navigator.pop(context);
-                final fileName = _structuredNotes?.title.replaceAll(' ', '_') ?? 'notes';
-                final path = await PdfGeneratorService.savePdf(pdfBytes, fileName);
+                final fileName =
+                    _structuredNotes?.title.replaceAll(' ', '_') ?? 'notes';
+                final path =
+                    await PdfGeneratorService.savePdf(pdfBytes, fileName);
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -292,10 +301,10 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           children: [
             // Header
             _buildHeader(),
-            
+
             // Progress Steps
             _buildProgressSteps(),
-            
+
             // Main Content
             Expanded(
               child: SingleChildScrollView(
@@ -303,7 +312,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                 child: _buildCurrentStepContent(),
               ),
             ),
-            
+
             const BottomNav(),
           ],
         ),
@@ -326,69 +335,68 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
       ),
       child: SingleChildScrollView(
         child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2B34E3),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF2B34E3).withOpacity(0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(Icons.document_scanner_rounded, color: Colors.white, size: 28),
-          ),
-          const SizedBox(width: 16),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Notes Scanner',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2B34E3),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF2B34E3).withOpacity(0.4),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Convert handwritten notes to PDF',
-                  style: TextStyle(color: Colors.white60, fontSize: 13),
-                ),
-              ],
+                ],
+              ),
+              child: const Icon(Icons.document_scanner_rounded,
+                  color: Colors.white, size: 28),
             ),
-          ),
-          if (_currentStep > 0)
-            IconButton(
-              onPressed: _reset,
-              icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-              tooltip: 'Start Over',
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Notes Scanner',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Convert handwritten notes to PDF',
+                    style: TextStyle(color: Colors.white60, fontSize: 13),
+                  ),
+                ],
+              ),
             ),
-        ],
-      ),
+            if (_currentStep > 0)
+              IconButton(
+                onPressed: _reset,
+                icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
+                tooltip: 'Start Over',
+              ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildProgressSteps() {
     final steps = ['Select', 'Draft', 'Convert', 'Export'];
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Row(
+      child: Row(
         children: List.generate(steps.length, (index) {
           final isActive = index <= _currentStep;
           final isCurrent = index == _currentStep;
-          
-          return 
-             Flexible(
-              child: Row(
-              
+
+          return Flexible(
+            child: Row(
               children: [
                 Container(
                   width: 32,
@@ -422,7 +430,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                   ),
                 ),
                 const SizedBox(width: 6),
-              Text(
+                Text(
                   steps[index],
                   style: TextStyle(
                     color: isActive ? Colors.white : Colors.white38,
@@ -444,11 +452,10 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                     ),
                   ),
               ],
-              ),
+            ),
           );
         }),
       ),
-      
     );
   }
 
@@ -489,7 +496,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
               decoration: BoxDecoration(
                 color: const Color(0xFF1E1E28),
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF2B34E3).withOpacity(0.5), width: 2),
+                border: Border.all(
+                    color: const Color(0xFF2B34E3).withOpacity(0.5), width: 2),
               ),
               child: const Icon(
                 Icons.camera_alt_rounded,
@@ -518,7 +526,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         Row(
           children: [
             Expanded(
-              child: _ActionButton(
+              child: ActionButton(
                 icon: Icons.camera_alt_rounded,
                 label: 'Camera',
                 color: const Color(0xFF2B34E3),
@@ -527,7 +535,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: _ActionButton(
+              child: ActionButton(
                 icon: Icons.photo_library_rounded,
                 label: 'Gallery',
                 color: const Color(0xFF6366F1),
@@ -546,7 +554,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           ),
           child: const Row(
             children: [
-              Icon(Icons.tips_and_updates_rounded, color: Color(0xFFFBBF24), size: 24),
+              Icon(Icons.tips_and_updates_rounded,
+                  color: Color(0xFFFBBF24), size: 24),
               SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -570,7 +579,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFF2B34E3).withOpacity(0.5), width: 2),
+            border: Border.all(
+                color: const Color(0xFF2B34E3).withOpacity(0.5), width: 2),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
@@ -594,7 +604,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           style: TextStyle(color: Colors.white60, fontSize: 14),
         ),
         const SizedBox(height: 32),
-        _ActionButton(
+        ActionButton(
           icon: Icons.text_fields_rounded,
           label: _isTranscribing ? 'Transcribing...' : 'Transcribe Notes',
           color: const Color(0xFF2B34E3),
@@ -605,7 +615,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         TextButton.icon(
           onPressed: () => setState(() => _currentStep = 0),
           icon: const Icon(Icons.arrow_back_rounded, color: Colors.white60),
-          label: const Text('Choose Different Image', style: TextStyle(color: Colors.white60)),
+          label: const Text('Choose Different Image',
+              style: TextStyle(color: Colors.white60)),
         ),
       ],
     );
@@ -634,7 +645,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             border: Border.all(color: Colors.white10),
           ),
           child: SingleChildScrollView(
-            child: _MathMarkdownWidget(text: _transcription ?? ''),
+            child: MathMarkdownWidget(text: _transcription ?? ''),
           ),
         ),
         const SizedBox(height: 24),
@@ -652,7 +663,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           style: TextStyle(color: Colors.white60, fontSize: 13),
         ),
         const SizedBox(height: 20),
-        _ActionButton(
+        ActionButton(
           icon: Icons.auto_awesome_rounded,
           label: _isConverting ? 'Converting...' : 'Generate Smart Notes',
           color: const Color(0xFF10B981),
@@ -665,14 +676,18 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           children: [
             TextButton.icon(
               onPressed: () => setState(() => _currentStep = 1),
-              icon: const Icon(Icons.arrow_back_rounded, color: Colors.white60, size: 18),
-              label: const Text('Back', style: TextStyle(color: Colors.white60)),
+              icon: const Icon(Icons.arrow_back_rounded,
+                  color: Colors.white60, size: 18),
+              label:
+                  const Text('Back', style: TextStyle(color: Colors.white60)),
             ),
             const SizedBox(width: 16),
             TextButton.icon(
               onPressed: _reset,
-              icon: const Icon(Icons.refresh_rounded, color: Colors.white60, size: 18),
-              label: const Text('Start Over', style: TextStyle(color: Colors.white60)),
+              icon: const Icon(Icons.refresh_rounded,
+                  color: Colors.white60, size: 18),
+              label: const Text('Start Over',
+                  style: TextStyle(color: Colors.white60)),
             ),
           ],
         ),
@@ -684,7 +699,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
     if (_structuredNotes == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -709,7 +724,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                   color: Color(0xFF10B981),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_rounded, color: Colors.white, size: 24),
+                child: const Icon(Icons.check_rounded,
+                    color: Colors.white, size: 24),
               ),
               const SizedBox(width: 16),
               const Expanded(
@@ -736,7 +752,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           ),
         ),
         const SizedBox(height: 24),
-        
+
         // Notes Preview
         Text(
           _structuredNotes!.title,
@@ -747,17 +763,17 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Stats
         Row(
           children: [
-            _StatChip(
+            StatChip(
               icon: Icons.lightbulb_outline,
               label: '${_structuredNotes!.keyPoints.length} Key Points',
               color: const Color(0xFFFBBF24),
             ),
             const SizedBox(width: 8),
-            _StatChip(
+            StatChip(
               icon: Icons.style_outlined,
               label: '${_structuredNotes!.flashcards.length} Flashcards',
               color: const Color(0xFF6366F1),
@@ -767,13 +783,13 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         const SizedBox(height: 8),
         Row(
           children: [
-            _StatChip(
+            StatChip(
               icon: Icons.quiz_outlined,
               label: '${_structuredNotes!.quizQuestions.length} Questions',
               color: const Color(0xFF10B981),
             ),
             const SizedBox(width: 8),
-            _StatChip(
+            StatChip(
               icon: Icons.book_outlined,
               label: '${_structuredNotes!.definitions.length} Definitions',
               color: const Color(0xFFEC4899),
@@ -781,7 +797,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           ],
         ),
         const SizedBox(height: 24),
-        
+
         // Summary Preview
         if (_structuredNotes!.summary.isNotEmpty) ...[
           const Text(
@@ -810,9 +826,9 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           ),
           const SizedBox(height: 24),
         ],
-        
+
         // Export Button
-        _ActionButton(
+        ActionButton(
           icon: Icons.picture_as_pdf_rounded,
           label: _isGeneratingPdf ? 'Generating PDF...' : 'Export as PDF',
           color: const Color(0xFF2B34E3),
@@ -823,8 +839,10 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         Center(
           child: TextButton.icon(
             onPressed: _reset,
-            icon: const Icon(Icons.add_photo_alternate_rounded, color: Colors.white60, size: 18),
-            label: const Text('Scan Another Page', style: TextStyle(color: Colors.white60)),
+            icon: const Icon(Icons.add_photo_alternate_rounded,
+                color: Colors.white60, size: 18),
+            label: const Text('Scan Another Page',
+                style: TextStyle(color: Colors.white60)),
           ),
         ),
       ],
@@ -832,329 +850,4 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback? onTap;
-  final bool isLoading;
-
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    required this.color,
-    this.onTap,
-    this.isLoading = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [color, color.withOpacity(0.8)],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: color.withOpacity(0.4),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isLoading)
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                ),
-              )
-            else
-              Icon(icon, color: Colors.white, size: 22),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ExportButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  final bool fullWidth;
-
-  const _ExportButton({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-    this.fullWidth = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: fullWidth ? 16 : 14),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.5)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  const _StatChip({
-    required this.icon,
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 16),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Custom widget to render markdown with math support
-class _MathMarkdownWidget extends StatelessWidget {
-  final String text;
-
-  const _MathMarkdownWidget({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return md.MarkdownBody(
-      data: text,
-      selectable: true,
-      extensionSet: markdown.ExtensionSet(
-        [
-          ...markdown.ExtensionSet.gitHubFlavored.blockSyntaxes,
-        ],
-        [
-          ...markdown.ExtensionSet.gitHubFlavored.inlineSyntaxes,
-          LatexSyntax(),
-        ],
-      ),
-      styleSheet: md.MarkdownStyleSheet(
-        p: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-          height: 1.6,
-        ),
-        strong: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
-        em: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-          fontStyle: FontStyle.italic,
-        ),
-        listBullet: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-        ),
-        code: TextStyle(
-          color: Colors.cyan.shade200,
-          backgroundColor: Colors.black.withOpacity(0.4),
-          fontSize: 14,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.w500,
-        ),
-        codeblockDecoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.cyan.withOpacity(0.3),
-            width: 1,
-          ),
-        ),
-        codeblockPadding: const EdgeInsets.all(12),
-        blockquote: const TextStyle(
-          color: Colors.white70,
-          fontSize: 14,
-          fontStyle: FontStyle.italic,
-        ),
-        h1: const TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-        h2: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-        h3: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
-        a: const TextStyle(
-          color: Colors.lightBlueAccent,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      builders: {
-        'code': _StyledCodeBuilder(),
-        'latex': LatexElementBuilder(),
-      },
-    );
-  }
-}
-
-// Custom builder that styles code blocks
-class _StyledCodeBuilder extends md.MarkdownElementBuilder {
-  @override
-  Widget? visitElementAfter(markdown.Element element, TextStyle? preferredStyle) {
-    final text = element.textContent;
-    
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: Colors.cyan.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: SelectableText(
-        text,
-        style: TextStyle(
-          color: Colors.cyan.shade200,
-          fontSize: 14,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.w500,
-          height: 1.4,
-        ),
-      ),
-    );
-  }
-}
-
-class LatexSyntax extends markdown.InlineSyntax {
-  LatexSyntax() : super(r'(\$\$[\s\S]*?\$\$)|(\$[^$]+?\$)');
-
-  @override
-  bool onMatch(markdown.InlineParser parser, Match match) {
-    final input = match.input;
-    final matchStart = match.start;
-    final matchEnd = match.end;
-    final text = input.substring(matchStart, matchEnd);
-    final isBlock = text.startsWith(r'$$');
-    final content = isBlock 
-        ? text.substring(2, text.length - 2) 
-        : text.substring(1, text.length - 1);
-
-    final element = markdown.Element.text('latex', content);
-    element.attributes['style'] = isBlock ? 'block' : 'inline';
-    parser.addNode(element);
-    return true;
-  }
-}
-
-class LatexElementBuilder extends md.MarkdownElementBuilder {
-  @override
-  Widget? visitElementAfter(markdown.Element element, TextStyle? preferredStyle) {
-    final content = element.textContent;
-    final style = element.attributes['style'];
-    
-    if (style == 'block') {
-      return Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Math.tex(
-          content,
-          textStyle: const TextStyle(fontSize: 16, color: Colors.white),
-          onErrorFallback: (err) => Text(
-            '\$$content\$',
-            style: const TextStyle(color: Colors.redAccent),
-          ),
-        ),
-      );
-    }
-    
-    return Math.tex(
-      content,
-      textStyle: preferredStyle?.copyWith(color: Colors.white) ?? const TextStyle(color: Colors.white),
-      onErrorFallback: (err) => Text(
-        '\$$content\$',
-        style: preferredStyle?.copyWith(color: Colors.redAccent) ?? const TextStyle(color: Colors.redAccent),
-      ),
-    );
-  }
-}
 

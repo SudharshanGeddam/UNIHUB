@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart' as md;
-import 'package:markdown/markdown.dart' as markdown;
-import 'package:flutter_math_fork/flutter_math.dart';
+import 'package:unihub/features/chat/models/chat_message.dart';
+import 'package:unihub/features/chat/widgets/message_bubble.dart';
+import 'package:unihub/features/chat/widgets/quick_action_tile.dart';
+import 'package:unihub/features/chat/widgets/typing_indicator.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:unihub/services/gemini_service.dart';
+import 'package:unihub/features/chat/services/chat_service.dart';
+import 'package:unihub/features/notes_scanner/services/document_analysis_service.dart';
 
 class AgentScreen extends StatefulWidget {
   const AgentScreen({super.key});
@@ -17,11 +19,12 @@ class AgentScreen extends StatefulWidget {
 class _AgentScreenState extends State<AgentScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
-  final _geminiService = GeminiService.getInstance();
-  
+  final _chatService = ChatService();
+  final _docService = DocumentAnalysisService();
+
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
-  
+
   // Document upload state
   String? _uploadedFileName;
   String? _uploadedFileContent;
@@ -32,7 +35,8 @@ class _AgentScreenState extends State<AgentScreen> {
   void initState() {
     super.initState();
     _messages.add(ChatMessage(
-      text: "Hi! I'm UniHub AI 🎓\n\nI can help you with:\n• **Study planning** and scheduling\n• **Academic doubts** and explanations\n• **Exam preparation** tips\n• **Document analysis** - Upload PDFs, notes, or study materials!\n\nTap the **+** button to upload documents or use quick actions.\n\nHow can I assist you today?",
+      text:
+          "Hi! I'm UniHub AI 🎓\n\nI can help you with:\n• **Study planning** and scheduling\n• **Academic doubts** and explanations\n• **Exam preparation** tips\n• **Document analysis** - Upload PDFs, notes, or study materials!\n\nTap the **+** button to upload documents or use quick actions.\n\nHow can I assist you today?",
       isUser: false,
     ));
   }
@@ -58,17 +62,20 @@ class _AgentScreenState extends State<AgentScreen> {
 
   Future<void> _sendMessage() async {
     final message = _messageController.text.trim();
-    if (message.isEmpty && _uploadedFileContent == null && _uploadedFileBytes == null) return;
+    if (message.isEmpty &&
+        _uploadedFileContent == null &&
+        _uploadedFileBytes == null) return;
 
-    final hasDocument = _uploadedFileContent != null || _uploadedFileBytes != null;
+    final hasDocument =
+        _uploadedFileContent != null || _uploadedFileBytes != null;
     final fileName = _uploadedFileName;
     final fileContent = _uploadedFileContent;
     final fileBytes = _uploadedFileBytes;
 
     setState(() {
       _messages.add(ChatMessage(
-        text: message.isEmpty && hasDocument 
-            ? 'Analyze this document: $fileName' 
+        text: message.isEmpty && hasDocument
+            ? 'Analyze this document: $fileName'
             : message,
         isUser: true,
         attachedFileName: hasDocument ? fileName : null,
@@ -87,21 +94,21 @@ class _AgentScreenState extends State<AgentScreen> {
       String response;
       if (hasDocument) {
         // Use native vision processing if file bytes are available (PDF or image)
-        response = await _geminiService.chatWithDocument(
+        response = await _docService.chatWithDocument(
           documentContent: fileContent ?? '',
           fileName: fileName ?? 'document',
           userMessage: message.isEmpty ? null : message,
           fileBytes: fileBytes, // Pass file bytes for native vision processing
         );
       } else {
-        response = await _geminiService.chat(message);
+        response = await _chatService.chat(message);
       }
-      
+
       setState(() {
         _messages.add(ChatMessage(text: response, isUser: false));
         _isLoading = false;
       });
-      
+
       _scrollToBottom();
     } catch (e) {
       setState(() {
@@ -118,7 +125,19 @@ class _AgentScreenState extends State<AgentScreen> {
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf', 'txt', 'md', 'csv', 'json', 'xml', 'html', 'png', 'jpg', 'jpeg', 'webp'],
+        allowedExtensions: [
+          'pdf',
+          'txt',
+          'md',
+          'csv',
+          'json',
+          'xml',
+          'html',
+          'png',
+          'jpg',
+          'jpeg',
+          'webp'
+        ],
         allowMultiple: false,
       );
 
@@ -139,12 +158,12 @@ class _AgentScreenState extends State<AgentScreen> {
           final extension = filePath.toLowerCase().split('.').last;
           final isPdf = extension == 'pdf';
           final isImage = ['png', 'jpg', 'jpeg', 'webp'].contains(extension);
-          
+
           if (isPdf || isImage) {
             // For PDFs and images, read bytes for native Gemini vision processing
             final fileObj = File(filePath);
             final bytes = await fileObj.readAsBytes();
-            
+
             // Check file size (Gemini supports up to ~20MB inline)
             if (bytes.length > 20 * 1024 * 1024) {
               _showSnackBar('File too large. Please use a file under 20MB.');
@@ -160,13 +179,15 @@ class _AgentScreenState extends State<AgentScreen> {
             });
 
             final fileType = isPdf ? 'PDF' : 'image';
-            _showSnackBar('📄 ${file.name} attached (native $fileType processing)');
+            _showSnackBar(
+                '📄 ${file.name} attached (native $fileType processing)');
           } else {
             // For text files, extract content
-            final content = await _geminiService.extractTextFromFile(filePath);
-            
+            final docContent = await _docService.readDocument(filePath);
+            final content = docContent.textContent ?? '';
+
             // Check if content is too long (Gemini has token limits)
-            final truncatedContent = content.length > 30000 
+            final truncatedContent = content.length > 30000
                 ? '${content.substring(0, 30000)}\n\n[Document truncated due to length...]'
                 : content;
 
@@ -183,7 +204,8 @@ class _AgentScreenState extends State<AgentScreen> {
           setState(() {
             _isProcessingFile = false;
           });
-          _showSnackBar('Error reading file: ${e.toString().replaceAll('Exception: ', '')}');
+          _showSnackBar(
+              'Error reading file: ${e.toString().replaceAll('Exception: ', '')}');
         }
       }
     } catch (e) {
@@ -234,7 +256,7 @@ class _AgentScreenState extends State<AgentScreen> {
                   isUser: false,
                 ));
               });
-              _geminiService.resetChat();
+              _chatService.resetChat();
               Navigator.pop(context);
             },
             child: const Text('Clear', style: TextStyle(color: Colors.red)),
@@ -283,9 +305,9 @@ class _AgentScreenState extends State<AgentScreen> {
                   itemCount: _messages.length + (_isLoading ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == _messages.length && _isLoading) {
-                      return const _TypingIndicator();
+                      return const TypingIndicator();
                     }
-                    return _MessageBubble(message: _messages[index]);
+                    return MessageBubble(message: _messages[index]);
                   },
                 ),
               ),
@@ -303,12 +325,15 @@ class _AgentScreenState extends State<AgentScreen> {
                       if (_uploadedFileName != null)
                         Container(
                           margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 43, 52, 227).withOpacity(0.3),
+                            color: const Color.fromARGB(255, 43, 52, 227)
+                                .withOpacity(0.3),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color.fromARGB(255, 43, 52, 227).withOpacity(0.5),
+                              color: const Color.fromARGB(255, 43, 52, 227)
+                                  .withOpacity(0.5),
                             ),
                           ),
                           child: Row(
@@ -358,7 +383,8 @@ class _AgentScreenState extends State<AgentScreen> {
                       if (_isProcessingFile)
                         Container(
                           margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
                           decoration: BoxDecoration(
                             color: Colors.orange.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(12),
@@ -377,7 +403,8 @@ class _AgentScreenState extends State<AgentScreen> {
                               SizedBox(width: 8),
                               Text(
                                 'Processing document...',
-                                style: TextStyle(color: Colors.orange, fontSize: 14),
+                                style: TextStyle(
+                                    color: Colors.orange, fontSize: 14),
                               ),
                             ],
                           ),
@@ -394,7 +421,9 @@ class _AgentScreenState extends State<AgentScreen> {
                             child: IconButton(
                               onPressed: () => _showQuickActions(context),
                               icon: Icon(
-                                _uploadedFileName != null ? Icons.description : Icons.add,
+                                _uploadedFileName != null
+                                    ? Icons.description
+                                    : Icons.add,
                                 color: Colors.white,
                               ),
                             ),
@@ -410,9 +439,11 @@ class _AgentScreenState extends State<AgentScreen> {
                                 hintText: _uploadedFileName != null
                                     ? 'Ask about the document...'
                                     : 'Ask UniHub AI...',
-                                hintStyle: const TextStyle(color: Colors.white54),
+                                hintStyle:
+                                    const TextStyle(color: Colors.white54),
                                 filled: true,
-                                fillColor: const Color.fromARGB(255, 85, 86, 91),
+                                fillColor:
+                                    const Color.fromARGB(255, 85, 86, 91),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(24),
                                   borderSide: BorderSide.none,
@@ -432,7 +463,9 @@ class _AgentScreenState extends State<AgentScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
-                              onPressed: _isLoading || _isProcessingFile ? null : _sendMessage,
+                              onPressed: _isLoading || _isProcessingFile
+                                  ? null
+                                  : _sendMessage,
                               icon: const Icon(Icons.send, color: Colors.white),
                             ),
                           ),
@@ -470,7 +503,7 @@ class _AgentScreenState extends State<AgentScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.upload_file,
               title: 'Upload Document',
               subtitle: 'PDF, images, TXT, MD, CSV files',
@@ -479,7 +512,7 @@ class _AgentScreenState extends State<AgentScreen> {
                 _pickDocument();
               },
             ),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.school,
               title: 'Explain a concept',
               onTap: () {
@@ -487,7 +520,7 @@ class _AgentScreenState extends State<AgentScreen> {
                 _messageController.text = 'Explain the concept of ';
               },
             ),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.quiz,
               title: 'Practice questions',
               onTap: () {
@@ -495,7 +528,7 @@ class _AgentScreenState extends State<AgentScreen> {
                 _messageController.text = 'Give me practice questions on ';
               },
             ),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.summarize,
               title: 'Summarize topic',
               onTap: () {
@@ -503,7 +536,7 @@ class _AgentScreenState extends State<AgentScreen> {
                 _messageController.text = 'Summarize the topic: ';
               },
             ),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.lightbulb,
               title: 'Study tips',
               onTap: () {
@@ -553,37 +586,40 @@ class _AgentScreenState extends State<AgentScreen> {
               style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
             const SizedBox(height: 20),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.summarize,
               title: 'Summarize',
               subtitle: 'Get a summary of key points',
               onTap: () {
                 Navigator.pop(context);
-                _messageController.text = 'Please summarize this document and highlight the key points.';
+                _messageController.text =
+                    'Please summarize this document and highlight the key points.';
                 _sendMessage();
               },
             ),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.school,
               title: 'Exam Prep',
               subtitle: 'Generate exam questions & tips',
               onTap: () {
                 Navigator.pop(context);
-                _messageController.text = 'Help me prepare for exams using this document. Generate potential questions and key concepts.';
+                _messageController.text =
+                    'Help me prepare for exams using this document. Generate potential questions and key concepts.';
                 _sendMessage();
               },
             ),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.note_alt,
               title: 'Create Notes',
               subtitle: 'Convert to organized study notes',
               onTap: () {
                 Navigator.pop(context);
-                _messageController.text = 'Convert this document into well-organized study notes.';
+                _messageController.text =
+                    'Convert this document into well-organized study notes.';
                 _sendMessage();
               },
             ),
-            _QuickActionTile(
+            QuickActionTile(
               icon: Icons.help_outline,
               title: 'Ask Questions',
               subtitle: 'Ask anything about this document',
@@ -599,7 +635,8 @@ class _AgentScreenState extends State<AgentScreen> {
                 _removeAttachment();
               },
               icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-              label: const Text('Remove Document', style: TextStyle(color: Colors.redAccent)),
+              label: const Text('Remove Document',
+                  style: TextStyle(color: Colors.redAccent)),
             ),
           ],
         ),
@@ -608,342 +645,4 @@ class _AgentScreenState extends State<AgentScreen> {
   }
 }
 
-class ChatMessage {
-  final String text;
-  final bool isUser;
-  final DateTime timestamp;
-  final String? attachedFileName;
-  final bool hasAttachment;
 
-  ChatMessage({
-    required this.text,
-    required this.isUser,
-    DateTime? timestamp,
-    this.attachedFileName,
-    this.hasAttachment = false,
-  }) : timestamp = timestamp ?? DateTime.now();
-}
-
-class _MessageBubble extends StatelessWidget {
-  final ChatMessage message;
-
-  const _MessageBubble({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.8,
-        ),
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: message.isUser
-              ? const Color.fromARGB(255, 43, 52, 227)
-              : const Color.fromARGB(230, 85, 86, 91),
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(message.isUser ? 16 : 4),
-            bottomRight: Radius.circular(message.isUser ? 4 : 16),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Show attachment indicator if message has attachment
-            if (message.hasAttachment && message.attachedFileName != null)
-              Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.attach_file,
-                      color: Colors.white70,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: Text(
-                        message.attachedFileName!,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 13,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            message.isUser
-                ? SelectableText(
-                    message.text,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      height: 1.4,
-                    ),
-                  )
-                : _MathMarkdownWidget(text: message.text),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TypingIndicator extends StatefulWidget {
-  const _TypingIndicator();
-
-  @override
-  State<_TypingIndicator> createState() => _TypingIndicatorState();
-}
-
-class _TypingIndicatorState extends State<_TypingIndicator>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(230, 85, 86, 91),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(3, (index) {
-                final delay = index * 0.2;
-                final value = ((_controller.value + delay) % 1.0);
-                final opacity = 0.3 + (0.7 * (value < 0.5 ? value * 2 : (1 - value) * 2));
-                return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 2),
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(opacity),
-                    shape: BoxShape.circle,
-                  ),
-                );
-              }),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _QuickActionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String? subtitle;
-  final VoidCallback onTap;
-
-  const _QuickActionTile({
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 43, 52, 227).withOpacity(0.2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, color: const Color.fromARGB(255, 43, 52, 227)),
-      ),
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      subtitle: subtitle != null 
-          ? Text(subtitle!, style: const TextStyle(color: Colors.white54, fontSize: 12))
-          : null,
-      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
-      onTap: onTap,
-    );
-  }
-}
-
-// Custom widget to render markdown with math support
-class _MathMarkdownWidget extends StatelessWidget {
-  final String text;
-
-  const _MathMarkdownWidget({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    // Process text to replace $...$ math expressions with code blocks that we can style
-    final processedText = text.replaceAllMapped(
-      RegExp(r'\$([^$]+)\$'),
-      (match) {
-        final mathContent = match.group(1) ?? '';
-        // Use a special marker that we can detect in the code builder
-        return '`MATH:${mathContent.trim()}`';
-      },
-    );
-    
-    return md.MarkdownBody(
-      data: processedText,
-      selectable: true,
-      styleSheet: md.MarkdownStyleSheet(
-        p: const TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-          height: 1.5,
-        ),
-        strong: const TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-        ),
-        em: const TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-          fontStyle: FontStyle.italic,
-        ),
-        listBullet: const TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-        ),
-        code: TextStyle(
-          color: Colors.cyan.shade200,
-          backgroundColor: Colors.black.withOpacity(0.4),
-          fontSize: 15,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.w500,
-        ),
-        codeblockDecoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: Colors.cyan.withOpacity(0.3),
-            width: 1,
-          ),
-        ),
-        codeblockPadding: const EdgeInsets.all(12),
-        blockquote: const TextStyle(
-          color: Colors.white70,
-          fontSize: 15,
-          fontStyle: FontStyle.italic,
-        ),
-        h1: const TextStyle(
-          color: Colors.white,
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-        ),
-        h2: const TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-        h3: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-        a: const TextStyle(
-          color: Colors.lightBlueAccent,
-          decoration: TextDecoration.underline,
-        ),
-      ),
-      builders: {
-        'code': _MathCodeBuilder(),
-      },
-    );
-  }
-}
-
-// Custom builder that detects and renders math expressions
-class _MathCodeBuilder extends md.MarkdownElementBuilder {
-  @override
-  Widget? visitElementAfter(markdown.Element element, TextStyle? preferredStyle) {
-    final text = element.textContent.trim();
-    
-    // Check if it's a math expression (starts with MATH:)
-    if (text.startsWith('MATH:')) {
-      try {
-        // Extract math content
-        final mathContent = text.substring(5).trim();
-        
-        // Render using flutter_math_fork
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-          child: Math.tex(
-            mathContent,
-            mathStyle: MathStyle.text,
-            textStyle: const TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-            ),
-          ),
-        );
-      } catch (e) {
-        // If math parsing fails, show as styled code
-        return _buildStyledCode(text.substring(5));
-      }
-    }
-    
-    // Regular code block - style it nicely
-    return _buildStyledCode(text);
-  }
-  
-  Widget _buildStyledCode(String text) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: Colors.cyan.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: SelectableText(
-        text,
-        style: TextStyle(
-          color: Colors.cyan.shade200,
-          fontSize: 15,
-          fontFamily: 'monospace',
-          fontWeight: FontWeight.w500,
-          height: 1.4,
-        ),
-      ),
-    );
-  }
-}

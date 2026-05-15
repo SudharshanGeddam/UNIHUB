@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unihub/services/auth_service.dart';
-import 'package:unihub/screens/login_screen.dart';
+import 'package:unihub/features/auth/screens/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -177,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Settings list
                 Container(
                   decoration: BoxDecoration(
@@ -232,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Logout button
                 SizedBox(
                   width: double.infinity,
@@ -318,7 +318,8 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
       title: Text(title, style: const TextStyle(color: Colors.white)),
-      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+      trailing:
+          const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
       onTap: onTap,
     );
   }

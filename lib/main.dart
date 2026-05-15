@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:unihub/firebase_options.dart';
-import 'package:unihub/screens/login_screen.dart';
-import 'package:unihub/screens/home_screen.dart';
+import 'package:unihub/features/auth/screens/login_screen.dart';
+import 'package:unihub/features/home/screens/home_screen.dart';
 import 'package:unihub/services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase
   try {
     await Firebase.initializeApp(
@@ -26,7 +26,7 @@ void main() async {
     // Don't continue if Firebase fails - it's required for auth
     rethrow;
   }
-  
+
   runApp(const MyApp());
 }
 
@@ -113,7 +113,7 @@ class AuthWrapper extends StatelessWidget {
 
     try {
       final authService = AuthService();
-      
+
       return StreamBuilder(
         stream: authService.authStateChanges,
         builder: (context, snapshot) {
@@ -140,12 +140,12 @@ class AuthWrapper extends StatelessWidget {
               ),
             );
           }
-          
+
           // User is logged in
           if (snapshot.hasData && snapshot.data != null) {
             return const HomeScreen();
           }
-          
+
           // User is not logged in
           return const LoginScreen();
         },

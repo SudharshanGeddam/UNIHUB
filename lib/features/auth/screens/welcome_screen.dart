@@ -66,7 +66,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 final double radius = w * 0.40;
                 final double startAngle = math.pi + 0.6;
                 final double endAngle = 2 * math.pi - 0.6;
-  
 
                 final positions = computeArcPositions(
                   count: n,
@@ -90,7 +89,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         builder: (context, child) {
                           // ---- parameters (copy the same ones you used in LayoutBuilder) ----
                           final int count = n; // number of avatars
-                          final double startA = startAngle; // e.g. math.pi + 0.6
+                          final double startA =
+                              startAngle; // e.g. math.pi + 0.6
                           final double endA = endAngle; // e.g. 2*math.pi - 0.6
                           final double span = endA - startA;
                           final double cx = centerX;
@@ -139,8 +139,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               minOp + (maxOp - minOp) * closeness;
 
                           // vertical lift tiny based on closeness to emphasize center slightly
-                          final double lift =
-                              -12.0 *
+                          final double lift = -12.0 *
                               math.pow(
                                 closeness,
                                 0.9,
@@ -160,7 +159,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             ),
                           );
                         },
-
                         child: Container(
                           width: size,
                           height: size,

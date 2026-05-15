@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/services/gemini_service.dart';
-import 'package:unihub/pages/study_planner_results.dart';
+import 'package:unihub/features/study_planner/services/study_plan_service.dart';
+import 'package:unihub/features/study_planner/screens/study_planner_results_screen.dart';
 import 'package:unihub/models/study_plan_model.dart';
 
 class StudyPlanner extends StatefulWidget {
@@ -13,13 +13,13 @@ class StudyPlanner extends StatefulWidget {
 class _StudyPlannerState extends State<StudyPlanner> {
   final _subjectController = TextEditingController();
   final _timeController = TextEditingController();
-  final _geminiService = GeminiService.getInstance();
-  
+  final _studyPlanService = StudyPlanService();
+
   String _selectedFocusType = 'Deep Work';
   String? _generatedPlan;
   StudyPlanModel? _parsedPlan;
   bool _isGenerating = false;
-  
+
   // Store last plan details for continuing
   String? _lastSubject;
   String? _lastTime;
@@ -67,7 +67,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
     });
 
     try {
-      final plan = await _geminiService.generateStudyPlan(
+      final plan = await _studyPlanService.generateStudyPlan(
         subject: _subjectController.text,
         availableTime: _timeController.text,
         focusType: _selectedFocusType,
@@ -75,7 +75,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
 
       // Parse the JSON response
       StudyPlanModel? parsedPlan = StudyPlanModel.parseFromResponse(plan);
-      
+
       // If parsing failed, create a default plan
       parsedPlan ??= StudyPlanModel.createDefault(
         subject: _subjectController.text,
@@ -222,7 +222,8 @@ class _StudyPlannerState extends State<StudyPlanner> {
                         icon: const Icon(Icons.dashboard),
                         label: const Text('View Results'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 43, 52, 227),
+                          backgroundColor:
+                              const Color.fromARGB(255, 43, 52, 227),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
@@ -309,7 +310,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   const Text(
                     'Available Time',
                     style: TextStyle(
@@ -327,7 +328,8 @@ class _StudyPlannerState extends State<StudyPlanner> {
                       fillColor: const Color.fromARGB(255, 85, 86, 91),
                       hintText: 'E.g: 2 hours/day for 1 week',
                       hintStyle: const TextStyle(color: Colors.white54),
-                      prefixIcon: const Icon(Icons.schedule, color: Colors.white54),
+                      prefixIcon:
+                          const Icon(Icons.schedule, color: Colors.white54),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide.none,
@@ -335,7 +337,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   const Text(
                     'Focus Type',
                     style: TextStyle(
@@ -370,7 +372,9 @@ class _StudyPlannerState extends State<StudyPlanner> {
                             type,
                             style: TextStyle(
                               color: Colors.white,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
                           ),
                         ),
@@ -378,7 +382,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                     }).toList(),
                   ),
                   const SizedBox(height: 40),
-                  
+
                   SizedBox(
                     width: double.infinity,
                     height: 56,
@@ -405,7 +409,8 @@ class _StudyPlannerState extends State<StudyPlanner> {
                                   ),
                                 ),
                                 SizedBox(width: 12),
-                                Text('Generating...', style: TextStyle(fontSize: 16)),
+                                Text('Generating...',
+                                    style: TextStyle(fontSize: 16)),
                               ],
                             )
                           : const Row(
@@ -424,7 +429,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                             ),
                     ),
                   ),
-                  
+
                   // Continue Last Plan Card
                   if (_parsedPlan != null && _lastSubject != null) ...[
                     const SizedBox(height: 24),
@@ -453,7 +458,8 @@ class _StudyPlannerState extends State<StudyPlanner> {
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF7C4DFF).withOpacity(0.2),
+                                  color:
+                                      const Color(0xFF7C4DFF).withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Icon(
@@ -495,13 +501,16 @@ class _StudyPlannerState extends State<StudyPlanner> {
                             children: [
                               Expanded(
                                 child: OutlinedButton.icon(
-                                  onPressed: () => _showGeneratedPlan(_generatedPlan!),
+                                  onPressed: () =>
+                                      _showGeneratedPlan(_generatedPlan!),
                                   icon: const Icon(Icons.code, size: 18),
                                   label: const Text('Raw Data'),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.white70,
-                                    side: BorderSide(color: Colors.white.withOpacity(0.3)),
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    side: BorderSide(
+                                        color: Colors.white.withOpacity(0.3)),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -515,7 +524,8 @@ class _StudyPlannerState extends State<StudyPlanner> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => StudyPlannerResults(
+                                        builder: (context) =>
+                                            StudyPlannerResults(
                                           subject: _lastSubject!,
                                           availableTime: _lastTime!,
                                           focusType: _lastFocusType!,
@@ -529,7 +539,8 @@ class _StudyPlannerState extends State<StudyPlanner> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF7C4DFF),
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
