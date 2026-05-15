@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/screens/agent_screen.dart';
-import 'package:unihub/screens/home_screen.dart';
-import 'package:unihub/screens/profile_screen.dart';
-import 'package:unihub/screens/notes_scanner_screen.dart';
+import 'package:unihub/features/chat/screens/agent_screen.dart';
+import 'package:unihub/features/home/screens/home_screen.dart';
+import 'package:unihub/features/profile/screens/profile_screen.dart';
+import 'package:unihub/features/notes_scanner/screens/notes_scanner_screen.dart';
 
 class BottomNav extends StatelessWidget {
   const BottomNav({super.key});
@@ -48,7 +48,8 @@ class BottomNav extends StatelessWidget {
               label: 'Notes Scanner',
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const NotesScannerScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const NotesScannerScreen()),
               ),
             ),
             _NavItem(
