@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:unihub/services/firestore_service.dart';
+import 'package:unihub/features/auth/repositories/user_profile_repository.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
   );
-  final FirestoreService _firestoreService = FirestoreService();
+  final UserProfileRepository _userProfileRepository = UserProfileRepository();
 
   // Get current user
   User? get currentUser => _auth.currentUser;
@@ -48,7 +48,7 @@ class AuthService {
       await credential.user?.updateDisplayName(name);
 
       // Save additional user data to Firestore
-      await _firestoreService.createUserProfile(
+      await _userProfileRepository.createUserProfile(
         email: email,
         name: name,
         phoneNumber: phoneNumber,
@@ -69,7 +69,7 @@ class AuthService {
     try {
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       // User cancelled the sign-in
       if (googleUser == null) {
         return null;
@@ -96,11 +96,11 @@ class AuthService {
       // Save/update user profile in Firestore (only if new user or missing data)
       if (userCredential.user != null) {
         final user = userCredential.user!;
-        final existingProfile = await _firestoreService.getUserProfile();
-        
+        final existingProfile = await _userProfileRepository.getUserProfile();
+
         // Only create profile if it doesn't exist
-        if (existingProfile == null || !existingProfile.exists) {
-          await _firestoreService.createUserProfile(
+        if (existingProfile == null) {
+          await _userProfileRepository.createUserProfile(
             email: user.email ?? googleUser.email,
             name: user.displayName ?? googleUser.displayName ?? 'User',
             photoUrl: user.photoURL ?? googleUser.photoUrl,
