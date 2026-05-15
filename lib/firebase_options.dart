@@ -1,7 +1,5 @@
-// Firebase configuration file
-// IMPORTANT: Replace these placeholder values with your actual Firebase project configuration
-// Get these from: Firebase Console > Project Settings > Your apps > Config
-
+// Firebase configuration file generated for UniHub
+// Contains environment-specific configuration for Firebase services.
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
