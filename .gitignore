@@ -49,3 +49,49 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /android/build/
+
+# ─── Sensitive / Secret Files ──────────────────────────────────────────────────
+
+# Firebase — contains live API keys, project IDs, and OAuth client IDs.
+# Each developer generates their own via `flutterfire configure`.
+# Commit the .example template instead; never commit the real file.
+lib/firebase_options.dart
+google-services.json
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+GoogleService-Info.plist
+
+# Firebase project config (contains hosting and project metadata)
+firebase.json
+.firebaserc
+
+# Environment / secret files
+.env
+.env.*
+!.env.example
+secrets.json
+secrets.yaml
+
+# Gemini / OpenAI / any third-party API keys
+api_keys.dart
+api_keys.json
+*.apikey
+
+# Android signing
+android/keystore.properties
+android/*.jks
+android/*.keystore
+upload-keystore.jks
+key.properties
+
+# iOS signing
+ios/Runner/*.p12
+ios/Runner/*.mobileprovision
+ios/Runner/ExportOptions.plist
+
+# Dart-define files (may contain injected secrets)
+dart_defines.json
+dart_defines/
+
+# macOS
+macos/Runner/GoogleService-Info.plist
