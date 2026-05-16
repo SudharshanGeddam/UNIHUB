@@ -2,6 +2,15 @@
 
 UniHub is an AI-powered study assistant application built with Flutter. It combines task management, study planning, and AI assistance into a single campus companion app.
 
+## Screenshots
+
+<div style="display: flex; gap: 10px;">
+  <img src="docs/assets/home_interface.png" alt="Home Interface" width="300" />
+  <img src="docs/assets/agent.png" alt="Agent Interface" width="300" /> 
+  <img src="docs/assets/notifications.png" alt="Notifications Interface" width="300" />
+  <img src="docs/assets/study_plan.png" alt="Study Plan Interface" width="300" /> 
+</div>
+
 ## Features
 
 ### ✅ Fully Functional
