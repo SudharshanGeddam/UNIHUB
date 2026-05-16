@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/models/study_plan_model.dart';
+import 'package:unihub/features/study_planner/models/study_plan_model.dart';
 
 class AIRecommendationsCard extends StatelessWidget {
   final StudyPlanModel studyPlan;

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:unihub/core/theme/app_colors.dart';
+import 'package:unihub/core/utils/json_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:unihub/widgets/bottom_nav.dart';
 import 'package:unihub/features/notes_scanner/services/notes_conversion_service.dart';
@@ -10,7 +12,7 @@ import 'package:unihub/features/notes_scanner/widgets/action_button.dart';
 import 'package:unihub/features/notes_scanner/widgets/export_button.dart';
 import 'package:unihub/features/notes_scanner/widgets/stat_chip.dart';
 import 'package:unihub/features/notes_scanner/widgets/math_markdown_widget.dart';
-import 'package:unihub/models/structured_notes.dart';
+import 'package:unihub/features/notes_scanner/models/structured_notes.dart';
 
 class NotesScannerScreen extends StatefulWidget {
   const NotesScannerScreen({super.key});
@@ -116,29 +118,19 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
       final result =
           await _notesConversionService.convertToStructuredNotes(_transcription!);
 
-      // Parse JSON
-      String jsonStr = result.trim();
-      if (jsonStr.startsWith('```json')) {
-        jsonStr = jsonStr.substring(7);
-      } else if (jsonStr.startsWith('```')) {
-        jsonStr = jsonStr.substring(3);
-      }
-      if (jsonStr.endsWith('```')) {
-        jsonStr = jsonStr.substring(0, jsonStr.length - 3);
-      }
-      jsonStr = jsonStr.trim();
+      // Use the shared JSON extraction utility
+      final extracted = extractJsonFromAiResponse(result);
+      if (extracted == null) throw Exception('No JSON found in AI response');
 
       Map<String, dynamic> json;
       try {
-        json = jsonDecode(jsonStr);
+        json = jsonDecode(extracted);
       } catch (e) {
         // Attempt to fix common JSON issues (like unescaped newlines)
         try {
-          // Replace literal newlines with spaces, assuming valid newlines are escaped as \n
-          final sanitized = jsonStr.replaceAll('\n', ' ').replaceAll('\r', ' ');
+          final sanitized = extracted.replaceAll('\n', ' ').replaceAll('\r', ' ');
           json = jsonDecode(sanitized);
         } catch (e2) {
-          // If that fails, rethrow original error
           throw e;
         }
       }
@@ -296,7 +288,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF0A0A12),
+        backgroundColor: AppColors.backgroundAlt,
         body: Column(
           children: [
             // Header

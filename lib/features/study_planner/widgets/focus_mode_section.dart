@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/features/study_planner/screens/focus_session_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unihub/core/routing/app_router.dart';
 
 class FocusModeSection extends StatelessWidget {
   final String subject;
@@ -71,11 +72,9 @@ class FocusModeSection extends StatelessWidget {
             height: 56,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FocusSessionScreen(
-                          subject: subject, focusType: focusType)),
+                context.push(
+                  AppRoutes.focusSession,
+                  extra: {'subject': subject, 'focusType': focusType},
                 );
               },
               style: ElevatedButton.styleFrom(

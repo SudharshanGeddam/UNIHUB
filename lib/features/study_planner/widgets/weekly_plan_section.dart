@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/models/study_plan_model.dart';
+import 'package:unihub/features/study_planner/models/study_plan_model.dart';
+import 'package:unihub/features/study_planner/widgets/study_task_extensions.dart';
 
 class WeeklyPlanSection extends StatelessWidget {
   final StudyPlanModel studyPlan;

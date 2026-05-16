@@ -4,7 +4,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:unihub/core/services/ai_client.dart';
 import 'package:unihub/core/prompts/ai_prompts.dart';
-import 'package:unihub/models/document_content.dart';
+import 'package:unihub/features/notes_scanner/models/document_content.dart';
 
 class DocumentAnalysisService {
   final AIClient _aiClient;
@@ -93,13 +93,13 @@ class DocumentAnalysisService {
         final actualMimeType = mimeType ?? getMimeType(extension);
 
         final content = Content.multi([
-          TextPart('I\\'ve uploaded a file named "\$fileName".\n\n\$userPrompt'),
+          TextPart('I\'ve uploaded a file named "$fileName".\n\n$userPrompt'),
           DataPart(actualMimeType, fileBytes),
         ]);
 
         final chat = _aiClient.model.startChat();
         final response = await chat.sendMessage(content);
-        return response.text ?? 'I couldn\\'t process the file. Please try again.';
+        return response.text ?? "I couldn't process the file. Please try again.";
       }
 
       final prompt = AIPrompts.chatWithDocumentTextPrompt(
@@ -110,7 +110,7 @@ class DocumentAnalysisService {
 
       final chat = _aiClient.model.startChat();
       final response = await chat.sendMessage(Content.text(prompt));
-      return response.text ?? 'I couldn\\'t process the document. Please try again.';
+      return response.text ?? "I couldn't process the document. Please try again.";
     } catch (e) {
       if (e.toString().contains('API_KEY')) {
         return 'Please configure your Gemini API key in lib/config/api_config.dart';

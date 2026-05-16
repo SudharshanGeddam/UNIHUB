@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unihub/core/theme/app_colors.dart';
 import 'dart:async';
 
 class FocusSessionScreen extends StatefulWidget {
@@ -201,7 +202,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

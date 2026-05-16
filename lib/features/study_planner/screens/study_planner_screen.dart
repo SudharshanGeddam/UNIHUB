@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unihub/core/routing/app_router.dart';
 import 'package:unihub/features/study_planner/services/study_plan_service.dart';
-import 'package:unihub/features/study_planner/screens/study_planner_results_screen.dart';
-import 'package:unihub/models/study_plan_model.dart';
+import 'package:unihub/features/study_planner/models/study_plan_model.dart';
 
 class StudyPlanner extends StatefulWidget {
   const StudyPlanner({super.key});
@@ -16,14 +17,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
   final _studyPlanService = StudyPlanService();
 
   String _selectedFocusType = 'Deep Work';
-  String? _generatedPlan;
-  StudyPlanModel? _parsedPlan;
   bool _isGenerating = false;
-
-  // Store last plan details for continuing
-  String? _lastSubject;
-  String? _lastTime;
-  String? _lastFocusType;
 
   final List<String> _focusTypes = [
     'Deep Work',
@@ -62,8 +56,6 @@ class _StudyPlannerState extends State<StudyPlanner> {
 
     setState(() {
       _isGenerating = true;
-      _generatedPlan = null;
-      _parsedPlan = null;
     });
 
     try {
@@ -83,28 +75,18 @@ class _StudyPlannerState extends State<StudyPlanner> {
         focusType: _selectedFocusType,
       );
 
-      setState(() {
-        _generatedPlan = plan;
-        _parsedPlan = parsedPlan;
-        _isGenerating = false;
-        // Store last plan details
-        _lastSubject = _subjectController.text;
-        _lastTime = _timeController.text;
-        _lastFocusType = _selectedFocusType;
-      });
+      setState(() => _isGenerating = false);
 
       // Navigate to results screen with parsed data
       if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StudyPlannerResults(
-              subject: _subjectController.text,
-              availableTime: _timeController.text,
-              focusType: _selectedFocusType,
-              studyPlan: parsedPlan!,
-            ),
-          ),
+        context.push(
+          AppRoutes.studyPlannerResults,
+          extra: {
+            'subject': _subjectController.text,
+            'availableTime': _timeController.text,
+            'focusType': _selectedFocusType,
+            'studyPlan': parsedPlan,
+          },
         );
       }
     } catch (e) {
@@ -116,127 +98,6 @@ class _StudyPlannerState extends State<StudyPlanner> {
         ),
       );
     }
-  }
-
-  void _showGeneratedPlan(String plan) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: const Color(0xFF1A1A2E),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) => Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.white30,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  const Icon(Icons.auto_awesome, color: Colors.amber),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: Text(
-                      'Raw AI Response',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(color: Colors.white24),
-            Expanded(
-              child: SingleChildScrollView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(20),
-                child: SelectableText(
-                  plan,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    height: 1.6,
-                  ),
-                ),
-              ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _generateSchedule();
-                        },
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Regenerate'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white30),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          if (_parsedPlan != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => StudyPlannerResults(
-                                  subject: _subjectController.text,
-                                  availableTime: _timeController.text,
-                                  focusType: _selectedFocusType,
-                                  studyPlan: _parsedPlan!,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        icon: const Icon(Icons.dashboard),
-                        label: const Text('View Results'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 43, 52, 227),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -429,130 +290,6 @@ class _StudyPlannerState extends State<StudyPlanner> {
                             ),
                     ),
                   ),
-
-                  // Continue Last Plan Card
-                  if (_parsedPlan != null && _lastSubject != null) ...[
-                    const SizedBox(height: 24),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            const Color(0xFF7C4DFF).withOpacity(0.2),
-                            const Color(0xFF9C7CFF).withOpacity(0.1),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: const Color(0xFF7C4DFF).withOpacity(0.3),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color(0xFF7C4DFF).withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Icon(
-                                  Icons.history,
-                                  color: Color(0xFF7C4DFF),
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              const Text(
-                                'Continue Your Plan',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            _lastSubject!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '$_lastTime • $_lastFocusType',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.6),
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () =>
-                                      _showGeneratedPlan(_generatedPlan!),
-                                  icon: const Icon(Icons.code, size: 18),
-                                  label: const Text('Raw Data'),
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.white70,
-                                    side: BorderSide(
-                                        color: Colors.white.withOpacity(0.3)),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            StudyPlannerResults(
-                                          subject: _lastSubject!,
-                                          availableTime: _lastTime!,
-                                          focusType: _lastFocusType!,
-                                          studyPlan: _parsedPlan!,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(Icons.play_arrow, size: 20),
-                                  label: const Text('Continue'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF7C4DFF),
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                   const SizedBox(height: 40),
                 ],
               ),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/features/chat/screens/agent_screen.dart';
-import 'package:unihub/features/home/screens/home_screen.dart';
-import 'package:unihub/features/profile/screens/profile_screen.dart';
-import 'package:unihub/features/notes_scanner/screens/notes_scanner_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unihub/core/routing/app_router.dart';
 
+/// Floating bottom navigation bar used on main app screens.
 class BottomNav extends StatelessWidget {
   const BottomNav({super.key});
 
@@ -30,35 +29,22 @@ class BottomNav extends StatelessWidget {
             _NavItem(
               icon: Icons.home_rounded,
               label: 'Home',
-              onTap: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-              ),
+              onTap: () => context.go(AppRoutes.home),
             ),
             _NavItem(
               icon: Icons.smart_toy_rounded,
               label: 'AI Chat',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AgentScreen()),
-              ),
+              onTap: () => context.push(AppRoutes.chat),
             ),
             _NavItem(
               icon: Icons.camera_alt_rounded,
               label: 'Notes Scanner',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const NotesScannerScreen()),
-              ),
+              onTap: () => context.push(AppRoutes.notesScanner),
             ),
             _NavItem(
               icon: Icons.person_rounded,
               label: 'Profile',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              ),
+              onTap: () => context.push('/profile'),
             ),
           ],
         ),

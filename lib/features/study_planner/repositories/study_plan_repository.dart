@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:unihub/models/study_plan_model.dart';
+import 'package:unihub/features/study_planner/models/study_plan_model.dart';
 
 class StudyPlanRepository {
   final FirebaseFirestore _firestore;

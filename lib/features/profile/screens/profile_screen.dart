@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/services/auth_service.dart';
-import 'package:unihub/features/auth/screens/login_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unihub/core/routing/app_router.dart';
+import 'package:unihub/features/auth/services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -53,11 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => _isLoading = true);
       await _authService.signOut();
       if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-          (route) => false,
-        );
+        context.go(AppRoutes.login);
       }
     }
   }

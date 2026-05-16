@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/features/study_planner/screens/focus_session_screen.dart';
-import 'package:unihub/models/study_plan_model.dart';
+import 'package:unihub/features/study_planner/models/study_plan_model.dart';
 import 'package:unihub/features/study_planner/widgets/ai_recommendations_card.dart';
 import 'package:unihub/features/study_planner/widgets/study_streak_section.dart';
 import 'package:unihub/features/study_planner/widgets/weekly_plan_section.dart';

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:unihub/features/home/screens/home_screen.dart';
-import 'package:unihub/services/auth_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unihub/core/routing/app_router.dart';
+import 'package:unihub/core/theme/app_colors.dart';
+import 'package:unihub/features/auth/services/auth_service.dart';
 import 'package:unihub/features/auth/widgets/auth_text_field.dart';
 import 'package:unihub/features/auth/widgets/social_login_buttons.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -70,10 +73,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        // The AuthNotifier stream will fire and the router redirect will
+        // navigate to home automatically. context.go is a belt-and-suspenders.
+        context.go(AppRoutes.home);
       }
     } catch (e) {
       setState(() => _errorMessage = e.toString());
@@ -91,10 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final result = await _authService.signInWithGoogle();
       if (result != null && mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        context.go(AppRoutes.home);
       } else if (mounted && result == null) {
         // User cancelled - don't show error
         setState(() => _errorMessage = null);
@@ -106,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
           errorMsg.contains('ID token is null') ||
           errorMsg.contains('10:')) {
         errorMsg =
-            'Google Sign-In not configured. Please add SHA-1 fingerprint to Firebase Console:\nDA:F5:7D:DB:1C:71:74:48:D8:EE:6D:30:DD:17:BF:6F:5B:65:1D:4F';
+            'Google Sign-In not configured. Please add your debug SHA-1 fingerprint to the Firebase Console under Project Settings → Your App → SHA certificate fingerprints. Run: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android';
       }
       if (mounted) {
         setState(() => _errorMessage = errorMsg);
@@ -278,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     const BorderSide(color: Colors.blue),
                               ),
                             ),
-                            dropdownColor: const Color(0xFF0A022E),
+                              dropdownColor: AppColors.background,
                             style: const TextStyle(color: Colors.white),
                             items:
                                 ['1st Year', '2nd Year', '3rd Year', '4th Year']
@@ -353,8 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleEmailAuth,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 6, 40, 229),
+                              backgroundColor: AppColors.primary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25),
                               ),

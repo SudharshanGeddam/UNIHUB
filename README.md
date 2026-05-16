@@ -22,6 +22,8 @@ UniHub is an AI-powered study assistant application built with Flutter. It combi
   - Auth: User identity management.
   - Firestore: Cloud database for storing user profiles and study data.
 - **AI & ML**: Google Gemini (`google_generative_ai`) for generative text and vision tasks.
+- **Navigation**: `go_router` — declarative routing with auth guards and named routes.
+- **State Management**: `provider` — lightweight `ChangeNotifier`-based auth state.
 - **PDF & File Handling**:
   - `syncfusion_flutter_pdf`: For extracting text from uploaded PDFs.
   - `pdf` & `printing`: For generating downloadable study guides.
@@ -30,39 +32,57 @@ UniHub is an AI-powered study assistant application built with Flutter. It combi
 
 ## Architecture
 
-The `lib/` directory is organized to cleanly separate application concerns:
-- `config/`: Application-wide settings, themes, and route definitions.
-- `data/`: Data models, repositories, and local storage mechanisms.
-- `models/`: Plain Dart objects representing core domain entities.
-- `pages/` / `screens/`: UI views representing complete screens in the app.
-- `services/`: Interfaces with external APIs (Firebase, Gemini) and complex business logic.
-- `main.dart`: Application entry point and initialization logic.
+The `lib/` directory is organized using a **feature-first architecture**:
+- `config/`: Application-wide settings and API key configuration.
+- `core/`: Shared infrastructure — `services/` (AI client), `theme/` (colors, theme), `prompts/` (AI prompt templates), `utils/` (shared utilities), `routing/` (navigation).
+- `features/`: Each feature is a self-contained module with its own `models/`, `repositories/`, `services/`, `screens/`, and `widgets/` sub-directories.
+  - `auth/` — Firebase Auth + Google Sign-In
+  - `chat/` — AI Chat Assistant
+  - `study_planner/` — AI Study Plan generator
+  - `notes_scanner/` — Handwriting transcription & PDF export
+  - `reminders/` — Smart Notifications (UI prototype)
+  - `community/` — Community Feed (UI prototype)
+  - `home/` — Home screen and navigation hub
+  - `profile/` — User profile management
+- `widgets/`: App-level shared widgets (e.g., bottom navigation bar).
+- `main.dart`: Application entry point, Firebase initialization, and routing.
 
 ## Setup & Configuration
 
 ### Prerequisites
-- Flutter SDK (3.0.0 or higher)
+- Flutter SDK ≥ 3.0.0
 - Firebase Project with Auth and Firestore enabled
-- Gemini API Key
+- A [Google Gemini API key](https://aistudio.google.com/app/apikey)
 
-### Installation
+### Developer Setup Checklist
 
-1. Clone the repository and install dependencies:
+1. **Clone and install dependencies**:
    ```bash
+   git clone https://github.com/your-org/UniHub.git
+   cd UniHub
    flutter pub get
    ```
 
 2. **Firebase Configuration**:
-   - The app uses `firebase_options.dart` for cross-platform initialization.
-   - For native plugins, ensure `android/app/google-services.json` (Android) and `ios/Runner/GoogleService-Info.plist` (iOS) are present in your local environment.
+   - Place `android/app/google-services.json` (Android) in your local environment.
+   - Place `ios/Runner/GoogleService-Info.plist` (iOS) in your local environment.
+   - Add your debug SHA-1 fingerprint to the Firebase Console:
+     ```bash
+     keytool -list -v -keystore ~/.android/debug.keystore \
+       -alias androiddebugkey -storepass android -keypass android
+     ```
 
-3. **Keystore (Release Builds)**:
+3. **Keystore (Release Builds only)**:
    - Copy `android/keystore.properties.example` to `android/keystore.properties`.
    - Fill in your signing key details.
 
-### Running the App
+4. **Gemini API Key**: Set it at runtime — never commit it.
+   ```bash
+   flutter run --dart-define=GEMINI_API_KEY="your_actual_api_key_here"
+   ```
+   > Without the key, AI features show an `ApiKeyMissingBanner` instead of crashing.
 
-This project uses compile-time variables (`--dart-define`) to securely inject API keys. You **must** provide your Gemini API key when running or building the app.
+### Running the App
 
 **Debug Mode:**
 ```bash
@@ -75,21 +95,29 @@ flutter build apk --release --dart-define=GEMINI_API_KEY="your_actual_api_key_he
 ```
 
 ### Note on Security
-- API keys are no longer hardcoded in the source.
+- API keys are never hardcoded in the source — they are injected at build time.
 - Debug logs are stripped in release mode.
 - Android backups are disabled to prevent data leakage.
 
 ## Known Limitations
 To provide transparency regarding the current state of the application:
-- **Offline Mode**: Currently, the app requires an active internet connection. Offline caching for notes and schedules is not fully supported.
+- **Offline Mode**: Currently, the app requires an active internet connection.
 - **Community Feed & Reminders**: These sections are functional as UI prototypes. Backend integration and notification scheduling are planned for future updates.
 - **Data Sync**: While Firebase stores user data, real-time cross-device synchronization might experience slight delays during complex AI operations.
 
+## Contributing
+
+1. Fork the repository and create a feature branch from `main`.
+2. Follow the existing feature-first directory structure.
+3. Ensure `flutter analyze` produces zero warnings before opening a PR.
+4. Run `dart format .` before committing.
+5. Write tests for any new business logic in `lib/core/` or `lib/features/*/services/`.
+
 ## Continuous Integration
-To ensure the codebase remains stable, run the following commands before committing:
+A GitHub Actions CI pipeline runs on every push and PR:
 ```bash
 flutter pub get
 dart format --set-exit-if-changed .
-flutter analyze
-flutter test
+flutter analyze --no-fatal-infos
+flutter test --coverage
 ```

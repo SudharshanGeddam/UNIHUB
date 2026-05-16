@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unihub/core/theme/app_colors.dart';
 import 'package:unihub/features/reminders/models/reminder_model.dart';
 import 'package:unihub/features/reminders/widgets/reminder_card.dart';
 import 'package:unihub/features/reminders/widgets/add_reminder_sheet.dart';
@@ -78,10 +79,10 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF0A022E),
-              Color(0xFF1A1A3E),
-              Color(0xFF2D1B4E),
-            ],
+            AppColors.background,
+            AppColors.surfaceTinted,
+            const Color(0xFF2D1B4E),
+          ],
             stops: [0.0, 0.5, 1.0],
           ),
         ),

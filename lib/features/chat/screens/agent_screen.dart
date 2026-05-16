@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:unihub/core/theme/app_colors.dart';
 import 'package:unihub/features/chat/models/chat_message.dart';
 import 'package:unihub/features/chat/widgets/message_bubble.dart';
 import 'package:unihub/features/chat/widgets/quick_action_tile.dart';
@@ -275,7 +276,7 @@ class _AgentScreenState extends State<AgentScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: const Color.fromRGBO(10, 2, 46, 1),
+        backgroundColor: AppColors.background,
         leading: const BackButton(color: Colors.white),
         actions: [
           IconButton(
@@ -313,9 +314,9 @@ class _AgentScreenState extends State<AgentScreen> {
               ),
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(10, 2, 46, 0.9),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                decoration: BoxDecoration(
+                  color: AppColors.background.withOpacity(0.9),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 child: SafeArea(
                   child: Column(

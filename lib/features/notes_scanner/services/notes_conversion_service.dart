@@ -21,7 +21,7 @@ class NotesConversionService {
       if (e.toString().contains('API_KEY')) {
         return 'Please configure your Gemini API key in lib/config/api_config.dart';
       }
-      return 'Error transcribing: \$e';
+      return 'Error transcribing: $e';
     }
   }
 
@@ -34,7 +34,7 @@ class NotesConversionService {
       if (e.toString().contains('API_KEY')) {
         return 'Please configure your Gemini API key in lib/config/api_config.dart';
       }
-      return 'Error converting notes: \$e';
+      return 'Error converting notes: $e';
     }
   }
 }
