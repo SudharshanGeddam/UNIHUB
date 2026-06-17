@@ -1,15 +1,15 @@
 import 'dart:io';
+import 'dart:convert';
 import 'dart:typed_data';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:unihub/core/services/ai_client.dart';
 import 'package:unihub/core/prompts/ai_prompts.dart';
 import 'package:unihub/features/notes_scanner/models/document_content.dart';
 
 class DocumentAnalysisService {
-  final AIClient _aiClient;
+  final AIClient? _aiClient;
 
-  DocumentAnalysisService({AIClient? aiClient}) : _aiClient = aiClient ?? AIClient.instance;
+  DocumentAnalysisService({AIClient? aiClient}) : _aiClient = aiClient ?? AIClient.tryGetInstance();
 
   String getMimeType(String extension) {
     switch (extension.toLowerCase()) {
@@ -46,13 +46,13 @@ class DocumentAnalysisService {
       final PdfTextExtractor extractor = PdfTextExtractor(document);
       for (int i = 0; i < document.pages.count; i++) {
         extractedText += extractor.extractText(startPageIndex: i, endPageIndex: i);
-        extractedText += '\n\n--- Page \${i + 1} ---\n\n';
+        extractedText += '\n\n--- Page ${i + 1} ---\n\n';
       }
 
       document.dispose();
       return extractedText.trim();
     } catch (e) {
-      throw Exception('Failed to extract text from PDF: \$e');
+      throw Exception('Failed to extract text from PDF: $e');
     }
   }
 
@@ -72,9 +72,9 @@ class DocumentAnalysisService {
         return DocumentContent(bytes: null, mimeType: mimeType, isPdf: false, textContent: text);
       }
 
-      throw Exception('Unsupported file type: \$extension');
+      throw Exception('Unsupported file type: $extension');
     } catch (e) {
-      throw Exception('Failed to read file: \$e');
+      throw Exception('Failed to read file: $e');
     }
   }
 
@@ -89,33 +89,29 @@ class DocumentAnalysisService {
       final userPrompt = userMessage ?? 'Please analyze this document and provide a summary of its key points, important concepts, and any notable information that would be helpful for studying.';
 
       if (fileBytes != null) {
+        if (_aiClient == null) throw Exception('API_KEY not configured');
         final extension = fileName.split('.').last.toLowerCase();
         final actualMimeType = mimeType ?? getMimeType(extension);
-
-        final content = Content.multi([
-          TextPart('I\'ve uploaded a file named "$fileName".\n\n$userPrompt'),
-          DataPart(actualMimeType, fileBytes),
-        ]);
-
-        final chat = _aiClient.model.startChat();
-        final response = await chat.sendMessage(content);
-        return response.text ?? "I couldn't process the file. Please try again.";
+        
+        final base64File = base64Encode(fileBytes);
+        final chat = _aiClient!.startChat();
+        return await chat.sendMessage('I\'ve uploaded a file named "$fileName".\n\n$userPrompt', base64Image: base64File, mimeType: actualMimeType);
       }
 
+      if (_aiClient == null) throw Exception('API_KEY not configured');
       final prompt = AIPrompts.chatWithDocumentTextPrompt(
         fileName: fileName,
         documentContent: documentContent,
         userPrompt: userPrompt,
       );
 
-      final chat = _aiClient.model.startChat();
-      final response = await chat.sendMessage(Content.text(prompt));
-      return response.text ?? "I couldn't process the document. Please try again.";
+      final chat = _aiClient!.startChat();
+      return await chat.sendMessage(prompt);
     } catch (e) {
       if (e.toString().contains('API_KEY')) {
-        return 'Please configure your Gemini API key in lib/config/api_config.dart';
+        return 'Please configure your OpenRouter API key in lib/config/api_config.dart';
       }
-      return 'Error analyzing document: \$e';
+      return 'Error analyzing document: $e';
     }
   }
 
@@ -130,26 +126,22 @@ class DocumentAnalysisService {
 
     try {
       if (fileBytes != null) {
+        if (_aiClient == null) throw Exception('API_KEY not configured');
         final extension = fileName.split('.').last.toLowerCase();
         final actualMimeType = mimeType ?? getMimeType(extension);
-
-        final content = Content.multi([
-          TextPart(promptText),
-          DataPart(actualMimeType, fileBytes),
-        ]);
-
-        final response = await _aiClient.model.generateContent([content]);
-        return response.text ?? 'Unable to analyze document. Please try again.';
+        
+        final base64File = base64Encode(fileBytes);
+        return await _aiClient!.generateContent(promptText, base64Image: base64File, mimeType: actualMimeType);
       }
 
+      if (_aiClient == null) throw Exception('API_KEY not configured');
       final prompt = AIPrompts.documentAnalysisTextPrompt(promptText: promptText, documentContent: documentContent);
-      final response = await _aiClient.model.generateContent([Content.text(prompt)]);
-      return response.text ?? 'Unable to analyze document. Please try again.';
+      return await _aiClient!.generateContent(prompt);
     } catch (e) {
       if (e.toString().contains('API_KEY')) {
-        return 'Please configure your Gemini API key in lib/config/api_config.dart';
+        return 'Please configure your OpenRouter API key in lib/config/api_config.dart';
       }
-      return 'Error: \$e';
+      return 'Error: $e';
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:unihub/core/routing/app_router.dart';
-import 'package:unihub/core/theme/app_colors.dart';
 import 'package:unihub/features/auth/services/auth_service.dart';
 import 'package:unihub/features/auth/widgets/auth_text_field.dart';
 import 'package:unihub/features/auth/widgets/social_login_buttons.dart';
@@ -73,8 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (mounted) {
-        // The AuthNotifier stream will fire and the router redirect will
-        // navigate to home automatically. context.go is a belt-and-suspenders.
         context.go(AppRoutes.home);
       }
     } catch (e) {
@@ -100,12 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       String errorMsg = e.toString();
-      // Provide helpful message for common OAuth configuration issues
       if (errorMsg.contains('oauth_client') ||
           errorMsg.contains('ID token is null') ||
           errorMsg.contains('10:')) {
         errorMsg =
-            'Google Sign-In not configured. Please add your debug SHA-1 fingerprint to the Firebase Console under Project Settings → Your App → SHA certificate fingerprints. Run: keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android';
+            'Google Sign-In not configured. Please add your debug SHA-1 fingerprint to the Firebase Console under Project Settings → Your App → SHA certificate fingerprints.';
       }
       if (mounted) {
         setState(() => _errorMessage = errorMsg);
@@ -125,9 +122,9 @@ class _LoginScreenState extends State<LoginScreen> {
       await _authService.resetPassword(_emailController.text.trim());
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Password reset email sent!'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text('Password reset email sent!', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
       }
@@ -138,66 +135,75 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SafeArea(
       child: Scaffold(
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.asset(
-                'assets/images/login_bg.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            // Header
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(179, 63, 62, 62),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                ],
-              ),
-            ),
-            // Form
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Error message
-                        if (_errorMessage != null)
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            margin: const EdgeInsets.only(bottom: 16),
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.red),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.error, color: Colors.red),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    _errorMessage!,
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+        backgroundColor: colorScheme.background,
+        body: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header
+                    Icon(
+                      Icons.school_rounded,
+                      size: 80,
+                      color: colorScheme.primary,
+                    ).animate().scale(delay: 100.ms, duration: 500.ms, curve: Curves.easeOutBack),
+                    const SizedBox(height: 24),
+                    Text(
+                      _isSignUp ? 'Create an Account' : 'Welcome Back',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onBackground,
+                      ),
+                    ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
+                    const SizedBox(height: 8),
+                    Text(
+                      _isSignUp ? 'Join UniHub today' : 'Sign in to continue',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colorScheme.onBackground.withOpacity(0.6),
+                      ),
+                    ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
+                    const SizedBox(height: 32),
 
+                    // Error message
+                    if (_errorMessage != null)
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: colorScheme.error.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: colorScheme.error.withOpacity(0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.error_outline, color: colorScheme.error),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _errorMessage!,
+                                style: TextStyle(color: colorScheme.error),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ).animate().fadeIn().slideY(begin: -0.1, end: 0),
+
+                    // Input Fields
+                    Column(
+                      children: [
                         // Email field
                         AuthTextField(
                           controller: _emailController,
@@ -216,8 +222,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Name field (only for sign up)
-                        if (_isSignUp)
+                        // Signup fields
+                        if (_isSignUp) ...[
                           AuthTextField(
                             controller: _nameController,
                             labelText: 'Full Name',
@@ -231,77 +237,55 @@ class _LoginScreenState extends State<LoginScreen> {
                                   }
                                 : null,
                           ),
-                        if (_isSignUp) const SizedBox(height: 16),
-
-                        // Phone field (only for sign up)
-                        if (_isSignUp)
+                          const SizedBox(height: 16),
                           AuthTextField(
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             labelText: 'Phone Number (Optional)',
                             prefixIcon: Icons.phone_outlined,
                           ),
-                        if (_isSignUp) const SizedBox(height: 16),
-
-                        // College field (only for sign up)
-                        if (_isSignUp)
+                          const SizedBox(height: 16),
                           AuthTextField(
                             controller: _collegeController,
                             labelText: 'College/University (Optional)',
                             prefixIcon: Icons.school_outlined,
                           ),
-                        if (_isSignUp) const SizedBox(height: 16),
-
-                        // Year dropdown (only for sign up)
-                        if (_isSignUp)
+                          const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
                             initialValue: _selectedYear,
                             decoration: InputDecoration(
                               labelText: 'Year (Optional)',
-                              labelStyle:
-                                  const TextStyle(color: Colors.white70),
-                              prefixIcon: const Icon(
-                                  Icons.calendar_today_outlined,
-                                  color: Colors.white),
+                              labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
+                              prefixIcon: Icon(Icons.calendar_today_outlined, color: colorScheme.primary),
+                              filled: true,
+                              fillColor: colorScheme.surface,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide:
-                                    const BorderSide(color: Colors.white54),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50.0),
-                                borderSide:
-                                    const BorderSide(color: Colors.blue),
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide.none,
                               ),
                             ),
-                              dropdownColor: AppColors.background,
-                            style: const TextStyle(color: Colors.white),
-                            items:
-                                ['1st Year', '2nd Year', '3rd Year', '4th Year']
-                                    .map((year) => DropdownMenuItem(
-                                          value: year,
-                                          child: Text(year),
-                                        ))
-                                    .toList(),
+                            dropdownColor: colorScheme.surface,
+                            style: TextStyle(color: colorScheme.onSurface),
+                            items: ['1st Year', '2nd Year', '3rd Year', '4th Year']
+                                .map((year) => DropdownMenuItem(
+                                      value: year,
+                                      child: Text(year),
+                                    ))
+                                .toList(),
                             onChanged: (value) {
                               setState(() {
                                 _selectedYear = value;
                               });
                             },
                           ),
-                        if (_isSignUp) const SizedBox(height: 16),
-
-                        // Course field (only for sign up)
-                        if (_isSignUp)
+                          const SizedBox(height: 16),
                           AuthTextField(
                             controller: _courseController,
                             labelText: 'Course/Department (Optional)',
                             prefixIcon: Icons.book_outlined,
                           ),
-                        if (_isSignUp) const SizedBox(height: 16),
+                          const SizedBox(height: 16),
+                        ],
 
                         // Password field
                         AuthTextField(
@@ -311,13 +295,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           prefixIcon: Icons.lock_outline,
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                              color: Colors.white,
+                              _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                              color: colorScheme.onSurface.withOpacity(0.6),
                             ),
-                            onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword),
+                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -329,105 +310,123 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                         ),
-                        const SizedBox(height: 8),
-
-                        // Forgot password (only for login)
-                        if (!_isSignUp)
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: _handleForgotPassword,
-                              child: const Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        const SizedBox(height: 16),
-
-                        // Login/Signup button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _handleEmailAuth,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : Text(
-                                    _isSignUp ? 'Sign Up' : 'Log In',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Divider
-                        const Text(
-                          'or Continue with',
-                          style: TextStyle(color: Colors.white70),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Social login buttons
-                        SocialLoginButtons(
-                          isLoading: _isLoading,
-                          onGoogleSignIn: _handleGoogleSignIn,
-                          onFacebookSignIn: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Facebook login coming soon!'),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Toggle signup/login
-                        TextButton(
-                          onPressed: () => setState(() {
-                            _isSignUp = !_isSignUp;
-                            _errorMessage = null;
-                            // Clear additional fields when switching
-                            if (!_isSignUp) {
-                              _nameController.clear();
-                              _phoneController.clear();
-                              _collegeController.clear();
-                              _courseController.clear();
-                              _selectedYear = null;
-                            }
-                          }),
-                          child: Text(
-                            _isSignUp
-                                ? 'Already have an account? Log in'
-                                : 'Don\'t have an account? Sign up',
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
                       ],
-                    ),
-                  ),
+                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0),
+
+                    const SizedBox(height: 8),
+
+                    // Forgot password (only for login)
+                    if (!_isSignUp)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: _handleForgotPassword,
+                          child: Text(
+                            'Forgot Password?',
+                            style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ).animate().fadeIn(delay: 450.ms),
+                    const SizedBox(height: 16),
+
+                    // Login/Signup button
+                    SizedBox(
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _handleEmailAuth,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(
+                                _isSignUp ? 'Sign Up' : 'Log In',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.1, end: 0),
+                    const SizedBox(height: 24),
+
+                    // Divider
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: colorScheme.onSurface.withOpacity(0.1))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'or Continue with',
+                            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: colorScheme.onSurface.withOpacity(0.1))),
+                      ],
+                    ).animate().fadeIn(delay: 600.ms),
+                    const SizedBox(height: 24),
+
+                    // Social login buttons
+                    SocialLoginButtons(
+                      isLoading: _isLoading,
+                      onGoogleSignIn: _handleGoogleSignIn,
+                      onFacebookSignIn: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Facebook login coming soon!', style: TextStyle(color: colorScheme.onInverseSurface)),
+                            backgroundColor: colorScheme.inverseSurface,
+                          ),
+                        );
+                      },
+                    ).animate().fadeIn(delay: 700.ms).slideY(begin: 0.1, end: 0),
+                    const SizedBox(height: 32),
+
+                    // Toggle signup/login
+                    TextButton(
+                      onPressed: () => setState(() {
+                        _isSignUp = !_isSignUp;
+                        _errorMessage = null;
+                        if (!_isSignUp) {
+                          _nameController.clear();
+                          _phoneController.clear();
+                          _collegeController.clear();
+                          _courseController.clear();
+                          _selectedYear = null;
+                        }
+                      }),
+                      child: RichText(
+                        text: TextSpan(
+                          text: _isSignUp ? 'Already have an account? ' : 'Don\'t have an account? ',
+                          style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6)),
+                          children: [
+                            TextSpan(
+                              text: _isSignUp ? 'Log in' : 'Sign up',
+                              style: TextStyle(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).animate().fadeIn(delay: 800.ms),
+                  ],
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

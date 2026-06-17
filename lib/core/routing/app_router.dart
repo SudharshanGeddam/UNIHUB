@@ -14,7 +14,6 @@ import 'package:unihub/features/study_planner/screens/focus_session_screen.dart'
 import 'package:unihub/features/study_planner/screens/study_planner_results_screen.dart';
 import 'package:unihub/features/study_planner/screens/study_planner_screen.dart';
 
-/// Route name constants to avoid magic strings at call sites.
 abstract final class AppRoutes {
   static const login = '/login';
   static const home = '/home';
@@ -28,12 +27,18 @@ abstract final class AppRoutes {
   static const profile = '/profile';
 }
 
-/// Application router built with [GoRouter].
-///
-/// - Unauthenticated users are redirected to [AppRoutes.login].
-/// - Authenticated users landing on `/` or `/login` are redirected to
-///   [AppRoutes.home].
-/// - Auth state changes are listened to via [AuthNotifier].
+Page<dynamic> _fadeTransition(Widget child) {
+  return CustomTransitionPage(
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: CurveTween(curve: Curves.easeInOut).animate(animation),
+        child: child,
+      );
+    },
+  );
+}
+
 GoRouter createAppRouter(BuildContext context) {
   final authNotifier = Provider.of<AuthNotifier>(context, listen: false);
 
@@ -44,7 +49,6 @@ GoRouter createAppRouter(BuildContext context) {
       final isAuthenticated = authNotifier.isAuthenticated;
       final isLoading = authNotifier.isLoading;
 
-      // During startup, don't redirect yet
       if (isLoading) return null;
 
       final onLoginPage = state.matchedLocation == AppRoutes.login;
@@ -61,33 +65,35 @@ GoRouter createAppRouter(BuildContext context) {
       GoRoute(
         path: AppRoutes.login,
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => _fadeTransition(const LoginScreen()),
       ),
       GoRoute(
         path: AppRoutes.home,
         name: 'home',
-        builder: (context, state) => const HomeScreen(),
+        pageBuilder: (context, state) => _fadeTransition(const HomeScreen()),
       ),
       GoRoute(
         path: AppRoutes.chat,
         name: 'chat',
-        builder: (context, state) => const AgentScreen(),
+        pageBuilder: (context, state) => _fadeTransition(const AgentScreen()),
       ),
       GoRoute(
         path: AppRoutes.studyPlanner,
         name: 'study-planner',
-        builder: (context, state) => const StudyPlanner(),
+        pageBuilder: (context, state) => _fadeTransition(const StudyPlanner()),
         routes: [
           GoRoute(
             path: 'results',
             name: 'study-planner-results',
-            builder: (context, state) {
+            pageBuilder: (context, state) {
               final extra = state.extra as Map<String, dynamic>;
-              return StudyPlannerResults(
-                subject: extra['subject'] as String,
-                availableTime: extra['availableTime'] as String,
-                focusType: extra['focusType'] as String,
-                studyPlan: extra['studyPlan'] as StudyPlanModel,
+              return _fadeTransition(
+                StudyPlannerResults(
+                  subject: extra['subject'] as String,
+                  availableTime: extra['availableTime'] as String,
+                  focusType: extra['focusType'] as String,
+                  studyPlan: extra['studyPlan'] as StudyPlanModel,
+                ),
               );
             },
           ),
@@ -96,41 +102,40 @@ GoRouter createAppRouter(BuildContext context) {
       GoRoute(
         path: AppRoutes.notesScanner,
         name: 'notes-scanner',
-        builder: (context, state) => const NotesScannerScreen(),
+        pageBuilder: (context, state) => _fadeTransition(const NotesScannerScreen()),
       ),
       GoRoute(
         path: AppRoutes.reminders,
         name: 'reminders',
-        builder: (context, state) => const SmartRemindersScreen(),
+        pageBuilder: (context, state) => _fadeTransition(const SmartRemindersScreen()),
       ),
       GoRoute(
         path: AppRoutes.community,
         name: 'community',
-        builder: (context, state) => const CommunityScreen(),
+        pageBuilder: (context, state) => _fadeTransition(const CommunityScreen()),
       ),
       GoRoute(
         path: AppRoutes.focusSession,
         name: 'focus-session',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>;
-          return FocusSessionScreen(
-            subject: extra['subject'] as String,
-            focusType: extra['focusType'] as String,
+          return _fadeTransition(
+            FocusSessionScreen(
+              subject: extra['subject'] as String,
+              focusType: extra['focusType'] as String,
+            ),
           );
         },
       ),
       GoRoute(
         path: AppRoutes.profile,
         name: 'profile',
-        builder: (context, state) => const ProfileScreen(),
+        pageBuilder: (context, state) => _fadeTransition(const ProfileScreen()),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
-        child: Text(
-          'Page not found: ${state.uri}',
-          style: const TextStyle(color: Colors.white),
-        ),
+        child: Text('Page not found: ${state.uri}'),
       ),
     ),
   );

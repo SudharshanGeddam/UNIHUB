@@ -14,6 +14,7 @@ class SocialLoginButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -21,20 +22,16 @@ class SocialLoginButtons extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: isLoading ? null : onGoogleSignIn,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(115, 63, 62, 62),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              backgroundColor: colorScheme.surface,
+              foregroundColor: colorScheme.onSurface,
+              padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
+              elevation: 0,
             ),
-            icon: Image.asset(
-              'assets/images/google.jpeg',
-              height: 24,
-            ),
-            label: const Text(
-              'Google',
-              style: TextStyle(color: Colors.white),
-            ),
+            icon: Image.asset('assets/images/google.jpeg', height: 24),
+            label: const Text('Google', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
         const SizedBox(width: 16),
@@ -42,20 +39,16 @@ class SocialLoginButtons extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: onFacebookSignIn,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(115, 63, 62, 62),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              backgroundColor: colorScheme.surface,
+              foregroundColor: colorScheme.onSurface,
+              padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
               ),
+              elevation: 0,
             ),
-            icon: Image.asset(
-              'assets/images/facebook.jpeg',
-              height: 24,
-            ),
-            label: const Text(
-              'Facebook',
-              style: TextStyle(color: Colors.white),
-            ),
+            icon: Image.asset('assets/images/facebook.jpeg', height: 24),
+            label: const Text('Facebook', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ),
       ],

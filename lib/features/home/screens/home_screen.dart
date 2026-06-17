@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:unihub/core/routing/app_router.dart';
-import 'package:unihub/core/theme/app_colors.dart';
 import 'package:unihub/widgets/bottom_nav.dart';
 import 'package:unihub/features/auth/services/auth_service.dart';
 
@@ -17,14 +17,12 @@ class HomeScreen extends StatefulWidget {
 class _Feature {
   final String title;
   final String description;
-  final String imagePath;
   final IconData icon;
   final VoidCallback Function(BuildContext context) onTapBuilder;
 
   const _Feature({
     required this.title,
     required this.description,
-    required this.imagePath,
     required this.icon,
     required this.onTapBuilder,
   });
@@ -47,48 +45,26 @@ class _HomeScreenState extends State<HomeScreen> {
     _Feature(
       title: 'AI Study Planner',
       description: 'Create personalized study schedules with AI.',
-      imagePath: 'assets/images/grid_1.png',
-      icon: Icons.calendar_month,
+      icon: Icons.calendar_month_rounded,
       onTapBuilder: (ctx) => () => ctx.push(AppRoutes.studyPlanner),
     ),
     _Feature(
       title: 'AI Chat Assistant',
       description: 'Get instant help with any academic question.',
-      imagePath: 'assets/images/grid_2.png',
-      icon: Icons.smart_toy,
+      icon: Icons.auto_awesome_rounded,
       onTapBuilder: (ctx) => () => ctx.push(AppRoutes.chat),
     ),
     _Feature(
       title: 'Smart Reminders',
       description: 'Never miss deadlines with smart notifications.',
-      imagePath: 'assets/images/grid_3.png',
-      icon: Icons.notifications_active,
+      icon: Icons.notifications_active_rounded,
       onTapBuilder: (ctx) => () => ctx.push(AppRoutes.reminders),
-    ),
-    _Feature(
-      title: 'Exam Analyzer',
-      description: 'Predict important topics for your exams.',
-      imagePath: 'assets/images/grid_4.png',
-      icon: Icons.analytics,
-      onTapBuilder: (ctx) => () {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(content: Text('Coming soon! 🚀')),
-        );
-      },
     ),
     _Feature(
       title: 'Notes Scanner',
       description: 'Transcribe handwritten notes with AI.',
-      imagePath: 'assets/images/grid_1.png',
-      icon: Icons.camera_alt_rounded,
+      icon: Icons.document_scanner_rounded,
       onTapBuilder: (ctx) => () => ctx.push(AppRoutes.notesScanner),
-    ),
-    _Feature(
-      title: 'Community',
-      description: 'Connect with fellow students.',
-      imagePath: 'assets/images/grid_2.png',
-      icon: Icons.people_rounded,
-      onTapBuilder: (ctx) => () => ctx.push(AppRoutes.community),
     ),
   ];
 
@@ -113,50 +89,50 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final filtered = _filteredFeatures;
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background.withOpacity(0.74),
-        body: Column(
+    return Scaffold(
+      backgroundColor: colorScheme.background,
+      body: SafeArea(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Row(
                 children: [
                   // Avatar
                   CircleAvatar(
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: colorScheme.primary.withOpacity(0.2),
                     radius: 28,
-                    backgroundImage:
-                        _userPhoto != null ? NetworkImage(_userPhoto!) : null,
+                    backgroundImage: _userPhoto != null ? NetworkImage(_userPhoto!) : null,
                     child: _userPhoto == null
                         ? Text(
                             _userName[0].toUpperCase(),
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: colorScheme.primary,
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
                             ),
                           )
                         : null,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Welcome back,',
-                          style: TextStyle(color: Colors.white70, fontSize: 13),
+                          style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6), fontSize: 13),
                         ),
                         Text(
                           _userName,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: colorScheme.onBackground,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontSize: 20,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -165,37 +141,40 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(100, 255, 255, 255),
-                      borderRadius: BorderRadius.circular(12),
+                      color: colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: IconButton(
                       onPressed: () => context.push(AppRoutes.chat),
-                      icon: const Icon(Icons.smart_toy_outlined,
-                          size: 28, color: Colors.white),
+                      icon: Icon(Icons.auto_awesome_rounded, size: 26, color: colorScheme.primary),
                       tooltip: 'Chat with AI',
                     ),
                   ),
                 ],
-              ),
+              ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.1, end: 0),
             ),
 
-            // ── Working search bar ─────────────────────────────────────────
+            // Search bar
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: TextField(
                 controller: _searchController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: colorScheme.onSurface),
                 onChanged: (value) => setState(() => _searchQuery = value),
                 decoration: InputDecoration(
-                  fillColor: AppColors.inputFillTranslucent,
+                  fillColor: colorScheme.surface,
                   filled: true,
-                  prefixIcon:
-                      const Icon(Icons.search, color: AppColors.textHint),
+                  prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withOpacity(0.4)),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear,
-                              color: AppColors.textHint, size: 18),
+                          icon: Icon(Icons.clear_rounded, color: colorScheme.onSurface.withOpacity(0.4), size: 20),
                           onPressed: () {
                             _searchController.clear();
                             setState(() => _searchQuery = '');
@@ -203,50 +182,51 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       : null,
                   hintText: 'Search features...',
-                  hintStyle: const TextStyle(color: AppColors.textHint),
+                  hintStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.4)),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12, horizontal: 20),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 ),
-              ),
+              ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1, end: 0),
             ),
+            const SizedBox(height: 16),
 
             // Features grid
             Expanded(
               child: filtered.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search_off,
-                              color: AppColors.textHint, size: 48),
-                          SizedBox(height: 12),
+                          Icon(Icons.search_off_rounded, color: colorScheme.onBackground.withOpacity(0.2), size: 64),
+                          const SizedBox(height: 16),
                           Text(
                             'No features match your search',
-                            style: TextStyle(color: AppColors.textSecondary),
+                            style: TextStyle(color: colorScheme.onBackground.withOpacity(0.5), fontSize: 16),
                           ),
                         ],
-                      ),
+                      ).animate().fadeIn(),
                     )
-                  : GridView.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      childAspectRatio: 0.85,
-                      children: filtered
-                          .map((feature) => _FeatureCard(
-                                title: feature.title,
-                                description: feature.description,
-                                imagePath: feature.imagePath,
-                                icon: feature.icon,
-                                onTap: feature.onTapBuilder(context),
-                              ))
-                          .toList(),
+                  : GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 20,
+                        childAspectRatio: 0.85,
+                      ),
+                      itemCount: filtered.length,
+                      itemBuilder: (context, index) {
+                        final feature = filtered[index];
+                        return _FeatureCard(
+                          title: feature.title,
+                          description: feature.description,
+                          icon: feature.icon,
+                          onTap: feature.onTapBuilder(context),
+                        ).animate().fadeIn(delay: (100 * index).ms).slideY(begin: 0.2, end: 0);
+                      },
                     ),
             ),
 
@@ -255,25 +235,44 @@ class _HomeScreenState extends State<HomeScreen> {
               GestureDetector(
                 onTap: () => context.push(AppRoutes.community),
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  margin: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
                   width: double.infinity,
-                  height: 80,
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   decoration: BoxDecoration(
-                    color: AppColors.surface.withOpacity(0.69),
-                    borderRadius: BorderRadius.circular(35.0),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Community',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.tertiary.withOpacity(0.8),
+                        colorScheme.primary.withOpacity(0.8),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.primary.withOpacity(0.2),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.people_rounded, color: Colors.white, size: 28),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Join Community',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
+              ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.5, end: 0),
 
             const BottomNav(),
           ],
@@ -285,93 +284,87 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // ─── Feature Card ─────────────────────────────────────────────────────────────
 
-class _FeatureCard extends StatelessWidget {
+class _FeatureCard extends StatefulWidget {
   final String title;
   final String description;
-  final String imagePath;
   final IconData icon;
   final VoidCallback onTap;
 
   const _FeatureCard({
     required this.title,
     required this.description,
-    required this.imagePath,
     required this.icon,
     required this.onTap,
   });
 
   @override
+  State<_FeatureCard> createState() => _FeatureCardState();
+}
+
+class _FeatureCardState extends State<_FeatureCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.surface.withOpacity(0.8),
-              AppColors.surfaceTinted.withOpacity(0.8),
-            ],
-          ),
-          border: Border.all(color: Colors.white.withOpacity(0.08)),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                ),
+    final colorScheme = Theme.of(context).colorScheme;
+    
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: _isHovered ? colorScheme.primary.withOpacity(0.15) : Colors.black.withOpacity(0.04),
+                blurRadius: _isHovered ? 20 : 10,
+                offset: Offset(0, _isHovered ? 8 : 4),
               ),
-              Positioned.fill(
-                child: Container(
+            ],
+            border: Border.all(
+              color: _isHovered ? colorScheme.primary.withOpacity(0.3) : Colors.transparent,
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.75),
-                      ],
-                    ),
+                    color: colorScheme.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(widget.icon, color: colorScheme.primary, size: 28),
+                ),
+                const Spacer(),
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(icon, color: Colors.white70, size: 28),
-                    const SizedBox(height: 6),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      description,
-                      style: const TextStyle(
-                        color: Colors.white60,
-                        fontSize: 11,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                const SizedBox(height: 8),
+                Text(
+                  widget.description,
+                  style: TextStyle(
+                    color: colorScheme.onSurface.withOpacity(0.6),
+                    fontSize: 12,
+                    height: 1.3,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

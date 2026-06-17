@@ -95,3 +95,14 @@ dart_defines/
 
 # macOS
 macos/Runner/GoogleService-Info.plist
+
+# Local configurations & generated paths
+android/local.properties
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# App configuration containing hardcoded API keys
+lib/config/api_config.dart

@@ -11,6 +11,9 @@ class ChatMarkdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textColor = colorScheme.onSurface;
+
     // Process text to replace $...$ math expressions with code blocks that we can style
     final processedText = text.replaceAllMapped(
       RegExp(r'\$([^$]+)\$'),
@@ -25,68 +28,68 @@ class ChatMarkdownWidget extends StatelessWidget {
       data: processedText,
       selectable: true,
       styleSheet: md.MarkdownStyleSheet(
-        p: const TextStyle(
-          color: Colors.white,
+        p: TextStyle(
+          color: textColor,
           fontSize: 15,
           height: 1.5,
         ),
-        strong: const TextStyle(
-          color: Colors.white,
+        strong: TextStyle(
+          color: textColor,
           fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
-        em: const TextStyle(
-          color: Colors.white,
+        em: TextStyle(
+          color: textColor,
           fontSize: 15,
           fontStyle: FontStyle.italic,
         ),
-        listBullet: const TextStyle(
-          color: Colors.white,
+        listBullet: TextStyle(
+          color: textColor,
           fontSize: 15,
         ),
         code: TextStyle(
-          color: Colors.cyan.shade200,
-          backgroundColor: Colors.black.withOpacity(0.4),
+          color: colorScheme.primary,
+          backgroundColor: colorScheme.primary.withOpacity(0.1),
           fontSize: 15,
           fontFamily: 'monospace',
           fontWeight: FontWeight.w500,
         ),
         codeblockDecoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
+          color: colorScheme.primary.withOpacity(0.05),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.cyan.withOpacity(0.3),
+            color: colorScheme.primary.withOpacity(0.2),
             width: 1,
           ),
         ),
         codeblockPadding: const EdgeInsets.all(12),
-        blockquote: const TextStyle(
-          color: Colors.white70,
+        blockquote: TextStyle(
+          color: textColor.withOpacity(0.7),
           fontSize: 15,
           fontStyle: FontStyle.italic,
         ),
-        h1: const TextStyle(
-          color: Colors.white,
+        h1: TextStyle(
+          color: textColor,
           fontSize: 22,
           fontWeight: FontWeight.bold,
         ),
-        h2: const TextStyle(
-          color: Colors.white,
+        h2: TextStyle(
+          color: textColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        h3: const TextStyle(
-          color: Colors.white,
+        h3: TextStyle(
+          color: textColor,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
-        a: const TextStyle(
-          color: Colors.lightBlueAccent,
+        a: TextStyle(
+          color: colorScheme.primary,
           decoration: TextDecoration.underline,
         ),
       ),
       builders: {
-        'code': _MathCodeBuilder(),
+        'code': _MathCodeBuilder(colorScheme: colorScheme),
       },
     );
   }
@@ -94,6 +97,9 @@ class ChatMarkdownWidget extends StatelessWidget {
 
 // Custom builder that detects and renders math expressions
 class _MathCodeBuilder extends md.MarkdownElementBuilder {
+  final ColorScheme colorScheme;
+  _MathCodeBuilder({required this.colorScheme});
+
   @override
   Widget? visitElementAfter(
       markdown.Element element, TextStyle? preferredStyle) {
@@ -111,8 +117,8 @@ class _MathCodeBuilder extends md.MarkdownElementBuilder {
           child: Math.tex(
             mathContent,
             mathStyle: MathStyle.text,
-            textStyle: const TextStyle(
-              color: Colors.white,
+            textStyle: TextStyle(
+              color: colorScheme.onSurface,
               fontSize: 15,
             ),
           ),
@@ -132,17 +138,17 @@ class _MathCodeBuilder extends md.MarkdownElementBuilder {
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
+        color: colorScheme.primary.withOpacity(0.05),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: Colors.cyan.withOpacity(0.3),
+          color: colorScheme.primary.withOpacity(0.2),
           width: 1,
         ),
       ),
       child: SelectableText(
         text,
         style: TextStyle(
-          color: Colors.cyan.shade200,
+          color: colorScheme.primary,
           fontSize: 15,
           fontFamily: 'monospace',
           fontWeight: FontWeight.w500,

@@ -6,6 +6,7 @@ import 'package:unihub/features/study_planner/widgets/weekly_plan_section.dart';
 import 'package:unihub/features/study_planner/widgets/key_topics_section.dart';
 import 'package:unihub/features/study_planner/widgets/study_techniques_section.dart';
 import 'package:unihub/features/study_planner/widgets/focus_mode_section.dart';
+
 class StudyPlannerResults extends StatefulWidget {
   final String subject;
   final String availableTime;
@@ -69,26 +70,11 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       body: Stack(
         children: [
-          // Background gradient
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF0A022E),
-                  Color(0xFF1A1A3E),
-                  Color(0xFF2D1B4E),
-                  Color(0xFF1A1A3E),
-                  Color(0xFF0A022E),
-                ],
-                stops: [0.0, 0.25, 0.5, 0.75, 1.0],
-              ),
-            ),
-          ),
           // Decorative circles
           Positioned(
             top: -100,
@@ -100,8 +86,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF7C4DFF).withOpacity(0.3),
-                    const Color(0xFF7C4DFF).withOpacity(0.0),
+                    colorScheme.primary.withOpacity(0.15),
+                    colorScheme.primary.withOpacity(0.0),
                   ],
                 ),
               ),
@@ -117,8 +103,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFF9C7CFF).withOpacity(0.2),
-                    const Color(0xFF9C7CFF).withOpacity(0.0),
+                    colorScheme.tertiary.withOpacity(0.15),
+                    colorScheme.tertiary.withOpacity(0.0),
                   ],
                 ),
               ),
@@ -134,8 +120,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    const Color(0xFFFF9800).withOpacity(0.15),
-                    const Color(0xFFFF9800).withOpacity(0.0),
+                    colorScheme.secondary.withOpacity(0.15),
+                    colorScheme.secondary.withOpacity(0.0),
                   ],
                 ),
               ),
@@ -145,7 +131,7 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
           SafeArea(
             child: Column(
               children: [
-                _buildCustomAppBar(),
+                _buildCustomAppBar(colorScheme),
                 Expanded(
                   child: FadeTransition(
                     opacity: _fadeAnimation,
@@ -211,28 +197,28 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
     );
   }
 
-  Widget _buildCustomAppBar() {
+  Widget _buildCustomAppBar(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: colorScheme.onSurface.withOpacity(0.1)),
             ),
             child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
               onPressed: () => Navigator.pop(context),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Text(
               'AI Study Planner',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: colorScheme.onBackground,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -240,12 +226,12 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: colorScheme.onSurface.withOpacity(0.1)),
             ),
             child: IconButton(
-              icon: const Icon(Icons.settings, color: Colors.white70),
+              icon: Icon(Icons.settings_outlined, color: colorScheme.onSurface.withOpacity(0.7)),
               onPressed: () {},
             ),
           ),
@@ -253,6 +239,4 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
       ),
     );
   }
-
-
 }

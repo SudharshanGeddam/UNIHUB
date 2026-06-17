@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:unihub/core/theme/app_colors.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:unihub/features/chat/models/chat_message.dart';
 import 'package:unihub/features/chat/widgets/message_bubble.dart';
 import 'package:unihub/features/chat/widgets/quick_action_tile.dart';
@@ -9,6 +9,8 @@ import 'package:unihub/features/chat/widgets/typing_indicator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:unihub/features/chat/services/chat_service.dart';
 import 'package:unihub/features/notes_scanner/services/document_analysis_service.dart';
+import 'package:unihub/core/services/ai_client.dart';
+import 'package:unihub/core/widgets/api_key_missing_banner.dart';
 
 class AgentScreen extends StatefulWidget {
   const AgentScreen({super.key});
@@ -215,10 +217,11 @@ class _AgentScreenState extends State<AgentScreen> {
   }
 
   void _showSnackBar(String message) {
+    final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF1A1A2E),
+        content: Text(message, style: TextStyle(color: colorScheme.onInverseSurface)),
+        backgroundColor: colorScheme.inverseSurface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -234,14 +237,15 @@ class _AgentScreenState extends State<AgentScreen> {
   }
 
   void _clearChat() {
+    final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1A2E),
-        title: const Text('Clear Chat', style: TextStyle(color: Colors.white)),
-        content: const Text(
+        backgroundColor: colorScheme.surface,
+        title: Text('Clear Chat', style: TextStyle(color: colorScheme.onSurface)),
+        content: Text(
           'Are you sure you want to clear the chat history?',
-          style: TextStyle(color: Colors.white70),
+          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
         ),
         actions: [
           TextButton(
@@ -269,224 +273,230 @@ class _AgentScreenState extends State<AgentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    if (AIClient.tryGetInstance() == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('UniHub AI', style: TextStyle(color: colorScheme.onBackground, fontWeight: FontWeight.bold)),
+          centerTitle: true,
+          backgroundColor: colorScheme.background,
+          leading: BackButton(color: colorScheme.onBackground),
+        ),
+        body: const Center(child: ApiKeyMissingBanner(featureName: 'AI Chat')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'UniHub AI',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: colorScheme.onBackground, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: AppColors.background,
-        leading: const BackButton(color: Colors.white),
+        backgroundColor: colorScheme.background,
+        leading: BackButton(color: colorScheme.onBackground),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.white),
+            icon: Icon(Icons.delete_outline, color: colorScheme.onBackground),
             onPressed: _clearChat,
             tooltip: 'Clear chat',
           ),
         ],
       ),
-      body: Stack(
+      body: Column(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/agent_home.jpeg',
-              fit: BoxFit.cover,
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: _messages.length + (_isLoading ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == _messages.length && _isLoading) {
+                  return const TypingIndicator();
+                }
+                return MessageBubble(message: _messages[index]);
+              },
             ),
           ),
-          Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.3)),
-          ),
-          Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _messages.length + (_isLoading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _messages.length && _isLoading) {
-                      return const TypingIndicator();
-                    }
-                    return MessageBubble(message: _messages[index]);
-                  },
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.background.withOpacity(0.9),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Show attached file indicator
-                      if (_uploadedFileName != null)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 43, 52, 227)
-                                .withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color.fromARGB(255, 43, 52, 227)
-                                  .withOpacity(0.5),
+              ],
+            ),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Show attached file indicator
+                  if (_uploadedFileName != null)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: colorScheme.primary.withOpacity(0.2),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.description,
+                            color: colorScheme.primary,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _uploadedFileName!,
+                              style: TextStyle(
+                                color: colorScheme.primary,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.description,
-                                color: Colors.white70,
+                          InkWell(
+                            onTap: () => _showDocumentActions(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.more_vert,
+                                color: colorScheme.primary,
                                 size: 20,
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _uploadedFileName!,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () => _showDocumentActions(context),
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  child: const Icon(
-                                    Icons.more_vert,
-                                    color: Colors.white70,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                              InkWell(
-                                onTap: _removeAttachment,
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white70,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      // Show processing indicator
-                      if (_isProcessingFile)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.orange,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                'Processing document...',
-                                style: TextStyle(
-                                    color: Colors.orange, fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ),
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: _uploadedFileName != null
-                                  ? const Color.fromARGB(255, 43, 52, 227)
-                                  : const Color.fromARGB(255, 85, 86, 91),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: IconButton(
-                              onPressed: () => _showQuickActions(context),
-                              icon: Icon(
-                                _uploadedFileName != null
-                                    ? Icons.description
-                                    : Icons.add,
-                                color: Colors.white,
-                              ),
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextField(
-                              controller: _messageController,
-                              style: const TextStyle(color: Colors.white),
-                              maxLines: null,
-                              textCapitalization: TextCapitalization.sentences,
-                              decoration: InputDecoration(
-                                hintText: _uploadedFileName != null
-                                    ? 'Ask about the document...'
-                                    : 'Ask UniHub AI...',
-                                hintStyle:
-                                    const TextStyle(color: Colors.white54),
-                                filled: true,
-                                fillColor:
-                                    const Color.fromARGB(255, 85, 86, 91),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                  borderSide: BorderSide.none,
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                  vertical: 12,
-                                ),
+                          InkWell(
+                            onTap: _removeAttachment,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.close,
+                                color: colorScheme.primary,
+                                size: 20,
                               ),
-                              onSubmitted: (_) => _sendMessage(),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 43, 52, 227),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: IconButton(
-                              onPressed: _isLoading || _isProcessingFile
-                                  ? null
-                                  : _sendMessage,
-                              icon: const Icon(Icons.send, color: Colors.white),
                             ),
                           ),
                         ],
                       ),
+                    ).animate().fadeIn().slideY(begin: 0.2, end: 0),
+                  // Show processing indicator
+                  if (_isProcessingFile)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.orange,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Processing document...',
+                            style: TextStyle(
+                                color: Colors.orange, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(),
+                  Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: _uploadedFileName != null
+                              ? colorScheme.primary
+                              : colorScheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: IconButton(
+                          onPressed: () => _showQuickActions(context),
+                          icon: Icon(
+                            _uploadedFileName != null
+                                ? Icons.description
+                                : Icons.add,
+                            color: _uploadedFileName != null ? colorScheme.onPrimary : colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: TextField(
+                          controller: _messageController,
+                          style: TextStyle(color: colorScheme.onSurface),
+                          maxLines: null,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(
+                            hintText: _uploadedFileName != null
+                                ? 'Ask about the document...'
+                                : 'Ask UniHub AI...',
+                            hintStyle:
+                                TextStyle(color: colorScheme.onSurface.withOpacity(0.5)),
+                            filled: true,
+                            fillColor: colorScheme.primary.withOpacity(0.05),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(24),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
+                          ),
+                          onSubmitted: (_) => _sendMessage(),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: IconButton(
+                          onPressed: _isLoading || _isProcessingFile
+                              ? null
+                              : _sendMessage,
+                          icon: Icon(Icons.send, color: colorScheme.onPrimary),
+                        ),
+                      ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ).animate().slideY(begin: 1, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
         ],
       ),
     );
   }
 
   void _showQuickActions(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -495,10 +505,10 @@ class _AgentScreenState extends State<AgentScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'Quick Actions',
               style: TextStyle(
-                color: Colors.white,
+                color: colorScheme.onSurface,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -552,9 +562,10 @@ class _AgentScreenState extends State<AgentScreen> {
   }
 
   void _showDocumentActions(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1A1A2E),
+      backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -566,13 +577,13 @@ class _AgentScreenState extends State<AgentScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.description, color: Colors.white70),
+                Icon(Icons.description, color: colorScheme.onSurface.withOpacity(0.7)),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
                     _uploadedFileName ?? 'Document',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -582,9 +593,9 @@ class _AgentScreenState extends State<AgentScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'What would you like to do with this document?',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7), fontSize: 14),
             ),
             const SizedBox(height: 20),
             QuickActionTile(
@@ -645,5 +656,3 @@ class _AgentScreenState extends State<AgentScreen> {
     );
   }
 }
-
-

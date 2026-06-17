@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:unihub/core/routing/app_router.dart';
 import 'package:unihub/features/study_planner/services/study_plan_service.dart';
 import 'package:unihub/features/study_planner/models/study_plan_model.dart';
+import 'package:unihub/core/services/ai_client.dart';
+import 'package:unihub/core/widgets/api_key_missing_banner.dart';
 
 class StudyPlanner extends StatefulWidget {
   const StudyPlanner({super.key});
@@ -102,6 +104,18 @@ class _StudyPlannerState extends State<StudyPlanner> {
 
   @override
   Widget build(BuildContext context) {
+    if (AIClient.tryGetInstance() == null) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: const BackButton(color: Colors.white),
+          title: const Text('Study Planner', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          centerTitle: true,
+          backgroundColor: const Color.fromRGBO(10, 2, 46, 1),
+        ),
+        body: const Center(child: ApiKeyMissingBanner(featureName: 'Study Planner')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(color: Colors.white),

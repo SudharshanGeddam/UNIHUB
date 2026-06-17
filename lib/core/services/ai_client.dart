@@ -1,73 +1,151 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart' as http;
 import 'package:unihub/config/api_config.dart';
 
-/// Singleton wrapper around the Gemini [GenerativeModel].
-///
-/// Use [AIClient.tryGetInstance()] from service classes rather than
-/// [AIClient.instance] to avoid an unhandled exception when the API key is
-/// absent (e.g. during development without `--dart-define=GEMINI_API_KEY`).
-class AIClient {
-  static AIClient? _instance;
+class ChatSession {
+  final AIClient client;
+  final String systemInstruction;
+  final List<Map<String, dynamic>> _messages = [];
 
-  late final GenerativeModel model;
+  ChatSession(this.client, {required this.systemInstruction}) {
+    if (systemInstruction.isNotEmpty) {
+      _messages.add({
+        "role": "system",
+        "content": systemInstruction,
+      });
+    }
+  }
 
-  AIClient._() {
-    if (!ApiConfig.isGeminiConfigured) {
-      throw Exception(
-          'Please set GEMINI_API_KEY via --dart-define=GEMINI_API_KEY=your_key');
+  Future<String> sendMessage(String text, {String? base64Image, String? mimeType}) async {
+    dynamic content;
+    if (base64Image != null && mimeType != null) {
+      content = [
+        {"type": "text", "text": text},
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:$mimeType;base64,$base64Image"
+          }
+        }
+      ];
+    } else {
+      content = text;
     }
 
-    model = GenerativeModel(
-      model: 'gemini-2.5-flash',
-      apiKey: ApiConfig.geminiApiKey,
-      generationConfig: GenerationConfig(
-        temperature: 0.7,
-        maxOutputTokens: 8192,
-      ),
-      systemInstruction: Content.text(
-        '''You are UniHub AI, a helpful academic assistant for college students. 
+    _messages.add({
+      "role": "user",
+      "content": content,
+    });
+
+    try {
+      final responseText = await client.generateContentFromMessages(_messages);
+      _messages.add({
+        "role": "assistant",
+        "content": responseText,
+      });
+      return responseText;
+    } catch (e) {
+      _messages.removeLast(); // Rollback user message on error
+      rethrow;
+    }
+  }
+}
+
+class AIClient {
+  static AIClient? _instance;
+  
+  final String _apiKey;
+  final String _baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
+  final String _model = 'google/gemini-2.5-flash';
+
+  final String defaultSystemInstruction = '''You are UniHub AI, a helpful academic assistant for college students. 
         You help with:
         - Study planning and scheduling
         - Answering academic doubts
         - Exam preparation tips
         - Note organization
         - Time management
-        Keep responses concise, friendly, and actionable.''',
-      ),
-    );
+        Keep responses concise, friendly, and actionable.''';
+
+  AIClient._() : _apiKey = ApiConfig.openRouterApiKey {
+    if (!ApiConfig.isConfigured) {
+      throw Exception('OpenRouter API Key not configured');
+    }
   }
 
-  /// Returns the shared [AIClient] instance.
-  ///
-  /// Throws an [Exception] if [ApiConfig.isGeminiConfigured] is `false`.
-  /// Prefer [tryGetInstance] in screens to handle the missing-key case.
   static AIClient get instance {
     _instance ??= AIClient._();
     return _instance!;
   }
 
-  /// Returns `null` instead of throwing when the API key is absent.
-  ///
-  /// Screens should check for `null` and display [ApiKeyMissingBanner].
-  ///
-  /// ```dart
-  /// final client = AIClient.tryGetInstance();
-  /// if (client == null) {
-  ///   return const ApiKeyMissingBanner(featureName: 'AI Chat');
-  /// }
-  /// ```
   static AIClient? tryGetInstance() {
-    if (!ApiConfig.isGeminiConfigured) {
-      debugPrint('⚠️ AIClient: GEMINI_API_KEY not configured.');
+    if (!ApiConfig.isConfigured) {
+      debugPrint('⚠️ AIClient: OpenRouter API key not configured.');
       return null;
     }
     return instance;
   }
 
-  /// Whether a valid Gemini API key is configured.
-  static bool get isConfigured => ApiConfig.isGeminiConfigured;
+  static bool get isConfigured => ApiConfig.isConfigured;
+  bool get isReady => ApiConfig.isConfigured;
 
-  /// For backward compatibility — prefer the static [isConfigured].
-  bool get isReady => ApiConfig.isGeminiConfigured;
+  ChatSession startChat() {
+    return ChatSession(this, systemInstruction: defaultSystemInstruction);
+  }
+
+  Future<String> generateContent(String prompt, {String? base64Image, String? mimeType}) async {
+    dynamic content;
+    if (base64Image != null && mimeType != null) {
+      content = [
+        {"type": "text", "text": prompt},
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "data:$mimeType;base64,$base64Image"
+          }
+        }
+      ];
+    } else {
+      content = prompt;
+    }
+
+    final List<Map<String, dynamic>> messages = [
+      {
+        "role": "system",
+        "content": defaultSystemInstruction,
+      },
+      {
+        "role": "user",
+        "content": content,
+      }
+    ];
+
+    return generateContentFromMessages(messages);
+  }
+
+  Future<String> generateContentFromMessages(List<Map<String, dynamic>> messages) async {
+    final response = await http.post(
+      Uri.parse(_baseUrl),
+      headers: {
+        'Authorization': 'Bearer $_apiKey',
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://unihub.app',
+        'X-Title': 'UniHub',
+      },
+      body: jsonEncode({
+        "model": _model,
+        "messages": messages,
+        "temperature": 0.7,
+        "max_tokens": 8192,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return json['choices']?[0]?['message']?['content'] ?? '';
+    } else {
+      throw Exception('OpenRouter API Error: ${response.statusCode} - ${response.body}');
+    }
+  }
 }

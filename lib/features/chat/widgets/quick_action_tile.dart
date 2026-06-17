@@ -16,22 +16,21 @@ class QuickActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 43, 52, 227).withOpacity(0.2),
+          color: colorScheme.primary.withOpacity(0.15),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: const Color.fromARGB(255, 43, 52, 227)),
+        child: Icon(icon, color: colorScheme.primary),
       ),
-      title: Text(title, style: const TextStyle(color: Colors.white)),
+      title: Text(title, style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w600)),
       subtitle: subtitle != null
-          ? Text(subtitle!,
-              style: const TextStyle(color: Colors.white54, fontSize: 12))
+          ? Text(subtitle!, style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6), fontSize: 12))
           : null,
-      trailing:
-          const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+      trailing: Icon(Icons.arrow_forward_ios, color: colorScheme.onSurface.withOpacity(0.3), size: 16),
       onTap: onTap,
     );
   }

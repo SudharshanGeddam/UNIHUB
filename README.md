@@ -1,67 +1,92 @@
-# UniHub
-
-UniHub is an AI-powered study assistant application built with Flutter. It combines task management, study planning, and AI assistance into a single campus companion app.
-
-## Screenshots
-
-<div style="display: flex; gap: 10px;">
-  <img src="docs/assets/home_interface.png" alt="Home Interface" width="300" />
-  <img src="docs/assets/agent.png" alt="Agent Interface" width="300" /> 
-  <img src="docs/assets/notifications.png" alt="Notifications Interface" width="300" />
-  <img src="docs/assets/study_planner.png" alt="Study Plan Interface" width="300" /> 
+<div align="center">
+  <img src="docs/assets/home_dark.png" alt="UniHub Logo" width="100"/>
+  <h1>🎓 UniHub</h1>
+  <p><b>Your AI-Powered Smart Campus Companion</b></p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white" alt="Flutter" />
+    <img src="https://img.shields.io/badge/Dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white" alt="Dart" />
+    <img src="https://img.shields.io/badge/Firebase-%23FFCA28.svg?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
+    <img src="https://img.shields.io/badge/OpenRouter-AI-%23000000.svg?style=for-the-badge" alt="OpenRouter" />
+  </p>
 </div>
 
-## Features
+UniHub is an AI-powered study assistant application built with Flutter. It combines task management, study planning, and AI assistance into a single, beautifully designed campus companion app.
+
+---
+
+## 📸 Screenshots
+
+<div align="center" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+  <img src="docs/assets/home_dark.png" alt="Home Dark" width="180" style="border-radius: 12px;"/>
+  <img src="docs/assets/home_light.png" alt="Home Light" width="180" style="border-radius: 12px;"/>
+  <img src="docs/assets/chat.png" alt="AI Chat" width="180" style="border-radius: 12px;"/>
+  <img src="docs/assets/scanner.png" alt="Notes Scanner" width="180" style="border-radius: 12px;"/> 
+  <img src="docs/assets/planner_1.png" alt="Study Planner" width="180" style="border-radius: 12px;"/> 
+  <img src="docs/assets/planner_2.png" alt="Study Planner Grid" width="180" style="border-radius: 12px;"/> 
+  <img src="docs/assets/notifications.png" alt="Smart Notifications" width="180" style="border-radius: 12px;"/>
+</div>
+
+---
+
+## ✨ Features
 
 ### ✅ Fully Functional
 - **Authentication**: Secure login via Email/Password and Google Sign-In (Firebase Auth).
-- **AI Chat Assistant**: Integration with Gemini AI for educational Q&A. Supports text, images, and uploading PDF documents for context-aware answers.
-- **Study Planner**: Generates personalized weekly study schedules using AI based on user topics and hours.
-- **Notes Scanner**: Uses vision capabilities to scan handwritten notes, transcribe them, and generate summaries, flashcards, and quizzes. Can export results to PDF.
-- **Profile Management**: User details and convenient account management.
+- **AI Chat Assistant**: Integration with advanced AI models via **OpenRouter** for educational Q&A. Supports text, images, and uploading PDF documents for context-aware answers.
+- **Study Planner**: Generates personalized weekly study schedules based on user topics and hours.
+- **Notes Scanner**: Uses vision capabilities to scan handwritten notes, transcribe them, and generate summaries, flashcards, and quizzes. Export results to PDF.
+- **Profile Management**: Account management, security settings, notification toggles, and seamless Dark/Light mode theme switching.
 
 ### 🚧 Prototype / UI-Only
-- **Smart Reminders**: Specialized content-aware reminders system (UI implemented).
-- **Community Feed**: A space for students to share resources and updates (UI implemented).
+- **Smart Reminders**: Specialized content-aware reminders system UI.
+- **Community Feed**: A beautiful space for students to share resources and updates.
 
-## Tech Stack
+---
 
-- **Flutter**: Dart-based cross-platform framework (Material Design 3).
-- **Firebase**:
-  - Auth: User identity management.
-  - Firestore: Cloud database for storing user profiles and study data.
-- **AI & ML**: Google Gemini (`google_generative_ai`) for generative text and vision tasks.
-- **Navigation**: `go_router` — declarative routing with auth guards and named routes.
-- **State Management**: `provider` — lightweight `ChangeNotifier`-based auth state.
+## 🛠️ Tech Stack
+
+- **Framework**: Flutter (Material Design 3 with dynamic `ColorScheme` & `flutter_animate` transitions)
+- **Backend & Auth**: Firebase Authentication & Firestore
+- **AI Integration**: Custom REST Client utilizing the OpenRouter API (defaults to `google/gemini-2.5-flash`)
+- **Navigation**: `go_router` (declarative routing with auth guards)
+- **State Management**: `provider` (lightweight `ChangeNotifier` architecture)
 - **PDF & File Handling**:
-  - `syncfusion_flutter_pdf`: For extracting text from uploaded PDFs.
-  - `pdf` & `printing`: For generating downloadable study guides.
-  - `file_picker` & `image_picker`: For local media selection.
-- **Markdown**: `flutter_markdown` for rendering rich AI responses.
+  - `syncfusion_flutter_pdf` for extracting text from uploaded PDFs
+  - `pdf` & `printing` for generating downloadable study guides
+  - `file_picker` & `image_picker` for local media selection
 
-## Architecture
+---
 
-The `lib/` directory is organized using a **feature-first architecture**:
-- `config/`: Application-wide settings and API key configuration.
-- `core/`: Shared infrastructure — `services/` (AI client), `theme/` (colors, theme), `prompts/` (AI prompt templates), `utils/` (shared utilities), `routing/` (navigation).
-- `features/`: Each feature is a self-contained module with its own `models/`, `repositories/`, `services/`, `screens/`, and `widgets/` sub-directories.
-  - `auth/` — Firebase Auth + Google Sign-In
-  - `chat/` — AI Chat Assistant
-  - `study_planner/` — AI Study Plan generator
-  - `notes_scanner/` — Handwriting transcription & PDF export
-  - `reminders/` — Smart Notifications (UI prototype)
-  - `community/` — Community Feed (UI prototype)
-  - `home/` — Home screen and navigation hub
-  - `profile/` — User profile management
-- `widgets/`: App-level shared widgets (e.g., bottom navigation bar).
-- `main.dart`: Application entry point, Firebase initialization, and routing.
+## 📂 Architecture
 
-## Setup & Configuration
+The `lib/` directory is organized using a strict **feature-first architecture**:
+
+```text
+lib/
+├── config/          # Application-wide settings and API configuration
+├── core/            # Shared infrastructure (AI client, theme, router)
+├── features/        # Self-contained feature modules
+│   ├── auth/        # Firebase Auth + Google Sign-In
+│   ├── chat/        # AI Chat Assistant
+│   ├── study_planner/ # AI Study Plan generator
+│   ├── notes_scanner/ # Handwriting transcription & PDF export
+│   ├── reminders/   # Smart Notifications
+│   ├── community/   # Community Feed
+│   ├── home/        # Home screen and navigation hub
+│   └── profile/     # User profile & settings
+├── widgets/         # App-level shared widgets
+└── main.dart        # Entry point
+```
+
+---
+
+## 🚀 Setup & Configuration
 
 ### Prerequisites
 - Flutter SDK ≥ 3.0.0
 - Firebase Project with Auth and Firestore enabled
-- A [Google Gemini API key](https://aistudio.google.com/app/apikey)
+- An [OpenRouter API key](https://openrouter.ai/)
 
 ### Developer Setup Checklist
 
@@ -75,58 +100,47 @@ The `lib/` directory is organized using a **feature-first architecture**:
 2. **Firebase Configuration**:
    - Place `android/app/google-services.json` (Android) in your local environment.
    - Place `ios/Runner/GoogleService-Info.plist` (iOS) in your local environment.
-   - Add your debug SHA-1 fingerprint to the Firebase Console:
-     ```bash
-     keytool -list -v -keystore ~/.android/debug.keystore \
-       -alias androiddebugkey -storepass android -keypass android
-     ```
 
-3. **Keystore (Release Builds only)**:
-   - Copy `android/keystore.properties.example` to `android/keystore.properties`.
-   - Fill in your signing key details.
-
-4. **Gemini API Key**: Set it at runtime — never commit it.
+3. **OpenRouter API Key**: 
+   Provide your API key at runtime (never commit it to version control).
    ```bash
-   flutter run --dart-define=GEMINI_API_KEY="your_actual_api_key_here"
+   flutter run --dart-define=OPENROUTER_API_KEY="sk-or-v1-..."
    ```
-   > Without the key, AI features show an `ApiKeyMissingBanner` instead of crashing.
 
 ### Running the App
 
 **Debug Mode:**
 ```bash
-flutter run --dart-define=GEMINI_API_KEY="your_actual_api_key_here"
+flutter run --dart-define=OPENROUTER_API_KEY="your_api_key_here"
 ```
 
 **Release Build:**
 ```bash
-flutter build apk --release --dart-define=GEMINI_API_KEY="your_actual_api_key_here"
+flutter build apk --release --dart-define=OPENROUTER_API_KEY="your_api_key_here"
 ```
 
-### Note on Security
-- API keys are never hardcoded in the source — they are injected at build time.
-- Debug logs are stripped in release mode.
-- Android backups are disabled to prevent data leakage.
+> **Note on Security**: API keys are injected at build time. Debug logs are stripped in release mode, and Android backups are disabled to prevent local data leakage.
 
-## Known Limitations
-To provide transparency regarding the current state of the application:
-- **Offline Mode**: Currently, the app requires an active internet connection.
-- **Community Feed & Reminders**: These sections are functional as UI prototypes. Backend integration and notification scheduling are planned for future updates.
-- **Data Sync**: While Firebase stores user data, real-time cross-device synchronization might experience slight delays during complex AI operations.
+---
 
-## Contributing
+## ⚠️ Known Limitations
+
+- **Offline Mode**: Currently, the app requires an active internet connection to communicate with Firebase and OpenRouter.
+- **Community Feed & Reminders**: These sections are highly-polished UI prototypes. Backend integration and physical notification scheduling are planned for future updates.
+
+---
+
+## 🤝 Contributing
 
 1. Fork the repository and create a feature branch from `main`.
 2. Follow the existing feature-first directory structure.
 3. Ensure `flutter analyze` produces zero warnings before opening a PR.
 4. Run `dart format .` before committing.
-5. Write tests for any new business logic in `lib/core/` or `lib/features/*/services/`.
 
-## Continuous Integration
-A GitHub Actions CI pipeline runs on every push and PR:
+## 🔄 Continuous Integration
+A standard CI pipeline runs on every push:
 ```bash
 flutter pub get
 dart format --set-exit-if-changed .
 flutter analyze --no-fatal-infos
-flutter test --coverage
 ```

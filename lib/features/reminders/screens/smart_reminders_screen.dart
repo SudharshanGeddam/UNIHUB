@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:unihub/core/theme/app_colors.dart';
 import 'package:unihub/features/reminders/models/reminder_model.dart';
 import 'package:unihub/features/reminders/widgets/reminder_card.dart';
@@ -72,136 +73,38 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-            AppColors.background,
-            AppColors.surfaceTinted,
-            const Color(0xFF2D1B4E),
-          ],
-            stops: [0.0, 0.5, 1.0],
-          ),
-        ),
-        child: Stack(
+      backgroundColor: colorScheme.background,
+      body: SafeArea(
+        child: Column(
           children: [
-            // Floating decorative circles
-            ..._buildFloatingOrbs(),
-            // Main content
-            SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  _buildFilterTabs(),
-                  Expanded(
-                    child: _filteredReminders.isEmpty
-                        ? _buildEmptyState()
-                        : _buildRemindersList(),
-                  ),
-                ],
-              ),
+            _buildHeader(colorScheme),
+            _buildFilterTabs(colorScheme),
+            Expanded(
+              child: _filteredReminders.isEmpty
+                  ? _buildEmptyState(colorScheme)
+                  : _buildRemindersList(),
             ),
           ],
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7C4DFF), Color(0xFF9C6AFF)],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF7C4DFF).withOpacity(0.5),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-              spreadRadius: 0,
-            ),
-          ],
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _showAddReminderSheet(context),
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 4,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text(
+          'Add Reminder',
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        child: FloatingActionButton.extended(
-          onPressed: () => _showAddReminderSheet(context),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          icon: const Icon(Icons.add_rounded, color: Colors.white),
-          label: const Text(
-            'Add Reminder',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
+      ).animate().scale(delay: 400.ms),
     );
   }
 
-  List<Widget> _buildFloatingOrbs() {
-    return [
-      // Top right purple orb
-      Positioned(
-        top: -50,
-        right: -30,
-        child: Container(
-          width: 180,
-          height: 180,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                const Color(0xFF7C4DFF).withOpacity(0.4),
-                const Color(0xFF7C4DFF).withOpacity(0.1),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
-      ),
-      // Bottom left orange orb
-      Positioned(
-        bottom: 150,
-        left: -60,
-        child: Container(
-          width: 200,
-          height: 200,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                const Color(0xFFFF9800).withOpacity(0.25),
-                const Color(0xFFFF9800).withOpacity(0.08),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
-      ),
-      // Middle right small orb
-      Positioned(
-        top: 300,
-        right: -40,
-        child: Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                const Color(0xFF9C27B0).withOpacity(0.3),
-                const Color(0xFF9C27B0).withOpacity(0.1),
-                Colors.transparent,
-              ],
-            ),
-          ),
-        ),
-      ),
-    ];
-  }
-
-  Widget _buildHeader() {
+  Widget _buildHeader(ColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: Row(
@@ -211,16 +114,16 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.15),
+                  color: colorScheme.onSurface.withOpacity(0.1),
                   width: 1,
                 ),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_ios_new,
-                color: Colors.white,
+                color: colorScheme.onBackground,
                 size: 18,
               ),
             ),
@@ -230,12 +133,12 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Smart Notifications',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: colorScheme.onBackground,
                     letterSpacing: 0.3,
                   ),
                 ),
@@ -244,7 +147,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                   'Never miss an important update',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white.withOpacity(0.6),
+                    color: colorScheme.onBackground.withOpacity(0.6),
                   ),
                 ),
               ],
@@ -253,25 +156,25 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.15),
+                color: colorScheme.onSurface.withOpacity(0.1),
                 width: 1,
               ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.notifications_active_rounded,
-              color: Colors.white,
+              color: colorScheme.onBackground,
               size: 20,
             ),
           ),
         ],
       ),
-    );
+    ).animate().fadeIn().slideY(begin: -0.2, end: 0);
   }
 
-  Widget _buildFilterTabs() {
+  Widget _buildFilterTabs(ColorScheme colorScheme) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SingleChildScrollView(
@@ -288,25 +191,20 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                   decoration: BoxDecoration(
-                    gradient: isSelected
-                        ? const LinearGradient(
-                            colors: [Color(0xFF7C4DFF), Color(0xFF9C6AFF)],
-                          )
-                        : null,
                     color: isSelected
-                        ? null
-                        : const Color(0xFF1E1E3F).withOpacity(0.8),
+                        ? colorScheme.primary
+                        : colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
                           ? Colors.transparent
-                          : Colors.white.withOpacity(0.1),
+                          : colorScheme.onSurface.withOpacity(0.1),
                       width: 1,
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF7C4DFF).withOpacity(0.4),
+                              color: colorScheme.primary.withOpacity(0.4),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -317,15 +215,15 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                     _getCategoryLabel(category),
                     style: TextStyle(
                       color: isSelected
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.7),
+                          ? colorScheme.onPrimary
+                          : colorScheme.onSurface.withOpacity(0.7),
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.w500,
                       fontSize: 13,
                     ),
                   ),
                 ),
-              ),
+              ).animate().fadeIn(delay: (100 + ReminderCategory.values.indexOf(category) * 50).ms).slideX(begin: 0.2, end: 0),
             );
           }).toList(),
         ),
@@ -338,29 +236,18 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
       itemCount: _filteredReminders.length,
       itemBuilder: (context, index) {
-        return TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0.0, end: 1.0),
-          duration: Duration(milliseconds: 350 + (index * 80)),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, child) {
-            return Transform.translate(
-              offset: Offset(0, 20 * (1 - value)),
-              child: Opacity(
-                opacity: value,
-                child: child,
-              ),
-            );
-          },
-          child: ReminderCard(
-            reminder: _filteredReminders[index],
-            onDelete: () => _deleteReminder(_filteredReminders[index].id),
-          ),
-        );
+        return ReminderCard(
+          reminder: _filteredReminders[index],
+          onDelete: () => _deleteReminder(_filteredReminders[index].id),
+        )
+            .animate()
+            .fadeIn(duration: 350.ms, delay: (index * 80).ms)
+            .slideY(begin: 0.1, end: 0, duration: 350.ms, delay: (index * 80).ms);
       },
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(ColorScheme colorScheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -369,43 +256,31 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  const Color(0xFF7C4DFF).withOpacity(0.2),
-                  const Color(0xFF7C4DFF).withOpacity(0.05),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF7C4DFF).withOpacity(0.2),
-                  blurRadius: 30,
-                  spreadRadius: 5,
-                ),
-              ],
+              color: colorScheme.primary.withOpacity(0.1),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.notifications_none_rounded,
               size: 48,
-              color: Color(0xFF7C4DFF),
+              color: colorScheme.primary,
             ),
-          ),
+          ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'No reminders yet',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: colorScheme.onBackground,
             ),
-          ),
+          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
           const SizedBox(height: 8),
           Text(
             'Tap the button below to add your first reminder',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.5),
+              color: colorScheme.onBackground.withOpacity(0.5),
             ),
-          ),
+          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
         ],
       ),
     );
@@ -435,4 +310,3 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
     );
   }
 }
-

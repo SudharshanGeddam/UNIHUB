@@ -1,11 +1,10 @@
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:unihub/core/services/ai_client.dart';
 import 'package:unihub/core/prompts/ai_prompts.dart';
 
 class StudyPlanService {
-  final AIClient _aiClient;
+  final AIClient? _aiClient;
 
-  StudyPlanService({AIClient? aiClient}) : _aiClient = aiClient ?? AIClient.instance;
+  StudyPlanService({AIClient? aiClient}) : _aiClient = aiClient ?? AIClient.tryGetInstance();
 
   Future<String> generateStudyPlan({
     required String subject,
@@ -21,11 +20,11 @@ class StudyPlanService {
     );
 
     try {
-      final response = await _aiClient.model.generateContent([Content.text(prompt)]);
-      return response.text ?? 'Unable to generate study plan. Please try again.';
+      if (_aiClient == null) throw Exception('API_KEY not configured');
+      return await _aiClient!.generateContent(prompt);
     } catch (e) {
       if (e.toString().contains('API_KEY')) {
-        return 'Please configure GEMINI_API_KEY via --dart-define at build time';
+        return 'Please configure OPENROUTER_API_KEY via --dart-define at build time';
       }
       return 'Error generating study plan: $e';
     }
@@ -35,9 +34,12 @@ class StudyPlanService {
     final prompt = AIPrompts.examPrepAnalysisPrompt(content);
 
     try {
-      final response = await _aiClient.model.generateContent([Content.text(prompt)]);
-      return response.text ?? 'Unable to analyze. Please try again.';
+      if (_aiClient == null) throw Exception('API_KEY not configured');
+      return await _aiClient!.generateContent(prompt);
     } catch (e) {
+      if (e.toString().contains('API_KEY')) {
+        return 'Please configure OPENROUTER_API_KEY via --dart-define at build time';
+      }
       return 'Error: $e';
     }
   }
