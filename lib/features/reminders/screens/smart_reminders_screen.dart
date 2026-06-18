@@ -191,9 +191,8 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? colorScheme.primary
-                        : colorScheme.surface,
+                    color:
+                        isSelected ? colorScheme.primary : colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: isSelected
@@ -223,7 +222,13 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                     ),
                   ),
                 ),
-              ).animate().fadeIn(delay: (100 + ReminderCategory.values.indexOf(category) * 50).ms).slideX(begin: 0.2, end: 0),
+              )
+                  .animate()
+                  .fadeIn(
+                      delay:
+                          (100 + ReminderCategory.values.indexOf(category) * 50)
+                              .ms)
+                  .slideX(begin: 0.2, end: 0),
             );
           }).toList(),
         ),
@@ -239,10 +244,8 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
         return ReminderCard(
           reminder: _filteredReminders[index],
           onDelete: () => _deleteReminder(_filteredReminders[index].id),
-        )
-            .animate()
-            .fadeIn(duration: 350.ms, delay: (index * 80).ms)
-            .slideY(begin: 0.1, end: 0, duration: 350.ms, delay: (index * 80).ms);
+        ).animate().fadeIn(duration: 350.ms, delay: (index * 80).ms).slideY(
+            begin: 0.1, end: 0, duration: 350.ms, delay: (index * 80).ms);
       },
     );
   }

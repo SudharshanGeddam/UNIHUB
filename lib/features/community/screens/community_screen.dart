@@ -137,7 +137,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   return PostCard(post: _filteredPosts[index])
                       .animate()
                       .fadeIn(duration: 350.ms, delay: (index * 80).ms)
-                      .slideY(begin: 0.1, end: 0, duration: 350.ms, delay: (index * 80).ms);
+                      .slideY(
+                          begin: 0.1,
+                          end: 0,
+                          duration: 350.ms,
+                          delay: (index * 80).ms);
                 },
               ),
             ),
@@ -148,7 +152,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Create post coming soon!', style: TextStyle(color: colorScheme.onPrimary)),
+              content: Text('Create post coming soon!',
+                  style: TextStyle(color: colorScheme.onPrimary)),
               backgroundColor: colorScheme.primary,
             ),
           );
@@ -285,7 +290,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     ),
                   ),
                 ),
-              ).animate().fadeIn(delay: (100 + index * 50).ms).slideX(begin: 0.2, end: 0),
+              )
+                  .animate()
+                  .fadeIn(delay: (100 + index * 50).ms)
+                  .slideX(begin: 0.2, end: 0),
             ),
           ),
         ),

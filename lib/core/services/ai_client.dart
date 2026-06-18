@@ -17,16 +17,15 @@ class ChatSession {
     }
   }
 
-  Future<String> sendMessage(String text, {String? base64Image, String? mimeType}) async {
+  Future<String> sendMessage(String text,
+      {String? base64Image, String? mimeType}) async {
     dynamic content;
     if (base64Image != null && mimeType != null) {
       content = [
         {"type": "text", "text": text},
         {
           "type": "image_url",
-          "image_url": {
-            "url": "data:$mimeType;base64,$base64Image"
-          }
+          "image_url": {"url": "data:$mimeType;base64,$base64Image"}
         }
       ];
     } else {
@@ -54,12 +53,13 @@ class ChatSession {
 
 class AIClient {
   static AIClient? _instance;
-  
+
   final String _apiKey;
   final String _baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
   final String _model = 'google/gemini-2.5-flash';
 
-  final String defaultSystemInstruction = '''You are UniHub AI, a helpful academic assistant for college students. 
+  final String defaultSystemInstruction =
+      '''You are UniHub AI, a helpful academic assistant for college students. 
         You help with:
         - Study planning and scheduling
         - Answering academic doubts
@@ -94,16 +94,15 @@ class AIClient {
     return ChatSession(this, systemInstruction: defaultSystemInstruction);
   }
 
-  Future<String> generateContent(String prompt, {String? base64Image, String? mimeType}) async {
+  Future<String> generateContent(String prompt,
+      {String? base64Image, String? mimeType}) async {
     dynamic content;
     if (base64Image != null && mimeType != null) {
       content = [
         {"type": "text", "text": prompt},
         {
           "type": "image_url",
-          "image_url": {
-            "url": "data:$mimeType;base64,$base64Image"
-          }
+          "image_url": {"url": "data:$mimeType;base64,$base64Image"}
         }
       ];
     } else {
@@ -124,7 +123,8 @@ class AIClient {
     return generateContentFromMessages(messages);
   }
 
-  Future<String> generateContentFromMessages(List<Map<String, dynamic>> messages) async {
+  Future<String> generateContentFromMessages(
+      List<Map<String, dynamic>> messages) async {
     final response = await http.post(
       Uri.parse(_baseUrl),
       headers: {
@@ -145,7 +145,8 @@ class AIClient {
       final json = jsonDecode(response.body);
       return json['choices']?[0]?['message']?['content'] ?? '';
     } else {
-      throw Exception('OpenRouter API Error: ${response.statusCode} - ${response.body}');
+      throw Exception(
+          'OpenRouter API Error: ${response.statusCode} - ${response.body}');
     }
   }
 }

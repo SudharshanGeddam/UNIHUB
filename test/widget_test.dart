@@ -1,6 +1,6 @@
 // Basic widget tests for UniHub application.
 //
-// Verify that the application UI boots up without crashing. 
+// Verify that the application UI boots up without crashing.
 // We test a simple UI screen to avoid Firebase initialization issues in CI.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

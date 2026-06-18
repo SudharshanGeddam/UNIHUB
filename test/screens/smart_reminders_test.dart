@@ -12,7 +12,7 @@ void main() {
         category: ReminderCategory.academic,
         createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
       );
-      
+
       expect(reminder.timeAgo, '5 minutes ago');
     });
 
@@ -25,7 +25,7 @@ void main() {
         category: ReminderCategory.academic,
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
       );
-      
+
       expect(reminder.timeAgo, '2 hours ago');
     });
 
@@ -38,7 +38,7 @@ void main() {
         category: ReminderCategory.exams,
         createdAt: DateTime.now().subtract(const Duration(days: 3)),
       );
-      
+
       expect(reminder.timeAgo, '3 days ago');
     });
   });

@@ -102,17 +102,20 @@ GoRouter createAppRouter(BuildContext context) {
       GoRoute(
         path: AppRoutes.notesScanner,
         name: 'notes-scanner',
-        pageBuilder: (context, state) => _fadeTransition(const NotesScannerScreen()),
+        pageBuilder: (context, state) =>
+            _fadeTransition(const NotesScannerScreen()),
       ),
       GoRoute(
         path: AppRoutes.reminders,
         name: 'reminders',
-        pageBuilder: (context, state) => _fadeTransition(const SmartRemindersScreen()),
+        pageBuilder: (context, state) =>
+            _fadeTransition(const SmartRemindersScreen()),
       ),
       GoRoute(
         path: AppRoutes.community,
         name: 'community',
-        pageBuilder: (context, state) => _fadeTransition(const CommunityScreen()),
+        pageBuilder: (context, state) =>
+            _fadeTransition(const CommunityScreen()),
       ),
       GoRoute(
         path: AppRoutes.focusSession,

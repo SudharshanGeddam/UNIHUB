@@ -27,7 +27,7 @@ class UserProfileModel {
 
   factory UserProfileModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>?;
-    
+
     return UserProfileModel(
       id: doc.id,
       email: data?['email'] ?? '',

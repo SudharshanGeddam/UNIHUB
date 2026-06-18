@@ -108,11 +108,14 @@ class _StudyPlannerState extends State<StudyPlanner> {
       return Scaffold(
         appBar: AppBar(
           leading: const BackButton(color: Colors.white),
-          title: const Text('Study Planner', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          title: const Text('Study Planner',
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: const Color.fromRGBO(10, 2, 46, 1),
         ),
-        body: const Center(child: ApiKeyMissingBanner(featureName: 'Study Planner')),
+        body: const Center(
+            child: ApiKeyMissingBanner(featureName: 'Study Planner')),
       );
     }
 
@@ -185,7 +188,6 @@ class _StudyPlannerState extends State<StudyPlanner> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   const Text(
                     'Available Time',
                     style: TextStyle(
@@ -212,7 +214,6 @@ class _StudyPlannerState extends State<StudyPlanner> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   const Text(
                     'Focus Type',
                     style: TextStyle(
@@ -257,7 +258,6 @@ class _StudyPlannerState extends State<StudyPlanner> {
                     }).toList(),
                   ),
                   const SizedBox(height: 40),
-
                   SizedBox(
                     width: double.infinity,
                     height: 56,

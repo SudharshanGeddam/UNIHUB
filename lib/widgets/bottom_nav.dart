@@ -57,7 +57,9 @@ class BottomNav extends StatelessWidget {
           ),
         ),
       ),
-    ).animate().slideY(begin: 1, end: 0, duration: 600.ms, curve: Curves.easeOutBack);
+    )
+        .animate()
+        .slideY(begin: 1, end: 0, duration: 600.ms, curve: Curves.easeOutBack);
   }
 }
 
@@ -91,7 +93,9 @@ class _NavItemState extends State<_NavItem> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: _isHovered ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+            color: _isHovered
+                ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Column(
@@ -99,14 +103,21 @@ class _NavItemState extends State<_NavItem> {
             children: [
               Icon(
                 widget.icon,
-                color: _isHovered ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                color: _isHovered
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                 size: 26,
               ),
               const SizedBox(height: 4),
               Text(
                 widget.label,
                 style: TextStyle(
-                  color: _isHovered ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: _isHovered
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.6),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),

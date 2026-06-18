@@ -220,7 +220,8 @@ class _AgentScreenState extends State<AgentScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: TextStyle(color: colorScheme.onInverseSurface)),
+        content: Text(message,
+            style: TextStyle(color: colorScheme.onInverseSurface)),
         backgroundColor: colorScheme.inverseSurface,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -242,7 +243,8 @@ class _AgentScreenState extends State<AgentScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: colorScheme.surface,
-        title: Text('Clear Chat', style: TextStyle(color: colorScheme.onSurface)),
+        title:
+            Text('Clear Chat', style: TextStyle(color: colorScheme.onSurface)),
         content: Text(
           'Are you sure you want to clear the chat history?',
           style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
@@ -278,7 +280,10 @@ class _AgentScreenState extends State<AgentScreen> {
     if (AIClient.tryGetInstance() == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('UniHub AI', style: TextStyle(color: colorScheme.onBackground, fontWeight: FontWeight.bold)),
+          title: Text('UniHub AI',
+              style: TextStyle(
+                  color: colorScheme.onBackground,
+                  fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: colorScheme.background,
           leading: BackButton(color: colorScheme.onBackground),
@@ -291,7 +296,8 @@ class _AgentScreenState extends State<AgentScreen> {
       appBar: AppBar(
         title: Text(
           'UniHub AI',
-          style: TextStyle(color: colorScheme.onBackground, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: colorScheme.onBackground, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: colorScheme.background,
@@ -323,7 +329,8 @@ class _AgentScreenState extends State<AgentScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colorScheme.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(30)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -416,8 +423,8 @@ class _AgentScreenState extends State<AgentScreen> {
                           SizedBox(width: 8),
                           Text(
                             'Processing document...',
-                            style: TextStyle(
-                                color: Colors.orange, fontSize: 14),
+                            style:
+                                TextStyle(color: Colors.orange, fontSize: 14),
                           ),
                         ],
                       ),
@@ -437,7 +444,9 @@ class _AgentScreenState extends State<AgentScreen> {
                             _uploadedFileName != null
                                 ? Icons.description
                                 : Icons.add,
-                            color: _uploadedFileName != null ? colorScheme.onPrimary : colorScheme.primary,
+                            color: _uploadedFileName != null
+                                ? colorScheme.onPrimary
+                                : colorScheme.primary,
                           ),
                         ),
                       ),
@@ -452,8 +461,8 @@ class _AgentScreenState extends State<AgentScreen> {
                             hintText: _uploadedFileName != null
                                 ? 'Ask about the document...'
                                 : 'Ask UniHub AI...',
-                            hintStyle:
-                                TextStyle(color: colorScheme.onSurface.withOpacity(0.5)),
+                            hintStyle: TextStyle(
+                                color: colorScheme.onSurface.withOpacity(0.5)),
                             filled: true,
                             fillColor: colorScheme.primary.withOpacity(0.05),
                             border: OutlineInputBorder(
@@ -486,7 +495,8 @@ class _AgentScreenState extends State<AgentScreen> {
                 ],
               ),
             ),
-          ).animate().slideY(begin: 1, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
+          ).animate().slideY(
+              begin: 1, end: 0, duration: 400.ms, curve: Curves.easeOutBack),
         ],
       ),
     );
@@ -577,7 +587,8 @@ class _AgentScreenState extends State<AgentScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.description, color: colorScheme.onSurface.withOpacity(0.7)),
+                Icon(Icons.description,
+                    color: colorScheme.onSurface.withOpacity(0.7)),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
@@ -595,7 +606,8 @@ class _AgentScreenState extends State<AgentScreen> {
             const SizedBox(height: 8),
             Text(
               'What would you like to do with this document?',
-              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7), fontSize: 14),
+              style: TextStyle(
+                  color: colorScheme.onSurface.withOpacity(0.7), fontSize: 14),
             ),
             const SizedBox(height: 20),
             QuickActionTile(

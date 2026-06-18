@@ -24,13 +24,14 @@ void main() {
       expect(notes.title, 'Biology Notes');
       expect(notes.summary, 'Cell structure');
       expect(notes.keyPoints, contains('Mitochondria is the powerhouse'));
-      
+
       expect(notes.flashcards.length, 1);
       expect(notes.flashcards.first['front'], 'What is a cell?');
       expect(notes.flashcards.first['back'], 'Basic unit of life');
-      
+
       expect(notes.quizQuestions.length, 1);
-      expect(notes.quizQuestions.first['question'], 'Which organelle produces energy?');
+      expect(notes.quizQuestions.first['question'],
+          'Which organelle produces energy?');
       expect(notes.quizQuestions.first['options'], contains('Nucleus'));
       expect(notes.quizQuestions.first['correct_answer'], 'Mitochondria');
     });

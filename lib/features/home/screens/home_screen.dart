@@ -106,7 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   CircleAvatar(
                     backgroundColor: colorScheme.primary.withOpacity(0.2),
                     radius: 28,
-                    backgroundImage: _userPhoto != null ? NetworkImage(_userPhoto!) : null,
+                    backgroundImage:
+                        _userPhoto != null ? NetworkImage(_userPhoto!) : null,
                     child: _userPhoto == null
                         ? Text(
                             _userName[0].toUpperCase(),
@@ -125,7 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           'Welcome back,',
-                          style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6), fontSize: 13),
+                          style: TextStyle(
+                              color: colorScheme.onBackground.withOpacity(0.6),
+                              fontSize: 13),
                         ),
                         Text(
                           _userName,
@@ -153,7 +156,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: IconButton(
                       onPressed: () => context.push(AppRoutes.chat),
-                      icon: Icon(Icons.auto_awesome_rounded, size: 26, color: colorScheme.primary),
+                      icon: Icon(Icons.auto_awesome_rounded,
+                          size: 26, color: colorScheme.primary),
                       tooltip: 'Chat with AI',
                     ),
                   ),
@@ -171,10 +175,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: InputDecoration(
                   fillColor: colorScheme.surface,
                   filled: true,
-                  prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withOpacity(0.4)),
+                  prefixIcon: Icon(Icons.search_rounded,
+                      color: colorScheme.onSurface.withOpacity(0.4)),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                          icon: Icon(Icons.clear_rounded, color: colorScheme.onSurface.withOpacity(0.4), size: 20),
+                          icon: Icon(Icons.clear_rounded,
+                              color: colorScheme.onSurface.withOpacity(0.4),
+                              size: 20),
                           onPressed: () {
                             _searchController.clear();
                             setState(() => _searchQuery = '');
@@ -182,12 +189,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       : null,
                   hintText: 'Search features...',
-                  hintStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.4)),
+                  hintStyle:
+                      TextStyle(color: colorScheme.onSurface.withOpacity(0.4)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 ),
               ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1, end: 0),
             ),
@@ -200,18 +209,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.search_off_rounded, color: colorScheme.onBackground.withOpacity(0.2), size: 64),
+                          Icon(Icons.search_off_rounded,
+                              color: colorScheme.onBackground.withOpacity(0.2),
+                              size: 64),
                           const SizedBox(height: 16),
                           Text(
                             'No features match your search',
-                            style: TextStyle(color: colorScheme.onBackground.withOpacity(0.5), fontSize: 16),
+                            style: TextStyle(
+                                color:
+                                    colorScheme.onBackground.withOpacity(0.5),
+                                fontSize: 16),
                           ),
                         ],
                       ).animate().fadeIn(),
                     )
                   : GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 8),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: 20,
                         crossAxisSpacing: 20,
@@ -225,7 +241,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           description: feature.description,
                           icon: feature.icon,
                           onTap: feature.onTapBuilder(context),
-                        ).animate().fadeIn(delay: (100 * index).ms).slideY(begin: 0.2, end: 0);
+                        )
+                            .animate()
+                            .fadeIn(delay: (100 * index).ms)
+                            .slideY(begin: 0.2, end: 0);
                       },
                     ),
             ),
@@ -235,7 +254,8 @@ class _HomeScreenState extends State<HomeScreen> {
               GestureDetector(
                 onTap: () => context.push(AppRoutes.community),
                 child: Container(
-                  margin: const EdgeInsets.only(left: 24, right: 24, bottom: 16),
+                  margin:
+                      const EdgeInsets.only(left: 24, right: 24, bottom: 16),
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   decoration: BoxDecoration(
@@ -259,7 +279,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.people_rounded, color: Colors.white, size: 28),
+                      const Icon(Icons.people_rounded,
+                          color: Colors.white, size: 28),
                       const SizedBox(width: 12),
                       const Text(
                         'Join Community',
@@ -307,7 +328,7 @@ class _FeatureCardState extends State<_FeatureCard> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -320,13 +341,17 @@ class _FeatureCardState extends State<_FeatureCard> {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: _isHovered ? colorScheme.primary.withOpacity(0.15) : Colors.black.withOpacity(0.04),
+                color: _isHovered
+                    ? colorScheme.primary.withOpacity(0.15)
+                    : Colors.black.withOpacity(0.04),
                 blurRadius: _isHovered ? 20 : 10,
                 offset: Offset(0, _isHovered ? 8 : 4),
               ),
             ],
             border: Border.all(
-              color: _isHovered ? colorScheme.primary.withOpacity(0.3) : Colors.transparent,
+              color: _isHovered
+                  ? colorScheme.primary.withOpacity(0.3)
+                  : Colors.transparent,
               width: 1.5,
             ),
           ),
@@ -341,7 +366,8 @@ class _FeatureCardState extends State<_FeatureCard> {
                     color: colorScheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Icon(widget.icon, color: colorScheme.primary, size: 28),
+                  child:
+                      Icon(widget.icon, color: colorScheme.primary, size: 28),
                 ),
                 const Spacer(),
                 Text(

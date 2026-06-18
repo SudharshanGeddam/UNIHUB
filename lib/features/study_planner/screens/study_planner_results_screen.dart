@@ -142,7 +142,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                         children: [
                           AIRecommendationsCard(studyPlan: widget.studyPlan),
                           const SizedBox(height: 24),
-                          StudyStreakSection(streakDays: widget.studyPlan.streakDays),
+                          StudyStreakSection(
+                              streakDays: widget.studyPlan.streakDays),
                           const SizedBox(height: 24),
                           WeeklyPlanSection(
                             studyPlan: widget.studyPlan,
@@ -160,7 +161,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                                         ?.contains(topicIndex) ??
                                     false;
                                 if (isCompleted) {
-                                  _completedTopics[taskIndex]?.remove(topicIndex);
+                                  _completedTopics[taskIndex]
+                                      ?.remove(topicIndex);
                                 } else {
                                   _completedTopics[taskIndex]?.add(topicIndex);
                                 }
@@ -169,13 +171,15 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                           ),
                           const SizedBox(height: 24),
                           if (widget.studyPlan.keyTopics.isNotEmpty) ...[
-                            KeyTopicsSection(keyTopics: widget.studyPlan.keyTopics),
+                            KeyTopicsSection(
+                                keyTopics: widget.studyPlan.keyTopics),
                             const SizedBox(height: 24),
                           ],
                           if (widget.studyPlan.studyTechniques.isNotEmpty) ...[
                             StudyTechniquesSection(
                               techniques: widget.studyPlan.studyTechniques,
-                              breakRecommendation: widget.studyPlan.breakRecommendation,
+                              breakRecommendation:
+                                  widget.studyPlan.breakRecommendation,
                             ),
                             const SizedBox(height: 24),
                           ],
@@ -231,7 +235,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
               border: Border.all(color: colorScheme.onSurface.withOpacity(0.1)),
             ),
             child: IconButton(
-              icon: Icon(Icons.settings_outlined, color: colorScheme.onSurface.withOpacity(0.7)),
+              icon: Icon(Icons.settings_outlined,
+                  color: colorScheme.onSurface.withOpacity(0.7)),
               onPressed: () {},
             ),
           ),

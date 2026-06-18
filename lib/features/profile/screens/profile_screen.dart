@@ -35,10 +35,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: Text('Logout', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+        title: Text('Logout',
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
         content: Text(
           'Are you sure you want to logout?',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
         ),
         actions: [
           TextButton(
@@ -67,7 +69,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _AccountSettingsSheet(userName: _userName, userEmail: _userEmail),
+      builder: (context) =>
+          _AccountSettingsSheet(userName: _userName, userEmail: _userEmail),
     );
   }
 
@@ -99,7 +102,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: BackButton(color: colorScheme.onBackground),
         title: Text(
           'Profile',
-          style: TextStyle(color: colorScheme.onBackground, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: colorScheme.onBackground, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -108,7 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Edit profile coming soon!', style: TextStyle(color: colorScheme.onSurface)),
+                  content: Text('Edit profile coming soon!',
+                      style: TextStyle(color: colorScheme.onSurface)),
                   backgroundColor: colorScheme.surface,
                 ),
               );
@@ -148,7 +153,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white24,
-                    backgroundImage: _userPhoto != null ? NetworkImage(_userPhoto!) : null,
+                    backgroundImage:
+                        _userPhoto != null ? NetworkImage(_userPhoto!) : null,
                     child: _userPhoto == null
                         ? Text(
                             _userName[0].toUpperCase(),
@@ -212,7 +218,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   _SettingsTile(
-                    icon: themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                    icon: themeProvider.isDarkMode
+                        ? Icons.dark_mode
+                        : Icons.light_mode,
                     title: 'Dark Mode',
                     trailing: Switch(
                       value: themeProvider.isDarkMode,
@@ -220,25 +228,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       activeColor: colorScheme.primary,
                     ),
                   ),
-                  Divider(color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                  Divider(
+                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.person_outline,
                     title: 'Account Settings',
                     onTap: _showAccountSettings,
                   ),
-                  Divider(color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                  Divider(
+                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.notifications_outlined,
                     title: 'Notifications',
                     onTap: _showNotificationsSettings,
                   ),
-                  Divider(color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                  Divider(
+                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.security_outlined,
                     title: 'Privacy & Security',
                     onTap: _showPrivacySettings,
                   ),
-                  Divider(color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                  Divider(
+                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.info_outline,
                     title: 'About UniHub',
@@ -284,7 +296,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(height: 40),
-          ].animate(interval: 50.ms).fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
+          ]
+              .animate(interval: 50.ms)
+              .fadeIn(duration: 400.ms)
+              .slideY(begin: 0.1, end: 0, curve: Curves.easeOutQuad),
         ),
       ),
     );
@@ -359,7 +374,9 @@ class _SettingsTile extends StatelessWidget {
           fontSize: 15,
         ),
       ),
-      trailing: trailing ?? Icon(Icons.arrow_forward_ios, color: colorScheme.onSurface.withOpacity(0.3), size: 16),
+      trailing: trailing ??
+          Icon(Icons.arrow_forward_ios,
+              color: colorScheme.onSurface.withOpacity(0.3), size: 16),
       onTap: onTap,
     );
   }
@@ -369,7 +386,8 @@ class _AccountSettingsSheet extends StatelessWidget {
   final String userName;
   final String userEmail;
 
-  const _AccountSettingsSheet({required this.userName, required this.userEmail});
+  const _AccountSettingsSheet(
+      {required this.userName, required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +407,11 @@ class _AccountSettingsSheet extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Account Settings', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+          Text('Account Settings',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface)),
           const SizedBox(height: 24),
           TextFormField(
             initialValue: userName,
@@ -407,7 +429,8 @@ class _AccountSettingsSheet extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings saved successfully!')));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Settings saved successfully!')));
               },
               child: const Text('Save Changes'),
             ),
@@ -421,10 +444,12 @@ class _AccountSettingsSheet extends StatelessWidget {
 class _NotificationsSettingsSheet extends StatefulWidget {
   const _NotificationsSettingsSheet();
   @override
-  State<_NotificationsSettingsSheet> createState() => _NotificationsSettingsSheetState();
+  State<_NotificationsSettingsSheet> createState() =>
+      _NotificationsSettingsSheetState();
 }
 
-class _NotificationsSettingsSheetState extends State<_NotificationsSettingsSheet> {
+class _NotificationsSettingsSheetState
+    extends State<_NotificationsSettingsSheet> {
   bool pushEnabled = true;
   bool emailEnabled = false;
   bool studyReminders = true;
@@ -442,24 +467,31 @@ class _NotificationsSettingsSheetState extends State<_NotificationsSettingsSheet
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Notifications', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+          Text('Notifications',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface)),
           const SizedBox(height: 16),
           SwitchListTile(
-            title: Text('Push Notifications', style: TextStyle(color: colorScheme.onSurface)),
+            title: Text('Push Notifications',
+                style: TextStyle(color: colorScheme.onSurface)),
             value: pushEnabled,
             onChanged: (val) => setState(() => pushEnabled = val),
             activeColor: colorScheme.primary,
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
-            title: Text('Email Summaries', style: TextStyle(color: colorScheme.onSurface)),
+            title: Text('Email Summaries',
+                style: TextStyle(color: colorScheme.onSurface)),
             value: emailEnabled,
             onChanged: (val) => setState(() => emailEnabled = val),
             activeColor: colorScheme.primary,
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
-            title: Text('Study Reminders', style: TextStyle(color: colorScheme.onSurface)),
+            title: Text('Study Reminders',
+                style: TextStyle(color: colorScheme.onSurface)),
             value: studyReminders,
             onChanged: (val) => setState(() => studyReminders = val),
             activeColor: colorScheme.primary,
@@ -494,21 +526,31 @@ class _PrivacySettingsSheetState extends State<_PrivacySettingsSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Privacy & Security', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+          Text('Privacy & Security',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface)),
           const SizedBox(height: 16),
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: Icon(Icons.password, color: colorScheme.primary),
-            title: Text('Change Password', style: TextStyle(color: colorScheme.onSurface)),
-            trailing: Icon(Icons.arrow_forward_ios, size: 16, color: colorScheme.onSurface.withOpacity(0.5)),
+            title: Text('Change Password',
+                style: TextStyle(color: colorScheme.onSurface)),
+            trailing: Icon(Icons.arrow_forward_ios,
+                size: 16, color: colorScheme.onSurface.withOpacity(0.5)),
             onTap: () {
-               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password reset link sent to email')));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Password reset link sent to email')));
             },
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text('Share Analytics Data', style: TextStyle(color: colorScheme.onSurface)),
-            subtitle: Text('Help us improve UniHub', style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6))),
+            title: Text('Share Analytics Data',
+                style: TextStyle(color: colorScheme.onSurface)),
+            subtitle: Text('Help us improve UniHub',
+                style:
+                    TextStyle(color: colorScheme.onSurface.withOpacity(0.6))),
             value: analyticsEnabled,
             onChanged: (val) => setState(() => analyticsEnabled = val),
             activeColor: colorScheme.primary,
@@ -524,9 +566,11 @@ class _PrivacySettingsSheetState extends State<_PrivacySettingsSheet> {
               ),
               onPressed: () {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Account deletion requested')));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Account deletion requested')));
               },
-              child: const Text('Delete Account', style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text('Delete Account',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),
         ],

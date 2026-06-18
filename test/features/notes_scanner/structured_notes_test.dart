@@ -14,7 +14,10 @@ void main() {
           {'name': "Planck's law", 'formula': 'E = hf'},
         ],
         'examples': [
-          {'title': 'Photoelectric effect', 'description': 'Light ejects electrons'},
+          {
+            'title': 'Photoelectric effect',
+            'description': 'Light ejects electrons'
+          },
         ],
         'flashcards': [
           {'question': 'What is a photon?', 'answer': 'A particle of light'},

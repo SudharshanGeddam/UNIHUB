@@ -26,11 +26,16 @@ class QuickActionTile extends StatelessWidget {
         ),
         child: Icon(icon, color: colorScheme.primary),
       ),
-      title: Text(title, style: TextStyle(color: colorScheme.onSurface, fontWeight: FontWeight.w600)),
+      title: Text(title,
+          style: TextStyle(
+              color: colorScheme.onSurface, fontWeight: FontWeight.w600)),
       subtitle: subtitle != null
-          ? Text(subtitle!, style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6), fontSize: 12))
+          ? Text(subtitle!,
+              style: TextStyle(
+                  color: colorScheme.onSurface.withOpacity(0.6), fontSize: 12))
           : null,
-      trailing: Icon(Icons.arrow_forward_ios, color: colorScheme.onSurface.withOpacity(0.3), size: 16),
+      trailing: Icon(Icons.arrow_forward_ios,
+          color: colorScheme.onSurface.withOpacity(0.3), size: 16),
       onTap: onTap,
     );
   }

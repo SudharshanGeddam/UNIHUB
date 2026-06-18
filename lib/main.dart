@@ -89,7 +89,10 @@ class _SplashScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
             ),
-          ].animate(interval: 200.ms).fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
+          ]
+              .animate(interval: 200.ms)
+              .fadeIn(duration: 500.ms)
+              .slideY(begin: 0.2, end: 0),
         ),
       ),
     );

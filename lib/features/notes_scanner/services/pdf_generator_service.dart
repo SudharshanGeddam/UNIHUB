@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 
 import 'package:unihub/features/notes_scanner/models/structured_notes.dart';
+
 class PdfGeneratorService {
   static Future<Uint8List> generateNotesPdf(StructuredNotes notes) async {
     final pdf = pw.Document();

@@ -1,5 +1,3 @@
-
-
 enum ReminderCategory { all, academic, community, exams }
 
 enum ReminderType { classReminder, studySession, labSchedule, assignmentDue }

@@ -26,7 +26,8 @@ class NotesScannerScreen extends StatefulWidget {
 class _NotesScannerScreenState extends State<NotesScannerScreen>
     with SingleTickerProviderStateMixin {
   final ImagePicker _picker = ImagePicker();
-  final NotesConversionService _notesConversionService = NotesConversionService();
+  final NotesConversionService _notesConversionService =
+      NotesConversionService();
 
   File? _selectedImage;
   Uint8List? _imageBytes;
@@ -97,8 +98,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         mimeType = 'image/png';
       } else if (extension == 'webp') mimeType = 'image/webp';
 
-      final result =
-          await _notesConversionService.transcribeHandwriting(_imageBytes!, mimeType);
+      final result = await _notesConversionService.transcribeHandwriting(
+          _imageBytes!, mimeType);
 
       setState(() {
         _transcription = result;
@@ -117,8 +118,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
     setState(() => _isConverting = true);
 
     try {
-      final result =
-          await _notesConversionService.convertToStructuredNotes(_transcription!);
+      final result = await _notesConversionService
+          .convertToStructuredNotes(_transcription!);
 
       final extracted = extractJsonFromAiResponse(result);
       if (extracted == null) throw Exception('No JSON found in AI response');
@@ -128,7 +129,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         json = jsonDecode(extracted);
       } catch (e) {
         try {
-          final sanitized = extracted.replaceAll('\n', ' ').replaceAll('\r', ' ');
+          final sanitized =
+              extracted.replaceAll('\n', ' ').replaceAll('\r', ' ');
           json = jsonDecode(sanitized);
         } catch (e2) {
           throw e;
@@ -203,7 +205,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             const SizedBox(height: 8),
             Text(
               _structuredNotes?.title ?? 'Your Notes',
-              style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6), fontSize: 14),
+              style: TextStyle(
+                  color: colorScheme.onSurface.withOpacity(0.6), fontSize: 14),
             ),
             const SizedBox(height: 24),
             Row(
@@ -251,7 +254,9 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Saved to: $path', style: TextStyle(color: colorScheme.onSecondaryContainer)),
+                      content: Text('Saved to: $path',
+                          style: TextStyle(
+                              color: colorScheme.onSecondaryContainer)),
                       backgroundColor: colorScheme.secondaryContainer,
                     ),
                   );
@@ -269,7 +274,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
     final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: TextStyle(color: colorScheme.onErrorContainer)),
+        content: Text(message,
+            style: TextStyle(color: colorScheme.onErrorContainer)),
         backgroundColor: colorScheme.errorContainer,
       ),
     );
@@ -292,7 +298,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
     if (AIClient.tryGetInstance() == null) {
       return Scaffold(
         backgroundColor: colorScheme.background,
-        body: const Center(child: ApiKeyMissingBanner(featureName: 'Notes Scanner')),
+        body: const Center(
+            child: ApiKeyMissingBanner(featureName: 'Notes Scanner')),
         bottomNavigationBar: const BottomNav(),
       );
     }
@@ -345,7 +352,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                 color: colorScheme.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(Icons.document_scanner_rounded, color: colorScheme.primary, size: 28),
+              child: Icon(Icons.document_scanner_rounded,
+                  color: colorScheme.primary, size: 28),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -363,7 +371,9 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                   const SizedBox(height: 4),
                   Text(
                     'Convert handwritten notes to PDF',
-                    style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6), fontSize: 13),
+                    style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.6),
+                        fontSize: 13),
                   ),
                 ],
               ),
@@ -371,7 +381,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             if (_currentStep > 0)
               IconButton(
                 onPressed: _reset,
-                icon: Icon(Icons.refresh_rounded, color: colorScheme.onSurface.withOpacity(0.7)),
+                icon: Icon(Icons.refresh_rounded,
+                    color: colorScheme.onSurface.withOpacity(0.7)),
                 tooltip: 'Start Over',
               ),
           ],
@@ -400,16 +411,24 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                     color: isActive ? colorScheme.primary : colorScheme.surface,
                     shape: BoxShape.circle,
                     border: isCurrent
-                        ? Border.all(color: colorScheme.primary.withOpacity(0.5), width: 2)
-                        : Border.all(color: isActive ? colorScheme.primary : colorScheme.onSurface.withOpacity(0.1)),
+                        ? Border.all(
+                            color: colorScheme.primary.withOpacity(0.5),
+                            width: 2)
+                        : Border.all(
+                            color: isActive
+                                ? colorScheme.primary
+                                : colorScheme.onSurface.withOpacity(0.1)),
                   ),
                   child: Center(
                     child: isActive && index < _currentStep
-                        ? Icon(Icons.check, color: colorScheme.onPrimary, size: 16)
+                        ? Icon(Icons.check,
+                            color: colorScheme.onPrimary, size: 16)
                         : Text(
                             '${index + 1}',
                             style: TextStyle(
-                              color: isActive ? colorScheme.onPrimary : colorScheme.onSurface.withOpacity(0.4),
+                              color: isActive
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSurface.withOpacity(0.4),
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
@@ -420,7 +439,9 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                 Text(
                   steps[index],
                   style: TextStyle(
-                    color: isActive ? colorScheme.onBackground : colorScheme.onBackground.withOpacity(0.4),
+                    color: isActive
+                        ? colorScheme.onBackground
+                        : colorScheme.onBackground.withOpacity(0.4),
                     fontSize: 11,
                     fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
                   ),
@@ -483,7 +504,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
               decoration: BoxDecoration(
                 color: colorScheme.surface,
                 shape: BoxShape.circle,
-                border: Border.all(color: colorScheme.primary.withOpacity(0.5), width: 2),
+                border: Border.all(
+                    color: colorScheme.primary.withOpacity(0.5), width: 2),
               ),
               child: Icon(
                 Icons.camera_alt_rounded,
@@ -506,7 +528,10 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         Text(
           'Take a photo or select from gallery\nto convert handwritten notes to digital format',
           textAlign: TextAlign.center,
-          style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6), fontSize: 14, height: 1.5),
+          style: TextStyle(
+              color: colorScheme.onBackground.withOpacity(0.6),
+              fontSize: 14,
+              height: 1.5),
         ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1, end: 0),
         const SizedBox(height: 40),
         Row(
@@ -540,12 +565,15 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           ),
           child: Row(
             children: [
-              Icon(Icons.tips_and_updates_rounded, color: colorScheme.tertiary, size: 24),
+              Icon(Icons.tips_and_updates_rounded,
+                  color: colorScheme.tertiary, size: 24),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   'For best results, ensure good lighting and keep your handwriting visible.',
-                  style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7), fontSize: 12),
+                  style: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.7),
+                      fontSize: 12),
                 ),
               ),
             ],
@@ -564,7 +592,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: colorScheme.primary.withOpacity(0.5), width: 2),
+            border: Border.all(
+                color: colorScheme.primary.withOpacity(0.5), width: 2),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18),
@@ -585,7 +614,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         const SizedBox(height: 8),
         Text(
           'AI will transcribe your handwriting accurately',
-          style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6), fontSize: 14),
+          style: TextStyle(
+              color: colorScheme.onBackground.withOpacity(0.6), fontSize: 14),
         ).animate().fadeIn(delay: 300.ms),
         const SizedBox(height: 32),
         ActionButton(
@@ -598,8 +628,11 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         const SizedBox(height: 16),
         TextButton.icon(
           onPressed: () => setState(() => _currentStep = 0),
-          icon: Icon(Icons.arrow_back_rounded, color: colorScheme.onBackground.withOpacity(0.6)),
-          label: Text('Choose Different Image', style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6))),
+          icon: Icon(Icons.arrow_back_rounded,
+              color: colorScheme.onBackground.withOpacity(0.6)),
+          label: Text('Choose Different Image',
+              style:
+                  TextStyle(color: colorScheme.onBackground.withOpacity(0.6))),
         ).animate().fadeIn(delay: 500.ms),
       ],
     );
@@ -643,7 +676,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         const SizedBox(height: 8),
         Text(
           'AI will extract key points, definitions, create flashcards & quiz questions',
-          style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6), fontSize: 13),
+          style: TextStyle(
+              color: colorScheme.onBackground.withOpacity(0.6), fontSize: 13),
         ).animate().fadeIn(delay: 400.ms),
         const SizedBox(height: 20),
         ActionButton(
@@ -659,14 +693,20 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           children: [
             TextButton.icon(
               onPressed: () => setState(() => _currentStep = 1),
-              icon: Icon(Icons.arrow_back_rounded, color: colorScheme.onBackground.withOpacity(0.6), size: 18),
-              label: Text('Back', style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6))),
+              icon: Icon(Icons.arrow_back_rounded,
+                  color: colorScheme.onBackground.withOpacity(0.6), size: 18),
+              label: Text('Back',
+                  style: TextStyle(
+                      color: colorScheme.onBackground.withOpacity(0.6))),
             ),
             const SizedBox(width: 16),
             TextButton.icon(
               onPressed: _reset,
-              icon: Icon(Icons.refresh_rounded, color: colorScheme.onBackground.withOpacity(0.6), size: 18),
-              label: Text('Start Over', style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6))),
+              icon: Icon(Icons.refresh_rounded,
+                  color: colorScheme.onBackground.withOpacity(0.6), size: 18),
+              label: Text('Start Over',
+                  style: TextStyle(
+                      color: colorScheme.onBackground.withOpacity(0.6))),
             ),
           ],
         ).animate().fadeIn(delay: 600.ms),
@@ -700,7 +740,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                   color: colorScheme.secondary,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.check_rounded, color: colorScheme.onSecondary, size: 24),
+                child: Icon(Icons.check_rounded,
+                    color: colorScheme.onSecondary, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -718,7 +759,9 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                     const SizedBox(height: 4),
                     Text(
                       'Your smart notes are ready to export',
-                      style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6), fontSize: 12),
+                      style: TextStyle(
+                          color: colorScheme.onBackground.withOpacity(0.6),
+                          fontSize: 12),
                     ),
                   ],
                 ),
@@ -814,8 +857,11 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         Center(
           child: TextButton.icon(
             onPressed: _reset,
-            icon: Icon(Icons.add_photo_alternate_rounded, color: colorScheme.onBackground.withOpacity(0.6), size: 18),
-            label: Text('Scan Another Page', style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6))),
+            icon: Icon(Icons.add_photo_alternate_rounded,
+                color: colorScheme.onBackground.withOpacity(0.6), size: 18),
+            label: Text('Scan Another Page',
+                style: TextStyle(
+                    color: colorScheme.onBackground.withOpacity(0.6))),
           ),
         ).animate().fadeIn(delay: 800.ms),
       ],

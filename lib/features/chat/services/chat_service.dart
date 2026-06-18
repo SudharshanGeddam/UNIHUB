@@ -5,7 +5,8 @@ class ChatService {
   final AIClient? _aiClient;
   ChatSession? _chat;
 
-  ChatService({AIClient? aiClient}) : _aiClient = aiClient ?? AIClient.tryGetInstance();
+  ChatService({AIClient? aiClient})
+      : _aiClient = aiClient ?? AIClient.tryGetInstance();
 
   ChatSession get _activeChat {
     if (_aiClient == null) throw Exception('API_KEY not configured');

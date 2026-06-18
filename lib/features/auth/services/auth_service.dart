@@ -22,8 +22,7 @@ class AuthService {
 
   // ── Email / Password ────────────────────────────────────────────────────
 
-  Future<UserCredential?> signInWithEmail(
-      String email, String password) async {
+  Future<UserCredential?> signInWithEmail(String email, String password) async {
     try {
       return await _auth.signInWithEmailAndPassword(
         email: email,
@@ -91,8 +90,7 @@ class AuthService {
 
       if (userCredential.user != null) {
         final user = userCredential.user!;
-        final existingProfile =
-            await _userProfileRepository.getUserProfile();
+        final existingProfile = await _userProfileRepository.getUserProfile();
 
         if (existingProfile == null) {
           await _userProfileRepository.createUserProfile(

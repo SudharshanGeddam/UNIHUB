@@ -9,30 +9,45 @@ import 'package:unihub/features/notes_scanner/models/document_content.dart';
 class DocumentAnalysisService {
   final AIClient? _aiClient;
 
-  DocumentAnalysisService({AIClient? aiClient}) : _aiClient = aiClient ?? AIClient.tryGetInstance();
+  DocumentAnalysisService({AIClient? aiClient})
+      : _aiClient = aiClient ?? AIClient.tryGetInstance();
 
   String getMimeType(String extension) {
     switch (extension.toLowerCase()) {
-      case 'pdf': return 'application/pdf';
-      case 'png': return 'image/png';
+      case 'pdf':
+        return 'application/pdf';
+      case 'png':
+        return 'image/png';
       case 'jpg':
-      case 'jpeg': return 'image/jpeg';
-      case 'webp': return 'image/webp';
-      case 'gif': return 'image/gif';
-      case 'txt': return 'text/plain';
-      case 'md': return 'text/markdown';
-      case 'csv': return 'text/csv';
-      case 'json': return 'application/json';
-      case 'xml': return 'application/xml';
-      case 'html': return 'text/html';
-      case 'js': return 'text/javascript';
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'webp':
+        return 'image/webp';
+      case 'gif':
+        return 'image/gif';
+      case 'txt':
+        return 'text/plain';
+      case 'md':
+        return 'text/markdown';
+      case 'csv':
+        return 'text/csv';
+      case 'json':
+        return 'application/json';
+      case 'xml':
+        return 'application/xml';
+      case 'html':
+        return 'text/html';
+      case 'js':
+        return 'text/javascript';
       case 'py':
       case 'dart':
       case 'java':
       case 'c':
       case 'cpp':
-      case 'h': return 'text/plain';
-      default: return 'text/plain';
+      case 'h':
+        return 'text/plain';
+      default:
+        return 'text/plain';
     }
   }
 
@@ -45,7 +60,8 @@ class DocumentAnalysisService {
       String extractedText = '';
       final PdfTextExtractor extractor = PdfTextExtractor(document);
       for (int i = 0; i < document.pages.count; i++) {
-        extractedText += extractor.extractText(startPageIndex: i, endPageIndex: i);
+        extractedText +=
+            extractor.extractText(startPageIndex: i, endPageIndex: i);
         extractedText += '\n\n--- Page ${i + 1} ---\n\n';
       }
 
@@ -64,12 +80,28 @@ class DocumentAnalysisService {
       final mimeType = getMimeType(extension);
 
       if (extension == 'pdf') {
-        return DocumentContent(bytes: bytes, mimeType: mimeType, isPdf: true, textContent: null);
+        return DocumentContent(
+            bytes: bytes, mimeType: mimeType, isPdf: true, textContent: null);
       }
 
-      if (['txt', 'md', 'csv', 'json', 'xml', 'html', 'dart', 'py', 'js', 'java', 'c', 'cpp', 'h'].contains(extension)) {
+      if ([
+        'txt',
+        'md',
+        'csv',
+        'json',
+        'xml',
+        'html',
+        'dart',
+        'py',
+        'js',
+        'java',
+        'c',
+        'cpp',
+        'h'
+      ].contains(extension)) {
         final text = await file.readAsString();
-        return DocumentContent(bytes: null, mimeType: mimeType, isPdf: false, textContent: text);
+        return DocumentContent(
+            bytes: null, mimeType: mimeType, isPdf: false, textContent: text);
       }
 
       throw Exception('Unsupported file type: $extension');
@@ -86,16 +118,20 @@ class DocumentAnalysisService {
     String? mimeType,
   }) async {
     try {
-      final userPrompt = userMessage ?? 'Please analyze this document and provide a summary of its key points, important concepts, and any notable information that would be helpful for studying.';
+      final userPrompt = userMessage ??
+          'Please analyze this document and provide a summary of its key points, important concepts, and any notable information that would be helpful for studying.';
 
       if (fileBytes != null) {
         if (_aiClient == null) throw Exception('API_KEY not configured');
         final extension = fileName.split('.').last.toLowerCase();
         final actualMimeType = mimeType ?? getMimeType(extension);
-        
+
         final base64File = base64Encode(fileBytes);
         final chat = _aiClient!.startChat();
-        return await chat.sendMessage('I\'ve uploaded a file named "$fileName".\n\n$userPrompt', base64Image: base64File, mimeType: actualMimeType);
+        return await chat.sendMessage(
+            'I\'ve uploaded a file named "$fileName".\n\n$userPrompt',
+            base64Image: base64File,
+            mimeType: actualMimeType);
       }
 
       if (_aiClient == null) throw Exception('API_KEY not configured');
@@ -122,20 +158,23 @@ class DocumentAnalysisService {
     Uint8List? fileBytes,
     String? mimeType,
   }) async {
-    final promptText = AIPrompts.documentAnalysisPrompt(fileName: fileName, analysisType: analysisType);
+    final promptText = AIPrompts.documentAnalysisPrompt(
+        fileName: fileName, analysisType: analysisType);
 
     try {
       if (fileBytes != null) {
         if (_aiClient == null) throw Exception('API_KEY not configured');
         final extension = fileName.split('.').last.toLowerCase();
         final actualMimeType = mimeType ?? getMimeType(extension);
-        
+
         final base64File = base64Encode(fileBytes);
-        return await _aiClient!.generateContent(promptText, base64Image: base64File, mimeType: actualMimeType);
+        return await _aiClient!.generateContent(promptText,
+            base64Image: base64File, mimeType: actualMimeType);
       }
 
       if (_aiClient == null) throw Exception('API_KEY not configured');
-      final prompt = AIPrompts.documentAnalysisTextPrompt(promptText: promptText, documentContent: documentContent);
+      final prompt = AIPrompts.documentAnalysisTextPrompt(
+          promptText: promptText, documentContent: documentContent);
       return await _aiClient!.generateContent(prompt);
     } catch (e) {
       if (e.toString().contains('API_KEY')) {

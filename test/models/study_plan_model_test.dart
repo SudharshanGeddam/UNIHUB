@@ -117,7 +117,8 @@ void main() {
 
   group('TopicItem', () {
     test('fromJson reads name and description', () {
-      final item = TopicItem.fromJson({'name': 'Optics', 'description': 'Light'});
+      final item =
+          TopicItem.fromJson({'name': 'Optics', 'description': 'Light'});
       expect(item.name, 'Optics');
       expect(item.description, 'Light');
     });

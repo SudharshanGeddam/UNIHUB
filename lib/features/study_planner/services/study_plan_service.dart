@@ -4,7 +4,8 @@ import 'package:unihub/core/prompts/ai_prompts.dart';
 class StudyPlanService {
   final AIClient? _aiClient;
 
-  StudyPlanService({AIClient? aiClient}) : _aiClient = aiClient ?? AIClient.tryGetInstance();
+  StudyPlanService({AIClient? aiClient})
+      : _aiClient = aiClient ?? AIClient.tryGetInstance();
 
   Future<String> generateStudyPlan({
     required String subject,

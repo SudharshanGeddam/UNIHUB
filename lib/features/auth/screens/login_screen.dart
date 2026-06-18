@@ -123,7 +123,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Password reset email sent!', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+            content: Text('Password reset email sent!',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );
@@ -143,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -155,7 +158,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       Icons.school_rounded,
                       size: 80,
                       color: colorScheme.primary,
-                    ).animate().scale(delay: 100.ms, duration: 500.ms, curve: Curves.easeOutBack),
+                    ).animate().scale(
+                        delay: 100.ms,
+                        duration: 500.ms,
+                        curve: Curves.easeOutBack),
                     const SizedBox(height: 24),
                     Text(
                       _isSignUp ? 'Create an Account' : 'Welcome Back',
@@ -165,7 +171,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.bold,
                         color: colorScheme.onBackground,
                       ),
-                    ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
+                    )
+                        .animate()
+                        .fadeIn(delay: 200.ms)
+                        .slideY(begin: 0.2, end: 0),
                     const SizedBox(height: 8),
                     Text(
                       _isSignUp ? 'Join UniHub today' : 'Sign in to continue',
@@ -174,7 +183,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 16,
                         color: colorScheme.onBackground.withOpacity(0.6),
                       ),
-                    ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
+                    )
+                        .animate()
+                        .fadeIn(delay: 300.ms)
+                        .slideY(begin: 0.2, end: 0),
                     const SizedBox(height: 32),
 
                     // Error message
@@ -185,7 +197,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: BoxDecoration(
                           color: colorScheme.error.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: colorScheme.error.withOpacity(0.5)),
+                          border: Border.all(
+                              color: colorScheme.error.withOpacity(0.5)),
                         ),
                         child: Row(
                           children: [
@@ -255,8 +268,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             initialValue: _selectedYear,
                             decoration: InputDecoration(
                               labelText: 'Year (Optional)',
-                              labelStyle: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
-                              prefixIcon: Icon(Icons.calendar_today_outlined, color: colorScheme.primary),
+                              labelStyle: TextStyle(
+                                  color:
+                                      colorScheme.onSurface.withOpacity(0.6)),
+                              prefixIcon: Icon(Icons.calendar_today_outlined,
+                                  color: colorScheme.primary),
                               filled: true,
                               fillColor: colorScheme.surface,
                               border: OutlineInputBorder(
@@ -266,12 +282,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             dropdownColor: colorScheme.surface,
                             style: TextStyle(color: colorScheme.onSurface),
-                            items: ['1st Year', '2nd Year', '3rd Year', '4th Year']
-                                .map((year) => DropdownMenuItem(
-                                      value: year,
-                                      child: Text(year),
-                                    ))
-                                .toList(),
+                            items:
+                                ['1st Year', '2nd Year', '3rd Year', '4th Year']
+                                    .map((year) => DropdownMenuItem(
+                                          value: year,
+                                          child: Text(year),
+                                        ))
+                                    .toList(),
                             onChanged: (value) {
                               setState(() {
                                 _selectedYear = value;
@@ -295,10 +312,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           prefixIcon: Icons.lock_outline,
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                              _obscurePassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                               color: colorScheme.onSurface.withOpacity(0.6),
                             ),
-                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -311,7 +331,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                       ],
-                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1, end: 0),
+                    )
+                        .animate()
+                        .fadeIn(delay: 400.ms)
+                        .slideY(begin: 0.1, end: 0),
 
                     const SizedBox(height: 8),
 
@@ -323,7 +346,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: _handleForgotPassword,
                           child: Text(
                             'Forgot Password?',
-                            style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                       ).animate().fadeIn(delay: 450.ms),
@@ -359,21 +384,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                       ),
-                    ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.1, end: 0),
+                    )
+                        .animate()
+                        .fadeIn(delay: 500.ms)
+                        .slideY(begin: 0.1, end: 0),
                     const SizedBox(height: 24),
 
                     // Divider
                     Row(
                       children: [
-                        Expanded(child: Divider(color: colorScheme.onSurface.withOpacity(0.1))),
+                        Expanded(
+                            child: Divider(
+                                color: colorScheme.onSurface.withOpacity(0.1))),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
                             'or Continue with',
-                            style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
+                            style: TextStyle(
+                                color: colorScheme.onSurface.withOpacity(0.6)),
                           ),
                         ),
-                        Expanded(child: Divider(color: colorScheme.onSurface.withOpacity(0.1))),
+                        Expanded(
+                            child: Divider(
+                                color: colorScheme.onSurface.withOpacity(0.1))),
                       ],
                     ).animate().fadeIn(delay: 600.ms),
                     const SizedBox(height: 24),
@@ -385,12 +418,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       onFacebookSignIn: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Facebook login coming soon!', style: TextStyle(color: colorScheme.onInverseSurface)),
+                            content: Text('Facebook login coming soon!',
+                                style: TextStyle(
+                                    color: colorScheme.onInverseSurface)),
                             backgroundColor: colorScheme.inverseSurface,
                           ),
                         );
                       },
-                    ).animate().fadeIn(delay: 700.ms).slideY(begin: 0.1, end: 0),
+                    )
+                        .animate()
+                        .fadeIn(delay: 700.ms)
+                        .slideY(begin: 0.1, end: 0),
                     const SizedBox(height: 32),
 
                     // Toggle signup/login
@@ -408,8 +446,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       }),
                       child: RichText(
                         text: TextSpan(
-                          text: _isSignUp ? 'Already have an account? ' : 'Don\'t have an account? ',
-                          style: TextStyle(color: colorScheme.onBackground.withOpacity(0.6)),
+                          text: _isSignUp
+                              ? 'Already have an account? '
+                              : 'Don\'t have an account? ',
+                          style: TextStyle(
+                              color: colorScheme.onBackground.withOpacity(0.6)),
                           children: [
                             TextSpan(
                               text: _isSignUp ? 'Log in' : 'Sign up',

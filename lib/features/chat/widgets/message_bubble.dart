@@ -21,9 +21,7 @@ class MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: message.isUser
-              ? colorScheme.primary
-              : colorScheme.surface,
+          color: message.isUser ? colorScheme.primary : colorScheme.surface,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(20),
             topRight: const Radius.circular(20),
@@ -59,7 +57,8 @@ class MessageBubble extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.attach_file,
-                      color: message.isUser ? Colors.white : colorScheme.primary,
+                      color:
+                          message.isUser ? Colors.white : colorScheme.primary,
                       size: 16,
                     ),
                     const SizedBox(width: 6),
@@ -67,7 +66,9 @@ class MessageBubble extends StatelessWidget {
                       child: Text(
                         message.attachedFileName!,
                         style: TextStyle(
-                          color: message.isUser ? Colors.white : colorScheme.primary,
+                          color: message.isUser
+                              ? Colors.white
+                              : colorScheme.primary,
                           fontSize: 13,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -89,6 +90,9 @@ class MessageBubble extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fade(duration: 300.ms).slideY(begin: 0.1, end: 0, curve: Curves.easeOut);
+    )
+        .animate()
+        .fade(duration: 300.ms)
+        .slideY(begin: 0.1, end: 0, curve: Curves.easeOut);
   }
 }
