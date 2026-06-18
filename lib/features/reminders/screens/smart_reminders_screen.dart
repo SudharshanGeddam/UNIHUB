@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:unihub/core/theme/app_colors.dart';
 import 'package:unihub/features/reminders/models/reminder_model.dart';
 import 'package:unihub/features/reminders/widgets/reminder_card.dart';
 import 'package:unihub/features/reminders/widgets/add_reminder_sheet.dart';
