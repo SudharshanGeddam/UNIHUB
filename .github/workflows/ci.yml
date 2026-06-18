@@ -34,7 +34,7 @@ jobs:
       - name: Run tests
         run: flutter test --coverage
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v4
