@@ -11,9 +11,9 @@
   </p>
 
   <p align="center">
-    <img src="https://img.shields.io/github/stars/SudharshanGeddam/UNIHUB?style=for-the-badge" />
-    <img src="https://img.shields.io/github/license/SudharshanGeddam/UNIHUB?style=for-the-badge" />
-    <img src="https://img.shields.io/github/last-commit/SudharshanGeddam/UNIHUB?style=for-the-badge" />
+    <img src="https://img.shields.io/github/stars/SudharshanGeddam/UNIHUB?style=for-the-badge&cacheSeconds=300" />
+    <img src="https://img.shields.io/github/license/SudharshanGeddam/UNIHUB?style=for-the-badge&cacheSeconds=300" />
+    <img src="https://img.shields.io/github/last-commit/SudharshanGeddam/UNIHUB?style=for-the-badge&cacheSeconds=300" />
   </p>
 </div>
 
