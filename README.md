@@ -9,6 +9,12 @@
     <img src="https://img.shields.io/badge/Firebase-%23FFCA28.svg?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
     <img src="https://img.shields.io/badge/OpenRouter-AI-%23000000.svg?style=for-the-badge" alt="OpenRouter" />
   </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/github/stars/SudharshanGeddam/UNIHUB?style=for-the-badge" />
+    <img src="https://img.shields.io/github/license/SudharshanGeddam/UNIHUB?style=for-the-badge" />
+    <img src="https://img.shields.io/github/last-commit/SudharshanGeddam/UNIHUB?style=for-the-badge" />
+  </p>
 </div>
 
 UniHub is an AI-powered study assistant application built with Flutter. It combines task management, study planning, and AI assistance into a single, beautifully designed campus companion app.
