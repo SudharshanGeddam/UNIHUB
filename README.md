@@ -17,6 +17,8 @@
   </p>
 </div>
 
+> ⭐ If UniHub looks useful to you, consider starring the repo — it helps other students find it too!
+
 UniHub is an AI-powered study assistant application built with Flutter. It combines task management, study planning, and AI assistance into a single, beautifully designed campus companion app.
 
 ---
