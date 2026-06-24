@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:unihub/models/structured_notes.dart';
+import 'package:unihub/features/notes_scanner/models/structured_notes.dart';
 
 void main() {
   group('StructuredNotes', () {
