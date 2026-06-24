@@ -378,8 +378,9 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                       ],
                     )
                   : null,
-              color:
-                  isSelected ? null : const Color(0xFF1E1E3F).withValues(alpha: 0.8),
+              color: isSelected
+                  ? null
+                  : const Color(0xFF1E1E3F).withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
@@ -403,7 +404,8 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                 Icon(
                   _getTypeIcon(type),
                   size: 18,
-                  color: isSelected ? color : Colors.white.withValues(alpha: 0.5),
+                  color:
+                      isSelected ? color : Colors.white.withValues(alpha: 0.5),
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -411,7 +413,9 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? color : Colors.white.withValues(alpha: 0.6),
+                    color: isSelected
+                        ? color
+                        : Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -461,7 +465,8 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: const Color(0xFF7C4DFF).withValues(alpha: 0.35),
+                            color:
+                                const Color(0xFF7C4DFF).withValues(alpha: 0.35),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),

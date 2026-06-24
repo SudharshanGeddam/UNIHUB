@@ -206,7 +206,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             Text(
               _structuredNotes?.title ?? 'Your Notes',
               style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  fontSize: 14),
             ),
             const SizedBox(height: 24),
             Row(
@@ -429,7 +430,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                             style: TextStyle(
                               color: isActive
                                   ? colorScheme.onPrimary
-                                  : colorScheme.onSurface.withValues(alpha: 0.4),
+                                  : colorScheme.onSurface
+                                      .withValues(alpha: 0.4),
                               fontWeight: FontWeight.bold,
                               fontSize: 12,
                             ),
@@ -506,7 +508,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
                 color: colorScheme.surface,
                 shape: BoxShape.circle,
                 border: Border.all(
-                    color: colorScheme.primary.withValues(alpha: 0.5), width: 2),
+                    color: colorScheme.primary.withValues(alpha: 0.5),
+                    width: 2),
               ),
               child: Icon(
                 Icons.camera_alt_rounded,
@@ -562,7 +565,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           decoration: BoxDecoration(
             color: colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
+            border:
+                Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
           ),
           child: Row(
             children: [
@@ -616,7 +620,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         Text(
           'AI will transcribe your handwriting accurately',
           style: TextStyle(
-              color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14),
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
+              fontSize: 14),
         ).animate().fadeIn(delay: 300.ms),
         const SizedBox(height: 32),
         ActionButton(
@@ -632,8 +637,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           icon: Icon(Icons.arrow_back_rounded,
               color: colorScheme.onSurface.withValues(alpha: 0.6)),
           label: Text('Choose Different Image',
-              style:
-                  TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6))),
+              style: TextStyle(
+                  color: colorScheme.onSurface.withValues(alpha: 0.6))),
         ).animate().fadeIn(delay: 500.ms),
       ],
     );
@@ -659,7 +664,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           decoration: BoxDecoration(
             color: colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
+            border:
+                Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
           ),
           child: SingleChildScrollView(
             child: MathMarkdownWidget(text: _transcription ?? ''),
@@ -678,7 +684,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
         Text(
           'AI will extract key points, definitions, create flashcards & quiz questions',
           style: TextStyle(
-              color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 13),
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
+              fontSize: 13),
         ).animate().fadeIn(delay: 400.ms),
         const SizedBox(height: 20),
         ActionButton(
@@ -695,7 +702,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             TextButton.icon(
               onPressed: () => setState(() => _currentStep = 1),
               icon: Icon(Icons.arrow_back_rounded,
-                  color: colorScheme.onSurface.withValues(alpha: 0.6), size: 18),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  size: 18),
               label: Text('Back',
                   style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.6))),
@@ -704,7 +712,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
             TextButton.icon(
               onPressed: _reset,
               icon: Icon(Icons.refresh_rounded,
-                  color: colorScheme.onSurface.withValues(alpha: 0.6), size: 18),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  size: 18),
               label: Text('Start Over',
                   style: TextStyle(
                       color: colorScheme.onSurface.withValues(alpha: 0.6))),
@@ -731,7 +740,8 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
           decoration: BoxDecoration(
             color: colorScheme.secondary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: colorScheme.secondary.withValues(alpha: 0.3)),
+            border:
+                Border.all(color: colorScheme.secondary.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [

@@ -23,7 +23,8 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
       await _reminderRepository.addReminder(reminder);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error adding reminder: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error adding reminder: $e')));
       }
     }
   }
@@ -33,7 +34,8 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
       await _reminderRepository.deleteReminder(id);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error deleting reminder: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting reminder: $e')));
       }
     }
   }
@@ -57,13 +59,18 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text('Error loading reminders', style: TextStyle(color: colorScheme.onSurface)));
+                    return Center(
+                        child: Text('Error loading reminders',
+                            style: TextStyle(color: colorScheme.onSurface)));
                   }
-                  
+
                   final reminders = snapshot.data ?? [];
-                  final filteredReminders = _selectedCategory == ReminderCategory.all
-                      ? reminders
-                      : reminders.where((r) => r.category == _selectedCategory).toList();
+                  final filteredReminders =
+                      _selectedCategory == ReminderCategory.all
+                          ? reminders
+                          : reminders
+                              .where((r) => r.category == _selectedCategory)
+                              .toList();
 
                   if (filteredReminders.isEmpty) {
                     return _buildEmptyState(colorScheme);

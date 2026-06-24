@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:unihub/core/theme/app_colors.dart';
 
-/// Displayed at the top of AI-powered screens when no Gemini API key
-/// has been configured via `--dart-define=GEMINI_API_KEY=...`.
+/// Displayed at the top of AI-powered screens when no OpenRouter API key
+/// has been configured via `--dart-define=OPENROUTER_API_KEY=...`.
 ///
 /// Provides a clear, actionable message so developers know exactly what
 /// to do, rather than seeing an opaque crash.
@@ -34,7 +34,7 @@ class ApiKeyMissingBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$featureName requires a Gemini API key',
+                  '$featureName requires an OpenRouter API key',
                   style: const TextStyle(
                     color: AppColors.warning,
                     fontWeight: FontWeight.bold,
@@ -43,7 +43,7 @@ class ApiKeyMissingBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 const Text(
-                  'Run with: flutter run --dart-define=GEMINI_API_KEY=your_key',
+                  'Run with: flutter run --dart-define=OPENROUTER_API_KEY=your_key',
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 11,

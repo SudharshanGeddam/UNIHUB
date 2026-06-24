@@ -8,11 +8,19 @@ import 'package:unihub/features/auth/repositories/user_profile_repository.dart';
 /// Errors are converted to human-readable strings before being thrown,
 /// so UI layers can display them directly.
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-  );
-  final UserProfileRepository _userProfileRepository = UserProfileRepository();
+  final FirebaseAuth _auth;
+  final GoogleSignIn _googleSignIn;
+  final UserProfileRepository _userProfileRepository;
+
+  AuthService({
+    FirebaseAuth? auth,
+    GoogleSignIn? googleSignIn,
+    UserProfileRepository? userProfileRepository,
+  })  : _auth = auth ?? FirebaseAuth.instance,
+        _googleSignIn =
+            googleSignIn ?? GoogleSignIn(scopes: ['email', 'profile']),
+        _userProfileRepository =
+            userProfileRepository ?? UserProfileRepository();
 
   /// The currently signed-in Firebase user, or `null` if signed out.
   User? get currentUser => _auth.currentUser;

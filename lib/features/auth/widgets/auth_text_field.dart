@@ -30,7 +30,8 @@ class AuthTextField extends StatelessWidget {
       style: TextStyle(color: colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
+        labelStyle:
+            TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
         prefixIcon: Icon(prefixIcon, color: colorScheme.primary),
         suffixIcon: suffixIcon,
         filled: true,

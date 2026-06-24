@@ -32,7 +32,8 @@ class QuickActionTile extends StatelessWidget {
       subtitle: subtitle != null
           ? Text(subtitle!,
               style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 12))
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                  fontSize: 12))
           : null,
       trailing: Icon(Icons.arrow_forward_ios,
           color: colorScheme.onSurface.withValues(alpha: 0.3), size: 16),

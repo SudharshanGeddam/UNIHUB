@@ -269,8 +269,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: InputDecoration(
                               labelText: 'Year (Optional)',
                               labelStyle: TextStyle(
-                                  color:
-                                      colorScheme.onSurface.withValues(alpha: 0.6)),
+                                  color: colorScheme.onSurface
+                                      .withValues(alpha: 0.6)),
                               prefixIcon: Icon(Icons.calendar_today_outlined,
                                   color: colorScheme.primary),
                               filled: true,
@@ -315,7 +315,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               _obscurePassword
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: colorScheme.onSurface.withValues(alpha: 0.6),
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.6),
                             ),
                             onPressed: () => setState(
                                 () => _obscurePassword = !_obscurePassword),
@@ -395,18 +396,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Expanded(
                             child: Divider(
-                                color: colorScheme.onSurface.withValues(alpha: 0.1))),
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.1))),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
                             'or Continue with',
                             style: TextStyle(
-                                color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.6)),
                           ),
                         ),
                         Expanded(
                             child: Divider(
-                                color: colorScheme.onSurface.withValues(alpha: 0.1))),
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.1))),
                       ],
                     ).animate().fadeIn(delay: 600.ms),
                     const SizedBox(height: 24),
@@ -450,7 +454,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               ? 'Already have an account? '
                               : 'Don\'t have an account? ',
                           style: TextStyle(
-                              color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.6)),
                           children: [
                             TextSpan(
                               text: _isSignUp ? 'Log in' : 'Sign up',

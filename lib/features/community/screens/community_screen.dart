@@ -32,23 +32,28 @@ class _CommunityScreenState extends State<CommunityScreen> {
             Expanded(
               child: StreamBuilder<List<CommunityPost>>(
                 stream: _repository.getPosts(
-                  category: _selectedTabIndex == 0 ? null : _tabs[_selectedTabIndex],
+                  category:
+                      _selectedTabIndex == 0 ? null : _tabs[_selectedTabIndex],
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: colorScheme.onSurface)));
+                    return Center(
+                        child: Text('Error: ${snapshot.error}',
+                            style: TextStyle(color: colorScheme.onSurface)));
                   }
-                  
+
                   final posts = snapshot.data ?? [];
-                  
+
                   if (posts.isEmpty) {
                     return Center(
                       child: Text(
                         'No posts in this category yet.',
-                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5)),
+                        style: TextStyle(
+                            color:
+                                colorScheme.onSurface.withValues(alpha: 0.5)),
                       ),
                     );
                   }
@@ -60,7 +65,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       return PostCard(
                         post: posts[index],
                         onLike: () => _repository.likePost(posts[index].id),
-                      ).animate()
+                      )
+                          .animate()
                           .fadeIn(duration: 350.ms, delay: (index * 80).ms)
                           .slideY(
                               begin: 0.1,

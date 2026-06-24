@@ -54,14 +54,16 @@ class _AgentScreenState extends State<AgentScreen> {
         setState(() {
           _messages.addAll(history);
         });
-        
+
         // Pass history to AI service
-        final aiHistory = history.map((m) => {
-          "role": m.isUser ? "user" : "assistant",
-          "content": m.text,
-        }).toList();
+        final aiHistory = history
+            .map((m) => {
+                  "role": m.isUser ? "user" : "assistant",
+                  "content": m.text,
+                })
+            .toList();
         _chatService.initChat(aiHistory);
-        
+
         _scrollToBottom();
       }
     } catch (e) {
@@ -140,26 +142,36 @@ class _AgentScreenState extends State<AgentScreen> {
       });
 
       _scrollToBottom();
-      
+
       // Save to repository
       try {
-        await _chatRepository.saveChatMessage(message: message.isEmpty && hasDocument ? 'Analyzed document: $fileName' : message, response: response);
+        await _chatRepository.saveChatMessage(
+            message: message.isEmpty && hasDocument
+                ? 'Analyzed document: $fileName'
+                : message,
+            response: response);
       } catch (e) {
         debugPrint('Failed to save chat message: $e');
       }
     } catch (e) {
       String errorMsg;
       final errorStr = e.toString();
-      if (errorStr.contains('401') || errorStr.contains('API_KEY') || errorStr.contains('Unauthorized')) {
+      if (errorStr.contains('401') ||
+          errorStr.contains('API_KEY') ||
+          errorStr.contains('Unauthorized')) {
         errorMsg = '🔑 API key is invalid or missing. Please reconfigure.';
       } else if (errorStr.contains('429') || errorStr.contains('rate limit')) {
         errorMsg = '⏳ Rate limit reached. Please wait a moment and try again.';
-      } else if (errorStr.contains('SocketException') || errorStr.contains('Connection refused') || errorStr.contains('Network')) {
+      } else if (errorStr.contains('SocketException') ||
+          errorStr.contains('Connection refused') ||
+          errorStr.contains('Network')) {
         errorMsg = '📶 No internet connection. Please check your network.';
-      } else if (errorStr.contains('timeout') || errorStr.contains('TimeoutException')) {
+      } else if (errorStr.contains('timeout') ||
+          errorStr.contains('TimeoutException')) {
         errorMsg = '⏱️ Request timed out. Please try again.';
       } else {
-        errorMsg = 'Something went wrong: ${errorStr.replaceAll('Exception: ', '')}';
+        errorMsg =
+            'Something went wrong: ${errorStr.replaceAll('Exception: ', '')}';
       }
       setState(() {
         _messages.add(ChatMessage(
@@ -330,8 +342,7 @@ class _AgentScreenState extends State<AgentScreen> {
         appBar: AppBar(
           title: Text('UniHub AI',
               style: TextStyle(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.bold)),
+                  color: colorScheme.onSurface, fontWeight: FontWeight.bold)),
           centerTitle: true,
           backgroundColor: colorScheme.surface,
           leading: BackButton(color: colorScheme.onSurface),
@@ -510,9 +521,11 @@ class _AgentScreenState extends State<AgentScreen> {
                                 ? 'Ask about the document...'
                                 : 'Ask UniHub AI...',
                             hintStyle: TextStyle(
-                                color: colorScheme.onSurface.withValues(alpha: 0.5)),
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.5)),
                             filled: true,
-                            fillColor: colorScheme.primary.withValues(alpha: 0.05),
+                            fillColor:
+                                colorScheme.primary.withValues(alpha: 0.05),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide.none,
@@ -655,7 +668,8 @@ class _AgentScreenState extends State<AgentScreen> {
             Text(
               'What would you like to do with this document?',
               style: TextStyle(
-                  color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
+                  fontSize: 14),
             ),
             const SizedBox(height: 20),
             QuickActionTile(

@@ -53,17 +53,18 @@ class CommunityPost {
 
   factory CommunityPost.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    
+
     final avatarColorValue = data['avatarColor'] as int?;
     final actionColorValue = data['actionColor'] as int?;
-    
+
     return CommunityPost(
       id: doc.id,
       authorId: data['authorId'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       authorName: data['authorName'] ?? 'Unknown',
       authorAvatar: data['authorAvatar'] ?? 'U',
-      avatarColor: avatarColorValue != null ? Color(avatarColorValue) : Colors.grey,
+      avatarColor:
+          avatarColorValue != null ? Color(avatarColorValue) : Colors.grey,
       category: data['category'] ?? 'General',
       title: data['title'] ?? '',
       description: data['description'] ?? '',
@@ -73,7 +74,8 @@ class CommunityPost {
       likes: data['likes'] ?? 0,
       comments: data['comments'] ?? 0,
       actionText: data['actionText'] ?? 'View',
-      actionColor: actionColorValue != null ? Color(actionColorValue) : Colors.blue,
+      actionColor:
+          actionColorValue != null ? Color(actionColorValue) : Colors.blue,
     );
   }
 

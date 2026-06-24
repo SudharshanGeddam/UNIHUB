@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:unihub/features/community/models/community_post.dart';
 import 'package:unihub/features/community/repositories/community_repository.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class CreatePostSheet extends StatefulWidget {
   const CreatePostSheet({super.key});
@@ -14,10 +15,10 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _repository = CommunityRepository();
-  
+
   String _selectedCategory = 'Academics';
   final List<String> _categories = ['Academics', 'Events', 'Lost & Found'];
-  
+
   bool _isSaving = false;
 
   @override
@@ -30,7 +31,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
   Future<void> _submitPost() async {
     final title = _titleController.text.trim();
     final description = _descriptionController.text.trim();
-    
+
     if (title.isEmpty || description.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill out all fields')),
@@ -80,7 +81,7 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     return Container(
       padding: EdgeInsets.only(
         left: 24,
@@ -103,39 +104,45 @@ class _CreatePostSheetState extends State<CreatePostSheet> {
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
             ),
-          ),
+          ).animate().fadeIn().slideY(begin: 0.1),
           const SizedBox(height: 20),
           DropdownButtonFormField<String>(
             initialValue: _selectedCategory,
             decoration: const InputDecoration(labelText: 'Category'),
-            items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+            items: _categories
+                .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                .toList(),
             onChanged: (val) {
               if (val != null) {
                 setState(() => _selectedCategory = val);
               }
             },
-          ),
+          ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
           const SizedBox(height: 16),
           TextFormField(
             controller: _titleController,
             decoration: const InputDecoration(labelText: 'Title'),
-          ),
+          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
           const SizedBox(height: 16),
           TextFormField(
             controller: _descriptionController,
             decoration: const InputDecoration(labelText: 'Description'),
             maxLines: 4,
-          ),
+          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
+            height: 50,
             child: ElevatedButton(
               onPressed: _isSaving ? null : _submitPost,
-              child: _isSaving 
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+              child: _isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : const Text('Post to Community'),
             ),
-          ),
+          ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1),
         ],
       ),
     );
