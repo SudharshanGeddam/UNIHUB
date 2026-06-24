@@ -25,6 +25,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Generate mock config files for CI
+        run: |
+          mkdir -p lib/config
+          echo "class ApiConfig { static const openRouterApiKey = ''; static bool get isConfigured => false; static bool get isGeminiConfigured => false; }" > lib/config/api_config.dart
+          echo "import 'package:firebase_core/firebase_core.dart'; class DefaultFirebaseOptions { static FirebaseOptions get currentPlatform => const FirebaseOptions(apiKey: '', appId: '', messagingSenderId: '', projectId: ''); }" > lib/firebase_options.dart
+
       - name: Verify formatting
         run: dart format --set-exit-if-changed .
 
