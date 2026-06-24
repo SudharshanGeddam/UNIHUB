@@ -7,6 +7,9 @@ import 'package:unihub/core/routing/app_router.dart';
 import 'package:unihub/core/theme/theme_provider.dart';
 import 'package:unihub/features/auth/services/auth_service.dart';
 import 'package:unihub/features/profile/repositories/user_profile_repository.dart';
+import 'package:unihub/features/profile/widgets/account_settings_sheet.dart';
+import 'package:unihub/features/profile/widgets/notifications_settings_sheet.dart';
+import 'package:unihub/features/profile/widgets/privacy_settings_sheet.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -59,7 +62,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: Text(
           'Are you sure you want to logout?',
           style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7)),
         ),
         actions: [
           TextButton(
@@ -88,15 +94,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) =>
-          _AccountSettingsSheet(
-            userName: _userName, 
-            userEmail: _userEmail,
-            onSave: (newName) async {
-              await _userProfileRepo.updateDisplayName(newName);
-              setState(() {}); // refresh name
-            },
-          ),
+      builder: (context) => AccountSettingsSheet(
+        userName: _userName,
+        userEmail: _userEmail,
+        onSave: (newName) async {
+          await _userProfileRepo.updateDisplayName(newName);
+          setState(() {}); // refresh name
+        },
+      ),
     );
   }
 
@@ -105,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const _NotificationsSettingsSheet(),
+      builder: (context) => const NotificationsSettingsSheet(),
     );
   }
 
@@ -114,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const _PrivacySettingsSheet(),
+      builder: (context) => const PrivacySettingsSheet(),
     );
   }
 
@@ -216,11 +221,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _StatItem(label: 'Study Plans', value: _stats?.totalStudyPlans.toString() ?? '-'),
+                      _StatItem(
+                          label: 'Study Plans',
+                          value: _stats?.totalStudyPlans.toString() ?? '-'),
                       Container(width: 1, height: 40, color: Colors.white24),
-                      _StatItem(label: 'Reminders', value: _stats?.totalReminders.toString() ?? '-'),
+                      _StatItem(
+                          label: 'Reminders',
+                          value: _stats?.totalReminders.toString() ?? '-'),
                       Container(width: 1, height: 40, color: Colors.white24),
-                      _StatItem(label: 'Completed', value: _stats?.completedReminders.toString() ?? '-'),
+                      _StatItem(
+                          label: 'Completed',
+                          value: _stats?.completedReminders.toString() ?? '-'),
                     ],
                   ),
                 ],
@@ -255,28 +266,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1),
+                      height: 1),
                   _SettingsTile(
                     icon: Icons.person_outline,
                     title: 'Account Settings',
                     onTap: _showAccountSettings,
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1),
+                      height: 1),
                   _SettingsTile(
                     icon: Icons.notifications_outlined,
                     title: 'Notifications',
                     onTap: _showNotificationsSettings,
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1),
+                      height: 1),
                   _SettingsTile(
                     icon: Icons.security_outlined,
                     title: 'Privacy & Security',
                     onTap: _showPrivacySettings,
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1),
+                      height: 1),
                   _SettingsTile(
                     icon: Icons.info_outline,
                     title: 'About UniHub',
@@ -404,353 +419,6 @@ class _SettingsTile extends StatelessWidget {
           Icon(Icons.arrow_forward_ios,
               color: colorScheme.onSurface.withValues(alpha: 0.3), size: 16),
       onTap: onTap,
-    );
-  }
-}
-
-class _AccountSettingsSheet extends StatefulWidget {
-  final String userName;
-  final String userEmail;
-  final Function(String) onSave;
-
-  const _AccountSettingsSheet({
-    required this.userName, 
-    required this.userEmail,
-    required this.onSave,
-  });
-
-  @override
-  State<_AccountSettingsSheet> createState() => _AccountSettingsSheetState();
-}
-
-class _AccountSettingsSheetState extends State<_AccountSettingsSheet> {
-  late TextEditingController _nameController;
-  bool _isSaving = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _nameController = TextEditingController(text: widget.userName);
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: EdgeInsets.only(
-        left: 24,
-        right: 24,
-        top: 24,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Account Settings',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface)),
-          const SizedBox(height: 24),
-          TextFormField(
-            controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Full Name'),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            initialValue: widget.userEmail,
-            decoration: const InputDecoration(labelText: 'Email Address'),
-            enabled: false,
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _isSaving ? null : () async {
-                setState(() => _isSaving = true);
-                try {
-                  await widget.onSave(_nameController.text.trim());
-                  if (mounted) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Settings saved successfully!')));
-                  }
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Failed to save settings: $e')));
-                  }
-                } finally {
-                  if (mounted) setState(() => _isSaving = false);
-                }
-              },
-              child: _isSaving 
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Save Changes'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NotificationsSettingsSheet extends StatefulWidget {
-  const _NotificationsSettingsSheet();
-  @override
-  State<_NotificationsSettingsSheet> createState() =>
-      _NotificationsSettingsSheetState();
-}
-
-class _NotificationsSettingsSheetState
-    extends State<_NotificationsSettingsSheet> {
-  bool pushEnabled = true;
-  bool emailEnabled = false;
-  bool studyReminders = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSettings();
-  }
-
-  Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {
-        pushEnabled = prefs.getBool('pushEnabled') ?? true;
-        emailEnabled = prefs.getBool('emailEnabled') ?? false;
-        studyReminders = prefs.getBool('studyReminders') ?? true;
-      });
-    }
-  }
-
-  Future<void> _saveSetting(String key, bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(key, value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Notifications',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface)),
-          const SizedBox(height: 16),
-          SwitchListTile(
-            title: Text('Push Notifications',
-                style: TextStyle(color: colorScheme.onSurface)),
-            value: pushEnabled,
-            onChanged: (val) {
-              setState(() => pushEnabled = val);
-              _saveSetting('pushEnabled', val);
-            },
-            activeThumbColor: colorScheme.primary,
-            contentPadding: EdgeInsets.zero,
-          ),
-          SwitchListTile(
-            title: Text('Email Summaries',
-                style: TextStyle(color: colorScheme.onSurface)),
-            value: emailEnabled,
-            onChanged: (val) {
-              setState(() => emailEnabled = val);
-              _saveSetting('emailEnabled', val);
-            },
-            activeThumbColor: colorScheme.primary,
-            contentPadding: EdgeInsets.zero,
-          ),
-          SwitchListTile(
-            title: Text('Study Reminders',
-                style: TextStyle(color: colorScheme.onSurface)),
-            value: studyReminders,
-            onChanged: (val) {
-              setState(() => studyReminders = val);
-              _saveSetting('studyReminders', val);
-            },
-            activeThumbColor: colorScheme.primary,
-            contentPadding: EdgeInsets.zero,
-          ),
-          const SizedBox(height: 24),
-        ],
-      ),
-    );
-  }
-}
-
-class _PrivacySettingsSheet extends StatefulWidget {
-  const _PrivacySettingsSheet();
-  @override
-  State<_PrivacySettingsSheet> createState() => _PrivacySettingsSheetState();
-}
-
-class _PrivacySettingsSheetState extends State<_PrivacySettingsSheet> {
-  bool analyticsEnabled = true;
-  bool _isLoading = false;
-  final _authService = AuthService();
-
-  Future<void> _handleChangePassword() async {
-    final email = _authService.currentUser?.email;
-    if (email == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('No email associated with this account')));
-      }
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      await _authService.resetPassword(email);
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Password reset email sent to $email')));
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Failed to send reset email: $e')));
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _handleDeleteAccount() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Account?'),
-        content: const Text(
-            'This action is permanent and cannot be undone. All your data will be lost.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm != true) return;
-
-    setState(() => _isLoading = true);
-    try {
-      await _authService.currentUser?.delete();
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Account deleted successfully')));
-      }
-    } catch (e) {
-      if (mounted) {
-        final errorMsg = e.toString().contains('requires-recent-login')
-            ? 'Please sign out, sign back in, and try again (recent login required).'
-            : 'Failed to delete account: $e';
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMsg)));
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Privacy & Security',
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface)),
-          const SizedBox(height: 16),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.password, color: colorScheme.primary),
-            title: Text('Change Password',
-                style: TextStyle(color: colorScheme.onSurface)),
-            trailing: _isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2))
-                : Icon(Icons.arrow_forward_ios,
-                    size: 16, color: colorScheme.onSurface.withValues(alpha: 0.5)),
-            onTap: _isLoading ? null : _handleChangePassword,
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text('Share Analytics Data',
-                style: TextStyle(color: colorScheme.onSurface)),
-            subtitle: Text('Help us improve UniHub',
-                style:
-                    TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6))),
-            value: analyticsEnabled,
-            onChanged: (val) => setState(() => analyticsEnabled = val),
-            activeThumbColor: colorScheme.primary,
-          ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: colorScheme.error,
-                side: BorderSide(color: colorScheme.error),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              onPressed: _isLoading ? null : _handleDeleteAccount,
-              child: _isLoading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: colorScheme.error,
-                      ),
-                    )
-                  : const Text('Delete Account',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
