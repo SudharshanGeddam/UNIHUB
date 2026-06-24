@@ -72,7 +72,7 @@ class StudyStreakSection extends StatelessWidget {
 
   Widget _buildStreakCalendar() {
     final now = DateTime.now();
-    final currentWeekday = now.weekday;
+    final currentWeekday = now.weekday; // 1 (Mon) to 7 (Sun)
     final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     return Column(
@@ -98,17 +98,21 @@ class StudyStreakSection extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(7, (dayIndex) {
-                final isCurrentWeek = weekIndex == 3;
-                final isPastDay =
-                    isCurrentWeek ? dayIndex < currentWeekday : weekIndex < 3;
-                final isToday = isCurrentWeek && dayIndex == currentWeekday - 1;
+                final cellIndex = weekIndex * 7 + dayIndex;
+                final todayIndex = 3 * 7 + (currentWeekday - 1);
+
+                final daysAgo = todayIndex - cellIndex;
+                final isToday = daysAgo == 0;
+
                 double fillLevel = 0.0;
-                if (isPastDay || isToday) {
-                  final totalDays = (weekIndex * 7) + dayIndex + 1;
-                  if (totalDays <= streakDays + 21) {
-                    fillLevel = [0.3, 0.5, 0.7, 1.0, 0.8, 0.6, 0.9][dayIndex];
-                  }
+
+                // Only fill cells that are within the active streak
+                if (daysAgo >= 0 && daysAgo < streakDays) {
+                  // Vary the fill level slightly for a dynamic look
+                  fillLevel =
+                      0.7 + (dayIndex % 4) * 0.1; // e.g., 0.7, 0.8, 0.9, 1.0
                 }
+
                 return _buildStreakCell(fillLevel: fillLevel, isToday: isToday);
               }),
             ),

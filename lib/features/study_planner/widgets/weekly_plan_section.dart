@@ -200,7 +200,8 @@ class WeeklyPlanSection extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                             child: LinearProgressIndicator(
                               value: progress,
-                              backgroundColor: Colors.white.withValues(alpha: 0.1),
+                              backgroundColor:
+                                  Colors.white.withValues(alpha: 0.1),
                               valueColor:
                                   AlwaysStoppedAnimation<Color>(task.color),
                               minHeight: 5,
@@ -322,7 +323,8 @@ class WeeklyPlanSection extends StatelessWidget {
                                 decoration: isCompleted
                                     ? TextDecoration.lineThrough
                                     : null,
-                                decorationColor: Colors.white.withValues(alpha: 0.4),
+                                decorationColor:
+                                    Colors.white.withValues(alpha: 0.4),
                               ),
                             ),
                             if (topic.description.isNotEmpty) ...[

@@ -14,6 +14,8 @@ import 'package:unihub/features/study_planner/screens/focus_session_screen.dart'
 import 'package:unihub/features/study_planner/screens/study_planner_results_screen.dart';
 import 'package:unihub/features/study_planner/screens/study_planner_screen.dart';
 import 'package:unihub/features/study_planner/screens/saved_study_plans_screen.dart';
+import 'package:unihub/features/study_planner/screens/generated_notes_screen.dart';
+import 'package:unihub/features/notes_scanner/models/structured_notes.dart';
 
 abstract final class AppRoutes {
   static const login = '/login';
@@ -102,7 +104,21 @@ GoRouter createAppRouter(BuildContext context) {
           GoRoute(
             path: 'saved',
             name: 'saved-study-plans',
-            pageBuilder: (context, state) => _fadeTransition(const SavedStudyPlansScreen()),
+            pageBuilder: (context, state) =>
+                _fadeTransition(const SavedStudyPlansScreen()),
+          ),
+          GoRoute(
+            path: 'generated-notes',
+            name: 'generated-notes',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              return _fadeTransition(
+                GeneratedNotesScreen(
+                  structuredNotes: extra['structuredNotes'] as StructuredNotes,
+                  focusType: extra['focusType'] as String,
+                ),
+              );
+            },
           ),
         ],
       ),

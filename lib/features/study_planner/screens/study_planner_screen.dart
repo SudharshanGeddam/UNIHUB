@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unihub/core/routing/app_router.dart';
 import 'package:unihub/features/study_planner/services/study_plan_service.dart';
 import 'package:unihub/features/study_planner/models/study_plan_model.dart';
+import 'package:unihub/features/notes_scanner/models/structured_notes.dart';
 import 'package:unihub/core/services/ai_client.dart';
 import 'package:unihub/core/widgets/api_key_missing_banner.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class StudyPlanner extends StatefulWidget {
   const StudyPlanner({super.key});
@@ -61,35 +64,76 @@ class _StudyPlannerState extends State<StudyPlanner> {
     });
 
     try {
-      final plan = await _studyPlanService.generateStudyPlan(
-        subject: _subjectController.text,
-        availableTime: _timeController.text,
-        focusType: _selectedFocusType,
-      );
-
-      // Parse the JSON response
-      StudyPlanModel? parsedPlan = StudyPlanModel.parseFromResponse(plan);
-
-      // If parsing failed, create a default plan
-      parsedPlan ??= StudyPlanModel.createDefault(
-        subject: _subjectController.text,
-        availableTime: _timeController.text,
-        focusType: _selectedFocusType,
-      );
-
-      setState(() => _isGenerating = false);
-
-      // Navigate to results screen with parsed data
-      if (mounted) {
-        context.push(
-          AppRoutes.studyPlannerResults,
-          extra: {
-            'subject': _subjectController.text,
-            'availableTime': _timeController.text,
-            'focusType': _selectedFocusType,
-            'studyPlan': parsedPlan,
-          },
+      if (_selectedFocusType == 'Deep Work') {
+        final plan = await _studyPlanService.generateStudyPlan(
+          subject: _subjectController.text,
+          availableTime: _timeController.text,
+          focusType: _selectedFocusType,
         );
+
+        // Parse the JSON response
+        StudyPlanModel? parsedPlan = StudyPlanModel.parseFromResponse(plan);
+
+        // If parsing failed, create a default plan
+        parsedPlan ??= StudyPlanModel.createDefault(
+          subject: _subjectController.text,
+          availableTime: _timeController.text,
+          focusType: _selectedFocusType,
+        );
+
+        setState(() => _isGenerating = false);
+
+        // Navigate to results screen with parsed data
+        if (mounted) {
+          context.push(
+            AppRoutes.studyPlannerResults,
+            extra: {
+              'subject': _subjectController.text,
+              'availableTime': _timeController.text,
+              'focusType': _selectedFocusType,
+              'studyPlan': parsedPlan,
+            },
+          );
+        }
+      } else {
+        // Topic Content generation for Notes, Revision, Exam Prep
+        final content = await _studyPlanService.generateTopicContent(
+          _subjectController.text,
+          _selectedFocusType,
+        );
+
+        StructuredNotes? parsedNotes;
+        try {
+          final jsonRegex = RegExp(r'\{[\s\S]*\}');
+          final match = jsonRegex.firstMatch(content);
+          if (match != null) {
+            final jsonStr = match.group(0)!;
+            final decoded = jsonDecode(jsonStr);
+            parsedNotes = StructuredNotes.fromJson(decoded);
+          } else {
+            final decoded = jsonDecode(content);
+            parsedNotes = StructuredNotes.fromJson(decoded);
+          }
+        } catch (e) {
+          debugPrint('Failed to parse topic content: $e');
+        }
+
+        if (parsedNotes == null) {
+          throw Exception(
+              'Failed to generate structured content. Please try again.');
+        }
+
+        setState(() => _isGenerating = false);
+
+        if (mounted) {
+          context.push(
+            '/study-planner/generated-notes',
+            extra: {
+              'structuredNotes': parsedNotes,
+              'focusType': _selectedFocusType,
+            },
+          );
+        }
       }
     } catch (e) {
       setState(() => _isGenerating = false);
@@ -176,14 +220,15 @@ class _StudyPlannerState extends State<StudyPlanner> {
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
-                  ),
+                  ).animate().fadeIn().slideY(begin: 0.1),
                   const SizedBox(height: 10),
                   TextField(
                     controller: _subjectController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: const Color.fromARGB(255, 85, 86, 91),
+                      fillColor: const Color.fromARGB(255, 85, 86, 91)
+                          .withValues(alpha: 0.5),
                       hintText: 'E.g: Data Structures, Calculus...',
                       hintStyle: const TextStyle(color: Colors.white54),
                       prefixIcon: const Icon(Icons.book, color: Colors.white54),
@@ -192,7 +237,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                         borderSide: BorderSide.none,
                       ),
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 50.ms).slideY(begin: 0.1),
                   const SizedBox(height: 20),
                   const Text(
                     'Available Time',
@@ -201,14 +246,15 @@ class _StudyPlannerState extends State<StudyPlanner> {
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 100.ms).slideY(begin: 0.1),
                   const SizedBox(height: 10),
                   TextField(
                     controller: _timeController,
                     style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: const Color.fromARGB(255, 85, 86, 91),
+                      fillColor: const Color.fromARGB(255, 85, 86, 91)
+                          .withValues(alpha: 0.5),
                       hintText: 'E.g: 2 hours/day for 1 week',
                       hintStyle: const TextStyle(color: Colors.white54),
                       prefixIcon:
@@ -218,7 +264,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                         borderSide: BorderSide.none,
                       ),
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
                   const SizedBox(height: 20),
                   const Text(
                     'Focus Type',
@@ -227,7 +273,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1),
                   const SizedBox(height: 10),
                   Wrap(
                     spacing: 10,
@@ -244,7 +290,8 @@ class _StudyPlannerState extends State<StudyPlanner> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? Theme.of(context).colorScheme.primary
-                                : const Color.fromARGB(255, 85, 86, 91),
+                                : const Color.fromARGB(255, 85, 86, 91)
+                                    .withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(25),
                             border: isSelected
                                 ? Border.all(color: Colors.white, width: 2)
@@ -253,62 +300,51 @@ class _StudyPlannerState extends State<StudyPlanner> {
                           child: Text(
                             type,
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              color: isSelected ? Colors.white : Colors.white70,
+                              fontWeight: isSelected ? FontWeight.bold : null,
                             ),
                           ),
                         ),
                       );
                     }).toList(),
-                  ),
+                  ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1),
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
-                    height: 56,
+                    height: 55,
                     child: ElevatedButton(
                       onPressed: _isGenerating ? null : _generateSchedule,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        disabledBackgroundColor: Colors.grey,
                       ),
                       child: _isGenerating
-                          ? const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                                SizedBox(width: 12),
-                                Text('Generating...',
-                                    style: TextStyle(fontSize: 16)),
-                              ],
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
                             )
                           : const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.auto_awesome),
+                                Icon(Icons.auto_awesome, color: Colors.white),
                                 SizedBox(width: 8),
                                 Text(
                                   'Generate Study Plan',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ],
                             ),
-                    ),
+                    ).animate().fadeIn(delay: 500.ms).slideY(begin: 0.1),
                   ),
                   const SizedBox(height: 40),
                 ],

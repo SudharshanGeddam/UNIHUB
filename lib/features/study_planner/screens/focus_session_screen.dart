@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unihub/core/theme/app_colors.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:async';
 
 class FocusSessionScreen extends StatefulWidget {
@@ -119,7 +120,10 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Theme.of(context).colorScheme.primary, Color(0xFF9C7CFF)],
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Color(0xFF9C7CFF)
+                  ],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -155,14 +159,16 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 14),
-                      side: BorderSide(color: Theme.of(context).colorScheme.primary),
+                      side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Text(
                       'Take Break',
-                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ),
@@ -182,7 +188,8 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                     ),
                     child: Text(
                       'Continue',
-                      style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.surface),
                     ),
                   ),
                 ),
@@ -230,7 +237,8 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
             margin: EdgeInsets.only(right: 16),
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
+              color:
+                  Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -257,23 +265,35 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
             // Subject and focus type
             Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(16),
+                color: Theme.of(context)
+                    .colorScheme
+                    .surface
+                    .withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withValues(alpha: 0.2),
+                ),
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      Icons.menu_book,
+                      Icons.book,
                       color: Theme.of(context).colorScheme.primary,
-                      size: 24,
+                      size: 28,
                     ),
                   ),
                   SizedBox(width: 16),
@@ -288,13 +308,15 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
-                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(height: 4),
                         Text(
                           widget.focusType,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surface
+                                .withValues(alpha: 0.7),
                             fontSize: 14,
                           ),
                         ),
@@ -303,7 +325,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                   ),
                 ],
               ),
-            ),
+            ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.1),
             Spacer(),
             // Timer display
             ScaleTransition(
@@ -329,7 +351,10 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                   boxShadow: _isRunning
                       ? [
                           BoxShadow(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: 0.5),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
@@ -355,7 +380,10 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                             ? (_isPaused ? 'PAUSED' : 'FOCUSING')
                             : 'READY',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surface
+                              .withValues(alpha: 0.7),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 4,
@@ -376,7 +404,10 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                     Text(
                       'Session Duration',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surface
+                            .withValues(alpha: 0.6),
                         fontSize: 14,
                       ),
                     ),
@@ -401,12 +432,18 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.surface.withValues(alpha: 0.1),
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .surface
+                                      .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: isSelected
                                   ? null
                                   : Border.all(
-                                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.2),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surface
+                                          .withValues(alpha: 0.2),
                                     ),
                             ),
                             child: Text(
@@ -424,7 +461,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                     ),
                   ],
                 ),
-              ),
+              ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1),
             SizedBox(height: 40),
             // Control buttons
             Padding(
@@ -463,7 +500,10 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
               margin: EdgeInsets.all(20),
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.08),
+                color: Theme.of(context)
+                    .colorScheme
+                    .surface
+                    .withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -480,7 +520,10 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                           ? 'Stay focused! Avoid checking your phone.'
                           : 'Find a quiet place and eliminate distractions.',
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surface
+                            .withValues(alpha: 0.8),
                         fontSize: 14,
                       ),
                     ),
@@ -510,19 +553,31 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
           gradient: isSecondary
               ? null
               : LinearGradient(
-                  colors: [Theme.of(context).colorScheme.primary, Color(0xFF9C7CFF)],
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    Color(0xFF9C7CFF)
+                  ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-          color: isSecondary ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.1) : null,
+          color: isSecondary
+              ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.1)
+              : null,
           border: isSecondary
-              ? Border.all(color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.2))
+              ? Border.all(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surface
+                      .withValues(alpha: 0.2))
               : null,
           boxShadow: isSecondary
               ? []
               : [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.4),
                     blurRadius: 20,
                     offset: Offset(0, 8),
                   ),

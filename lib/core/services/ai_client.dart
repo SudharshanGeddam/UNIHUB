@@ -8,7 +8,8 @@ class ChatSession {
   final String systemInstruction;
   final List<Map<String, dynamic>> _messages = [];
 
-  ChatSession(this.client, {required this.systemInstruction, List<Map<String, dynamic>>? history}) {
+  ChatSession(this.client,
+      {required this.systemInstruction, List<Map<String, dynamic>>? history}) {
     if (systemInstruction.isNotEmpty) {
       _messages.add({
         "role": "system",
@@ -94,7 +95,8 @@ class AIClient {
   bool get isReady => ApiConfig.isConfigured;
 
   ChatSession startChat({List<Map<String, dynamic>>? history}) {
-    return ChatSession(this, systemInstruction: defaultSystemInstruction, history: history);
+    return ChatSession(this,
+        systemInstruction: defaultSystemInstruction, history: history);
   }
 
   Future<String> generateContent(String prompt,

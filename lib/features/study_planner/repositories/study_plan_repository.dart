@@ -56,22 +56,26 @@ class StudyPlanRepository {
           StudyPlanModel plan;
           if (planString != null) {
             try {
-              final jsonStr = planString.trim().startsWith('{') ? planString : null; // Basic check
+              final jsonStr = planString.trim().startsWith('{')
+                  ? planString
+                  : null; // Basic check
               if (jsonStr != null) {
                 plan = StudyPlanModel.fromJson(jsonDecode(jsonStr));
               } else {
-                plan = StudyPlanModel.parseFromResponse(planString) ?? StudyPlanModel.createDefault(
-                  subject: data['subject'] ?? 'Study Plan',
-                  availableTime: data['availableTime'] ?? '',
-                  focusType: data['focusType'] ?? '',
-                );
+                plan = StudyPlanModel.parseFromResponse(planString) ??
+                    StudyPlanModel.createDefault(
+                      subject: data['subject'] ?? 'Study Plan',
+                      availableTime: data['availableTime'] ?? '',
+                      focusType: data['focusType'] ?? '',
+                    );
               }
             } catch (e) {
-              plan = StudyPlanModel.parseFromResponse(planString) ?? StudyPlanModel.createDefault(
-                subject: data['subject'] ?? 'Study Plan',
-                availableTime: data['availableTime'] ?? '',
-                focusType: data['focusType'] ?? '',
-              );
+              plan = StudyPlanModel.parseFromResponse(planString) ??
+                  StudyPlanModel.createDefault(
+                    subject: data['subject'] ?? 'Study Plan',
+                    availableTime: data['availableTime'] ?? '',
+                    focusType: data['focusType'] ?? '',
+                  );
             }
           } else {
             plan = StudyPlanModel.createDefault(
@@ -88,7 +92,8 @@ class StudyPlanRepository {
             availableTime: data['availableTime'] ?? '',
             focusType: data['focusType'] ?? '',
             plan: plan,
-            createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+            createdAt:
+                (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
           );
         }).toList();
       });

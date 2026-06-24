@@ -27,7 +27,8 @@ class FocusModeSection extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF7C4DFF).withValues(alpha: 0.3)),
+        border:
+            Border.all(color: const Color(0xFF7C4DFF).withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
               color: const Color(0xFF7C4DFF).withValues(alpha: 0.2),
@@ -63,8 +64,8 @@ class FocusModeSection extends StatelessWidget {
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text('Block distractions and study with AI guidance',
-              style:
-                  TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 14),
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7), fontSize: 14),
               textAlign: TextAlign.center),
           const SizedBox(height: 24),
           SizedBox(

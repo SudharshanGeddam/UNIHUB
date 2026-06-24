@@ -8,6 +8,7 @@ import 'package:unihub/features/study_planner/widgets/key_topics_section.dart';
 import 'package:unihub/features/study_planner/widgets/study_techniques_section.dart';
 import 'package:unihub/features/study_planner/widgets/focus_mode_section.dart';
 import 'package:unihub/features/study_planner/repositories/study_plan_repository.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class StudyPlannerResults extends StatefulWidget {
   final String subject;
@@ -171,10 +172,16 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AIRecommendationsCard(studyPlan: widget.studyPlan),
+                          AIRecommendationsCard(studyPlan: widget.studyPlan)
+                              .animate()
+                              .fadeIn(delay: 100.ms)
+                              .slideY(begin: 0.1),
                           const SizedBox(height: 24),
                           StudyStreakSection(
-                              streakDays: widget.studyPlan.streakDays),
+                                  streakDays: widget.studyPlan.streakDays)
+                              .animate()
+                              .fadeIn(delay: 200.ms)
+                              .slideY(begin: 0.1),
                           const SizedBox(height: 24),
                           WeeklyPlanSection(
                             studyPlan: widget.studyPlan,
@@ -199,11 +206,14 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                                 }
                               });
                             },
-                          ),
+                          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1),
                           const SizedBox(height: 24),
                           if (widget.studyPlan.keyTopics.isNotEmpty) ...[
                             KeyTopicsSection(
-                                keyTopics: widget.studyPlan.keyTopics),
+                                    keyTopics: widget.studyPlan.keyTopics)
+                                .animate()
+                                .fadeIn(delay: 400.ms)
+                                .slideY(begin: 0.1),
                             const SizedBox(height: 24),
                           ],
                           if (widget.studyPlan.studyTechniques.isNotEmpty) ...[
@@ -211,13 +221,16 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                               techniques: widget.studyPlan.studyTechniques,
                               breakRecommendation:
                                   widget.studyPlan.breakRecommendation,
-                            ),
+                            )
+                                .animate()
+                                .fadeIn(delay: 500.ms)
+                                .slideY(begin: 0.1),
                             const SizedBox(height: 24),
                           ],
                           FocusModeSection(
                             subject: widget.subject,
                             focusType: widget.focusType,
-                          ),
+                          ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1),
                           const SizedBox(height: 40),
                         ],
                       ),
@@ -241,7 +254,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
+              border: Border.all(
+                  color: colorScheme.onSurface.withValues(alpha: 0.1)),
             ),
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
@@ -263,15 +277,15 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
+              border: Border.all(
+                  color: colorScheme.onSurface.withValues(alpha: 0.1)),
             ),
             child: IconButton(
-              icon: _isSaving 
+              icon: _isSaving
                   ? const SizedBox(
-                      width: 20, 
-                      height: 20, 
-                      child: CircularProgressIndicator(strokeWidth: 2)
-                    )
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : Icon(Icons.bookmark_add_outlined,
                       color: colorScheme.onSurface.withValues(alpha: 0.7)),
               onPressed: _isSaving ? null : _savePlan,

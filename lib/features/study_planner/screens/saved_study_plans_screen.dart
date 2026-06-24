@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unihub/core/routing/app_router.dart';
 import 'package:unihub/features/study_planner/repositories/study_plan_repository.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SavedStudyPlansScreen extends StatefulWidget {
   const SavedStudyPlansScreen({super.key});
@@ -69,7 +70,9 @@ class _SavedStudyPlansScreenState extends State<SavedStudyPlansScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.folder_open_rounded, size: 64, color: colorScheme.onSurface.withValues(alpha: 0.5)),
+                  Icon(Icons.folder_open_rounded,
+                      size: 64,
+                      color: colorScheme.onSurface.withValues(alpha: 0.5)),
                   const SizedBox(height: 16),
                   Text(
                     'No saved plans yet',
@@ -88,7 +91,7 @@ class _SavedStudyPlansScreenState extends State<SavedStudyPlansScreen> {
                     ),
                   ),
                 ],
-              ),
+              ).animate().fadeIn().slideY(begin: 0.1),
             );
           }
 
@@ -100,9 +103,11 @@ class _SavedStudyPlansScreenState extends State<SavedStudyPlansScreen> {
               return Card(
                 color: colorScheme.surface,
                 margin: const EdgeInsets.only(bottom: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
                 child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   leading: CircleAvatar(
                     backgroundColor: colorScheme.primary.withValues(alpha: 0.2),
                     child: Icon(Icons.school, color: colorScheme.primary),
@@ -116,7 +121,8 @@ class _SavedStudyPlansScreenState extends State<SavedStudyPlansScreen> {
                   ),
                   subtitle: Text(
                     '${savedPlan.plan.weeklyTasks.length} tasks • ${savedPlan.focusType}',
-                    style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                    style: TextStyle(
+                        color: colorScheme.onSurface.withValues(alpha: 0.6)),
                   ),
                   trailing: IconButton(
                     icon: Icon(Icons.delete_outline, color: colorScheme.error),
@@ -134,7 +140,7 @@ class _SavedStudyPlansScreenState extends State<SavedStudyPlansScreen> {
                     );
                   },
                 ),
-              );
+              ).animate().fadeIn(delay: (50 * index).ms).slideX(begin: 0.1);
             },
           );
         },

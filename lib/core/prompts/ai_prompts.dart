@@ -225,4 +225,72 @@ Rules:
 - Return ONLY the JSON, no other text
 ''';
   }
+
+  static String generateTopicContentPrompt(String subject, String focusType) {
+    return '''
+Generate comprehensive and structured study materials for the following topic.
+
+TOPIC:
+$subject
+
+FOCUS MODE:
+$focusType
+
+Adjust the emphasis of the content based on the FOCUS MODE:
+- If "Notes", focus on detailed key points, definitions, and comprehensive coverage.
+- If "Revision", focus on concise summaries, flashcards, and high-yield facts.
+- If "Exam Prep", focus on quiz questions, potential exam topics, and examples.
+
+IMPORTANT: Respond ONLY with a valid JSON object (no markdown, no explanation, just pure JSON).
+Ensure all strings are properly escaped. Do not use unescaped double quotes inside strings.
+Ensure there are no trailing commas.
+Ensure all newlines within strings are escaped as \\n.
+
+Use this exact JSON structure:
+{
+  "title": "A descriptive title based on the topic",
+  "key_points": [
+    "Detailed key point 1",
+    "Detailed key point 2",
+    "Detailed key point 3",
+    "Detailed key point 4"
+  ],
+  "definitions": [
+    {"term": "Important Term 1", "definition": "Definition"},
+    {"term": "Important Term 2", "definition": "Definition"}
+  ],
+  "formulas": [
+    {"name": "Formula name", "formula": "The formula itself", "description": "What it's used for"}
+  ],
+  "examples": [
+    {"title": "Example title", "content": "Example explanation or problem solved"}
+  ],
+  "flashcards": [
+    {"front": "Question or term", "back": "Answer or definition"},
+    {"front": "Question or term", "back": "Answer or definition"},
+    {"front": "Question or term", "back": "Answer or definition"},
+    {"front": "Question or term", "back": "Answer or definition"},
+    {"front": "Question or term", "back": "Answer or definition"}
+  ],
+  "quiz_questions": [
+    {"question": "Quiz question 1?", "answer": "Correct answer", "options": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"]},
+    {"question": "Quiz question 2?", "answer": "Correct answer", "options": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"]},
+    {"question": "Quiz question 3?", "answer": "Correct answer", "options": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"]},
+    {"question": "Quiz question 4?", "answer": "Correct answer", "options": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"]},
+    {"question": "Quiz question 5?", "answer": "Correct answer", "options": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"]}
+  ],
+  "summary": "A brief 2-3 sentence summary of the generated material"
+}
+
+Rules:
+- Generate 4-7 key_points
+- Generate 3-5 definitions
+- Include formulas only if relevant to the topic, otherwise empty array
+- Create 1-3 practical examples
+- Generate exactly 5 flashcards
+- Generate exactly 5 quiz questions with 4 options each
+- Make the title specific to the topic
+- Return ONLY the JSON, no other text
+''';
+  }
 }

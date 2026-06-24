@@ -44,4 +44,18 @@ class StudyPlanService {
       return 'Error: $e';
     }
   }
+
+  Future<String> generateTopicContent(String subject, String focusType) async {
+    final prompt = AIPrompts.generateTopicContentPrompt(subject, focusType);
+
+    try {
+      if (_aiClient == null) throw Exception('API_KEY not configured');
+      return await _aiClient!.generateContent(prompt);
+    } catch (e) {
+      if (e.toString().contains('API_KEY')) {
+        return 'Please configure OPENROUTER_API_KEY via --dart-define at build time';
+      }
+      return 'Error generating topic content: $e';
+    }
+  }
 }

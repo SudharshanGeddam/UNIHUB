@@ -56,8 +56,8 @@ class AIRecommendationsCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Based on your schedule and performance',
-            style:
-                TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
+            style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
           ),
           const SizedBox(height: 16),
           Container(
