@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:unihub/features/reminders/models/reminder_model.dart';
 import 'package:unihub/features/reminders/widgets/reminder_card.dart';
@@ -109,7 +110,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => Navigator.pop(context),
+            onTap: () => context.pop(),
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(

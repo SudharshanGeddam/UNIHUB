@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unihub/core/theme/app_colors.dart';
 import 'dart:async';
 
@@ -212,7 +213,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
             if (_isRunning) {
               _showExitConfirmation();
             } else {
-              Navigator.pop(context);
+              context.pop();
             }
           },
         ),
@@ -564,7 +565,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Close focus session
+              context.pop(); // Close focus session
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red[400],

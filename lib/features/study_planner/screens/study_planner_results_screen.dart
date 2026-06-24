@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unihub/features/study_planner/models/study_plan_model.dart';
 import 'package:unihub/features/study_planner/widgets/ai_recommendations_card.dart';
 import 'package:unihub/features/study_planner/widgets/study_streak_section.dart';
@@ -214,7 +215,7 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
             ),
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
             ),
           ),
           Expanded(

@@ -114,9 +114,22 @@ class _AgentScreenState extends State<AgentScreen> {
 
       _scrollToBottom();
     } catch (e) {
+      String errorMsg;
+      final errorStr = e.toString();
+      if (errorStr.contains('401') || errorStr.contains('API_KEY') || errorStr.contains('Unauthorized')) {
+        errorMsg = '🔑 API key is invalid or missing. Please reconfigure.';
+      } else if (errorStr.contains('429') || errorStr.contains('rate limit')) {
+        errorMsg = '⏳ Rate limit reached. Please wait a moment and try again.';
+      } else if (errorStr.contains('SocketException') || errorStr.contains('Connection refused') || errorStr.contains('Network')) {
+        errorMsg = '📶 No internet connection. Please check your network.';
+      } else if (errorStr.contains('timeout') || errorStr.contains('TimeoutException')) {
+        errorMsg = '⏱️ Request timed out. Please try again.';
+      } else {
+        errorMsg = 'Something went wrong: ${errorStr.replaceAll('Exception: ', '')}';
+      }
       setState(() {
         _messages.add(ChatMessage(
-          text: 'Sorry, I encountered an error. Please try again.',
+          text: errorMsg,
           isUser: false,
         ));
         _isLoading = false;

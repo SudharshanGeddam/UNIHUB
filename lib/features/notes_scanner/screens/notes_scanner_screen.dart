@@ -271,6 +271,7 @@ class _NotesScannerScreenState extends State<NotesScannerScreen>
   }
 
   void _showError(String message) {
+    if (!mounted) return;
     final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
