@@ -92,14 +92,6 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
     super.dispose();
   }
 
-  // Calculate progress for a task
-  double _getTaskProgress(int taskIndex) {
-    final task = widget.studyPlan.weeklyTasks[taskIndex];
-    if (task.topics.isEmpty) return 0.0;
-    final completed = _completedTopics[taskIndex]?.length ?? 0;
-    return completed / task.topics.length;
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

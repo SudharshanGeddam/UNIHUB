@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class AccountSettingsSheet extends StatefulWidget {
   final String userName;
@@ -7,6 +6,7 @@ class AccountSettingsSheet extends StatefulWidget {
   final Function(String) onSave;
 
   const AccountSettingsSheet({
+    super.key,
     required this.userName,
     required this.userEmail,
     required this.onSave,

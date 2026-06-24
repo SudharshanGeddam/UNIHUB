@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unihub/core/routing/app_router.dart';
 import 'package:unihub/core/theme/theme_provider.dart';
 import 'package:unihub/features/auth/services/auth_service.dart';
