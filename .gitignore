@@ -106,3 +106,4 @@ ios/Pods/
 
 # App configuration containing hardcoded API keys
 lib/config/api_config.dart
+*.py
