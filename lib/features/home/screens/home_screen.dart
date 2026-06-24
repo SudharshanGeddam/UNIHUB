@@ -127,7 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           'Welcome back,',
                           style: TextStyle(
-                              color: colorScheme.onSurface.withValues(alpha: 0.6),
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.6),
                               fontSize: 13),
                         ),
                         Text(
@@ -180,7 +181,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
                           icon: Icon(Icons.clear_rounded,
-                              color: colorScheme.onSurface.withValues(alpha: 0.4),
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.4),
                               size: 20),
                           onPressed: () {
                             _searchController.clear();
@@ -189,8 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         )
                       : null,
                   hintText: 'Search features...',
-                  hintStyle:
-                      TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.4)),
+                  hintStyle: TextStyle(
+                      color: colorScheme.onSurface.withValues(alpha: 0.4)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
@@ -210,14 +212,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.search_off_rounded,
-                              color: colorScheme.onSurface.withValues(alpha: 0.2),
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.2),
                               size: 64),
                           const SizedBox(height: 16),
                           Text(
                             'No features match your search',
                             style: TextStyle(
-                                color:
-                                    colorScheme.onSurface.withValues(alpha: 0.5),
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.5),
                                 fontSize: 16),
                           ),
                         ],
@@ -337,13 +340,18 @@ class _FeatureCardState extends State<_FeatureCard> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
-            color: colorScheme.surface,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Color.alphaBlend(
+                    Colors.white.withValues(alpha: 0.03), colorScheme.surface)
+                : colorScheme.surface,
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
                 color: _isHovered
                     ? colorScheme.primary.withValues(alpha: 0.15)
-                    : Colors.black.withValues(alpha: 0.04),
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black.withValues(alpha: 0.2)
+                        : Colors.black.withValues(alpha: 0.04)),
                 blurRadius: _isHovered ? 20 : 10,
                 offset: Offset(0, _isHovered ? 8 : 4),
               ),
@@ -351,7 +359,9 @@ class _FeatureCardState extends State<_FeatureCard> {
             border: Border.all(
               color: _isHovered
                   ? colorScheme.primary.withValues(alpha: 0.3)
-                  : Colors.transparent,
+                  : (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.transparent),
               width: 1.5,
             ),
           ),
