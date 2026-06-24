@@ -23,7 +23,7 @@ class AIRecommendationsCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C4DFF).withOpacity(0.4),
+            color: const Color(0xFF7C4DFF).withValues(alpha: 0.4),
             blurRadius: 25,
             offset: const Offset(0, 12),
           ),
@@ -37,7 +37,7 @@ class AIRecommendationsCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.auto_awesome,
@@ -57,14 +57,14 @@ class AIRecommendationsCard extends StatelessWidget {
           Text(
             'Based on your schedule and performance',
             style:
-                TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
+                TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 14),
           ),
           const SizedBox(height: 16),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -86,7 +86,7 @@ class AIRecommendationsCard extends StatelessWidget {
                 child: Text(
                   studyPlan.motivationalTip,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.9), fontSize: 13),
+                      color: Colors.white.withValues(alpha: 0.9), fontSize: 13),
                 ),
               ),
             ],

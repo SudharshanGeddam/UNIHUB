@@ -112,7 +112,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           centerTitle: true,
-          backgroundColor: const Color.fromRGBO(10, 2, 46, 1),
+          backgroundColor: Theme.of(context).colorScheme.surface,
         ),
         body: const Center(
             child: ApiKeyMissingBanner(featureName: 'Study Planner')),
@@ -144,7 +144,13 @@ class _StudyPlannerState extends State<StudyPlanner> {
         ),
         toolbarHeight: 70,
         centerTitle: true,
-        backgroundColor: const Color.fromRGBO(10, 2, 46, 1),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bookmarks_outlined, color: Colors.white),
+            onPressed: () => context.push(AppRoutes.savedStudyPlans),
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -155,7 +161,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
             ),
           ),
           Positioned.fill(
-            child: Container(color: Colors.black.withOpacity(0.4)),
+            child: Container(color: Colors.black.withValues(alpha: 0.4)),
           ),
           SafeArea(
             child: SingleChildScrollView(
@@ -237,7 +243,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color.fromARGB(255, 43, 52, 227)
+                                ? Theme.of(context).colorScheme.primary
                                 : const Color.fromARGB(255, 85, 86, 91),
                             borderRadius: BorderRadius.circular(25),
                             border: isSelected
@@ -264,7 +270,7 @@ class _StudyPlannerState extends State<StudyPlanner> {
                     child: ElevatedButton(
                       onPressed: _isGenerating ? null : _generateSchedule,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 43, 52, 227),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),

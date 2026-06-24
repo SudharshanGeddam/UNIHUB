@@ -39,6 +39,18 @@ class StudyPlanModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'recommendation': recommendation,
+      'motivational_tip': motivationalTip,
+      'streak_days': streakDays,
+      'weekly_tasks': weeklyTasks.map((task) => task.toJson()).toList(),
+      'key_topics': keyTopics,
+      'study_techniques': studyTechniques,
+      'break_recommendation': breakRecommendation,
+    };
+  }
+
   /// Parses a [StudyPlanModel] from a raw AI response string.
   ///
   /// Returns `null` if the response cannot be parsed.
@@ -141,6 +153,17 @@ class StudyTaskModel {
           [],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'subtitle': subtitle,
+      'hours_left': hoursLeft,
+      'chapters': chapters,
+      'priority': priority,
+      'topics': topics.map((topic) => topic.toJson()).toList(),
+    };
+  }
 }
 
 /// A granular topic within a [StudyTaskModel].
@@ -158,5 +181,12 @@ class TopicItem {
       name: json['name'] ?? json['topic'] ?? 'Topic',
       description: json['description'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'description': description,
+    };
   }
 }

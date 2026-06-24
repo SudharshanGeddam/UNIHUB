@@ -15,6 +15,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
   final _descriptionController = TextEditingController();
   ReminderType _selectedType = ReminderType.classReminder;
   ReminderCategory _selectedCategory = ReminderCategory.academic;
+  DateTime _selectedDueDate = DateTime.now().add(const Duration(hours: 1));
 
   @override
   void dispose() {
@@ -40,7 +41,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
         ),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -56,7 +57,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -73,7 +74,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF7C4DFF).withOpacity(0.4),
+                          color: const Color(0xFF7C4DFF).withValues(alpha: 0.4),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -102,7 +103,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                         'Stay organized and never miss a deadline',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -126,11 +127,22 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
               ),
               const SizedBox(height: 24),
               Text(
+                'Due Date & Time',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.9),
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildDatePicker(),
+              const SizedBox(height: 24),
+              Text(
                 'Reminder Type',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
               ),
               const SizedBox(height: 12),
@@ -141,7 +153,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
               ),
               const SizedBox(height: 12),
@@ -157,7 +169,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF7C4DFF).withOpacity(0.4),
+                        color: const Color(0xFF7C4DFF).withValues(alpha: 0.4),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -214,7 +226,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha: 0.9),
           ),
         ),
         const SizedBox(height: 8),
@@ -228,14 +240,14 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha: 0.3),
               fontSize: 14,
             ),
             prefixIcon: Container(
               margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF7C4DFF).withOpacity(0.2),
+                color: const Color(0xFF7C4DFF).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -245,7 +257,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
               ),
             ),
             filled: true,
-            fillColor: const Color(0xFF1E1E3F).withOpacity(0.8),
+            fillColor: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide.none,
@@ -253,7 +265,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -274,6 +286,77 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
     );
   }
 
+  Widget _buildDatePicker() {
+    return GestureDetector(
+      onTap: () async {
+        final date = await showDatePicker(
+          context: context,
+          initialDate: _selectedDueDate,
+          firstDate: DateTime.now(),
+          lastDate: DateTime.now().add(const Duration(days: 365)),
+        );
+        if (date != null && mounted) {
+          final time = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.fromDateTime(_selectedDueDate),
+          );
+          if (time != null && mounted) {
+            setState(() {
+              _selectedDueDate = DateTime(
+                date.year,
+                date.month,
+                date.day,
+                time.hour,
+                time.minute,
+              );
+            });
+          }
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.1),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF7C4DFF).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.calendar_month_rounded,
+                color: Color(0xFF7C4DFF),
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Text(
+              '${_selectedDueDate.month}/${_selectedDueDate.day}/${_selectedDueDate.year} ${_selectedDueDate.hour}:${_selectedDueDate.minute.toString().padLeft(2, '0')}',
+              style: const TextStyle(
+                fontSize: 15,
+                color: Colors.white,
+              ),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.edit_calendar_rounded,
+              color: Colors.white.withValues(alpha: 0.5),
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildTypeSelector() {
     return Wrap(
       spacing: 10,
@@ -290,24 +373,24 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
               gradient: isSelected
                   ? LinearGradient(
                       colors: [
-                        color.withOpacity(0.3),
-                        color.withOpacity(0.15),
+                        color.withValues(alpha: 0.3),
+                        color.withValues(alpha: 0.15),
                       ],
                     )
                   : null,
               color:
-                  isSelected ? null : const Color(0xFF1E1E3F).withOpacity(0.8),
+                  isSelected ? null : const Color(0xFF1E1E3F).withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
-                    ? color.withOpacity(0.5)
-                    : Colors.white.withOpacity(0.1),
+                    ? color.withValues(alpha: 0.5)
+                    : Colors.white.withValues(alpha: 0.1),
                 width: 1.5,
               ),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: color.withOpacity(0.25),
+                        color: color.withValues(alpha: 0.25),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -320,7 +403,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                 Icon(
                   _getTypeIcon(type),
                   size: 18,
-                  color: isSelected ? color : Colors.white.withOpacity(0.5),
+                  color: isSelected ? color : Colors.white.withValues(alpha: 0.5),
                 ),
                 const SizedBox(width: 6),
                 Text(
@@ -328,7 +411,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? color : Colors.white.withOpacity(0.6),
+                    color: isSelected ? color : Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -367,18 +450,18 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                       : null,
                   color: isSelected
                       ? null
-                      : const Color(0xFF1E1E3F).withOpacity(0.8),
+                      : const Color(0xFF1E1E3F).withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
                         ? Colors.transparent
-                        : Colors.white.withOpacity(0.1),
+                        : Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: const Color(0xFF7C4DFF).withOpacity(0.35),
+                            color: const Color(0xFF7C4DFF).withValues(alpha: 0.35),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -392,7 +475,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected
                         ? Colors.white
-                        : Colors.white.withOpacity(0.6),
+                        : Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -426,6 +509,7 @@ class _AddReminderSheetState extends State<AddReminderSheet> {
       type: _selectedType,
       category: _selectedCategory,
       createdAt: DateTime.now(),
+      dueDate: _selectedDueDate,
     );
 
     widget.onAdd(reminder);

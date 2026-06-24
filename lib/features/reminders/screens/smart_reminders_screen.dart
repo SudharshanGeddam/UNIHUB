@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:unihub/features/reminders/models/reminder_model.dart';
 import 'package:unihub/features/reminders/widgets/reminder_card.dart';
 import 'package:unihub/features/reminders/widgets/add_reminder_sheet.dart';
+import 'package:unihub/features/reminders/repositories/reminder_repository.dart';
 
 class SmartRemindersScreen extends StatefulWidget {
   const SmartRemindersScreen({super.key});
@@ -15,60 +16,26 @@ class SmartRemindersScreen extends StatefulWidget {
 class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
   ReminderCategory _selectedCategory = ReminderCategory.all;
 
-  final List<Reminder> _reminders = [
-    Reminder(
-      id: '1',
-      title: 'Class Reminder',
-      description: 'Data Structures class starts in 10 minutes - Room 301',
-      type: ReminderType.classReminder,
-      category: ReminderCategory.academic,
-      createdAt: DateTime.now().subtract(const Duration(minutes: 8)),
-    ),
-    Reminder(
-      id: '2',
-      title: 'Study Session Reminder',
-      description:
-          'Perfect time to review Neural Networks - you have 2 hours free',
-      type: ReminderType.studySession,
-      category: ReminderCategory.academic,
-      createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-      isAiSuggestion: true,
-    ),
-    Reminder(
-      id: '3',
-      title: 'Lab Schedule',
-      description: 'Tomorrow: Machine Learning Lab at 2 PM - Lab 2',
-      type: ReminderType.labSchedule,
-      category: ReminderCategory.academic,
-      createdAt: DateTime.now().subtract(const Duration(hours: 3)),
-    ),
-    Reminder(
-      id: '4',
-      title: 'Assignment Due',
-      description: 'Neural Networks assignment due in 2 days',
-      type: ReminderType.assignmentDue,
-      category: ReminderCategory.exams,
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-  ];
+  final _reminderRepository = ReminderRepository();
 
-  List<Reminder> get _filteredReminders {
-    if (_selectedCategory == ReminderCategory.all) {
-      return _reminders;
+  void _addReminder(Reminder reminder) async {
+    try {
+      await _reminderRepository.addReminder(reminder);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error adding reminder: $e')));
+      }
     }
-    return _reminders.where((r) => r.category == _selectedCategory).toList();
   }
 
-  void _addReminder(Reminder reminder) {
-    setState(() {
-      _reminders.insert(0, reminder);
-    });
-  }
-
-  void _deleteReminder(String id) {
-    setState(() {
-      _reminders.removeWhere((r) => r.id == id);
-    });
+  void _deleteReminder(String id) async {
+    try {
+      await _reminderRepository.deleteReminder(id);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error deleting reminder: $e')));
+      }
+    }
   }
 
   @override
@@ -76,16 +43,34 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(colorScheme),
             _buildFilterTabs(colorScheme),
             Expanded(
-              child: _filteredReminders.isEmpty
-                  ? _buildEmptyState(colorScheme)
-                  : _buildRemindersList(),
+              child: StreamBuilder<List<Reminder>>(
+                stream: _reminderRepository.getReminders(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error loading reminders', style: TextStyle(color: colorScheme.onSurface)));
+                  }
+                  
+                  final reminders = snapshot.data ?? [];
+                  final filteredReminders = _selectedCategory == ReminderCategory.all
+                      ? reminders
+                      : reminders.where((r) => r.category == _selectedCategory).toList();
+
+                  if (filteredReminders.isEmpty) {
+                    return _buildEmptyState(colorScheme);
+                  }
+                  return _buildRemindersList(filteredReminders);
+                },
+              ),
             ),
           ],
         ),
@@ -117,13 +102,13 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colorScheme.onSurface.withOpacity(0.1),
+                  color: colorScheme.onSurface.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
               child: Icon(
                 Icons.arrow_back_ios_new,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
                 size: 18,
               ),
             ),
@@ -138,7 +123,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     letterSpacing: 0.3,
                   ),
                 ),
@@ -147,7 +132,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                   'Never miss an important update',
                   style: TextStyle(
                     fontSize: 13,
-                    color: colorScheme.onBackground.withOpacity(0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -159,13 +144,13 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: colorScheme.onSurface.withOpacity(0.1),
+                color: colorScheme.onSurface.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
             child: Icon(
               Icons.notifications_active_rounded,
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
               size: 20,
             ),
           ),
@@ -197,13 +182,13 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                     border: Border.all(
                       color: isSelected
                           ? Colors.transparent
-                          : colorScheme.onSurface.withOpacity(0.1),
+                          : colorScheme.onSurface.withValues(alpha: 0.1),
                       width: 1,
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: colorScheme.primary.withOpacity(0.4),
+                              color: colorScheme.primary.withValues(alpha: 0.4),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -215,7 +200,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
                     style: TextStyle(
                       color: isSelected
                           ? colorScheme.onPrimary
-                          : colorScheme.onSurface.withOpacity(0.7),
+                          : colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.w500,
                       fontSize: 13,
@@ -236,14 +221,14 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
     );
   }
 
-  Widget _buildRemindersList() {
+  Widget _buildRemindersList(List<Reminder> reminders) {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
-      itemCount: _filteredReminders.length,
+      itemCount: reminders.length,
       itemBuilder: (context, index) {
         return ReminderCard(
-          reminder: _filteredReminders[index],
-          onDelete: () => _deleteReminder(_filteredReminders[index].id),
+          reminder: reminders[index],
+          onDelete: () => _deleteReminder(reminders[index].id),
         ).animate().fadeIn(duration: 350.ms, delay: (index * 80).ms).slideY(
             begin: 0.1, end: 0, duration: 350.ms, delay: (index * 80).ms);
       },
@@ -259,7 +244,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: colorScheme.primary.withOpacity(0.1),
+              color: colorScheme.primary.withValues(alpha: 0.1),
             ),
             child: Icon(
               Icons.notifications_none_rounded,
@@ -273,7 +258,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
             ),
           ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
           const SizedBox(height: 8),
@@ -281,7 +266,7 @@ class _SmartRemindersScreenState extends State<SmartRemindersScreen> {
             'Tap the button below to add your first reminder',
             style: TextStyle(
               fontSize: 14,
-              color: colorScheme.onBackground.withOpacity(0.5),
+              color: colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
         ],

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unihub/core/routing/app_router.dart';
 import 'package:unihub/core/theme/theme_provider.dart';
 import 'package:unihub/features/auth/services/auth_service.dart';
+import 'package:unihub/features/profile/repositories/user_profile_repository.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,7 +17,24 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _authService = AuthService();
+  final _userProfileRepo = UserProfileRepository();
   bool _isLoading = false;
+  UserProfileStats? _stats;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStats();
+  }
+
+  Future<void> _loadStats() async {
+    final stats = await _userProfileRepo.getUserStats();
+    if (mounted) {
+      setState(() {
+        _stats = stats;
+      });
+    }
+  }
 
   String get _userName {
     final user = _authService.currentUser;
@@ -40,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: Text(
           'Are you sure you want to logout?',
           style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7)),
         ),
         actions: [
           TextButton(
@@ -70,7 +89,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) =>
-          _AccountSettingsSheet(userName: _userName, userEmail: _userEmail),
+          _AccountSettingsSheet(
+            userName: _userName, 
+            userEmail: _userEmail,
+            onSave: (newName) async {
+              await _userProfileRepo.updateDisplayName(newName);
+              setState(() {}); // refresh name
+            },
+          ),
     );
   }
 
@@ -99,16 +125,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: colorScheme.onBackground),
+        leading: BackButton(color: colorScheme.onSurface),
         title: Text(
           'Profile',
           style: TextStyle(
-              color: colorScheme.onBackground, fontWeight: FontWeight.bold),
+              color: colorScheme.onSurface, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit, color: colorScheme.onBackground),
+            icon: Icon(Icons.edit, color: colorScheme.onSurface),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -134,14 +160,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    colorScheme.primary.withOpacity(0.9),
-                    colorScheme.tertiary.withOpacity(0.9),
+                    colorScheme.primary.withValues(alpha: 0.9),
+                    colorScheme.tertiary.withValues(alpha: 0.9),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: colorScheme.primary.withOpacity(0.2),
+                    color: colorScheme.primary.withValues(alpha: 0.2),
                     blurRadius: 15,
                     offset: const Offset(0, 8),
                   ),
@@ -190,11 +216,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _StatItem(label: 'Study Plans', value: '3'),
+                      _StatItem(label: 'Study Plans', value: _stats?.totalStudyPlans.toString() ?? '-'),
                       Container(width: 1, height: 40, color: Colors.white24),
-                      _StatItem(label: 'Chat Sessions', value: '12'),
+                      _StatItem(label: 'Reminders', value: _stats?.totalReminders.toString() ?? '-'),
                       Container(width: 1, height: 40, color: Colors.white24),
-                      _StatItem(label: 'Days Active', value: '7'),
+                      _StatItem(label: 'Completed', value: _stats?.completedReminders.toString() ?? '-'),
                     ],
                   ),
                 ],
@@ -209,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -225,32 +251,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     trailing: Switch(
                       value: themeProvider.isDarkMode,
                       onChanged: (_) => themeProvider.toggleTheme(),
-                      activeColor: colorScheme.primary,
+                      activeThumbColor: colorScheme.primary,
                     ),
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.person_outline,
                     title: 'Account Settings',
                     onTap: _showAccountSettings,
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.notifications_outlined,
                     title: 'Notifications',
                     onTap: _showNotificationsSettings,
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.security_outlined,
                     title: 'Privacy & Security',
                     onTap: _showPrivacySettings,
                   ),
                   Divider(
-                      color: colorScheme.onSurface.withOpacity(0.1), height: 1),
+                      color: colorScheme.onSurface.withValues(alpha: 0.1), height: 1),
                   _SettingsTile(
                     icon: Icons.info_outline,
                     title: 'About UniHub',
@@ -286,7 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     : const Icon(Icons.logout),
                 label: Text(_isLoading ? 'Logging out...' : 'Logout'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.error.withOpacity(0.1),
+                  backgroundColor: colorScheme.error.withValues(alpha: 0.1),
                   foregroundColor: colorScheme.error,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
@@ -361,7 +387,7 @@ class _SettingsTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: colorScheme.primary.withOpacity(0.1),
+          color: colorScheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: colorScheme.primary, size: 22),
@@ -376,18 +402,42 @@ class _SettingsTile extends StatelessWidget {
       ),
       trailing: trailing ??
           Icon(Icons.arrow_forward_ios,
-              color: colorScheme.onSurface.withOpacity(0.3), size: 16),
+              color: colorScheme.onSurface.withValues(alpha: 0.3), size: 16),
       onTap: onTap,
     );
   }
 }
 
-class _AccountSettingsSheet extends StatelessWidget {
+class _AccountSettingsSheet extends StatefulWidget {
   final String userName;
   final String userEmail;
+  final Function(String) onSave;
 
-  const _AccountSettingsSheet(
-      {required this.userName, required this.userEmail});
+  const _AccountSettingsSheet({
+    required this.userName, 
+    required this.userEmail,
+    required this.onSave,
+  });
+
+  @override
+  State<_AccountSettingsSheet> createState() => _AccountSettingsSheetState();
+}
+
+class _AccountSettingsSheetState extends State<_AccountSettingsSheet> {
+  late TextEditingController _nameController;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.userName);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -414,12 +464,12 @@ class _AccountSettingsSheet extends StatelessWidget {
                   color: colorScheme.onSurface)),
           const SizedBox(height: 24),
           TextFormField(
-            initialValue: userName,
+            controller: _nameController,
             decoration: const InputDecoration(labelText: 'Full Name'),
           ),
           const SizedBox(height: 16),
           TextFormField(
-            initialValue: userEmail,
+            initialValue: widget.userEmail,
             decoration: const InputDecoration(labelText: 'Email Address'),
             enabled: false,
           ),
@@ -427,12 +477,27 @@ class _AccountSettingsSheet extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Settings saved successfully!')));
+              onPressed: _isSaving ? null : () async {
+                setState(() => _isSaving = true);
+                try {
+                  await widget.onSave(_nameController.text.trim());
+                  if (mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Settings saved successfully!')));
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('Failed to save settings: $e')));
+                  }
+                } finally {
+                  if (mounted) setState(() => _isSaving = false);
+                }
               },
-              child: const Text('Save Changes'),
+              child: _isSaving 
+                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Save Changes'),
             ),
           ),
         ],
@@ -453,6 +518,28 @@ class _NotificationsSettingsSheetState
   bool pushEnabled = true;
   bool emailEnabled = false;
   bool studyReminders = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        pushEnabled = prefs.getBool('pushEnabled') ?? true;
+        emailEnabled = prefs.getBool('emailEnabled') ?? false;
+        studyReminders = prefs.getBool('studyReminders') ?? true;
+      });
+    }
+  }
+
+  Future<void> _saveSetting(String key, bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(key, value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -477,24 +564,33 @@ class _NotificationsSettingsSheetState
             title: Text('Push Notifications',
                 style: TextStyle(color: colorScheme.onSurface)),
             value: pushEnabled,
-            onChanged: (val) => setState(() => pushEnabled = val),
-            activeColor: colorScheme.primary,
+            onChanged: (val) {
+              setState(() => pushEnabled = val);
+              _saveSetting('pushEnabled', val);
+            },
+            activeThumbColor: colorScheme.primary,
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
             title: Text('Email Summaries',
                 style: TextStyle(color: colorScheme.onSurface)),
             value: emailEnabled,
-            onChanged: (val) => setState(() => emailEnabled = val),
-            activeColor: colorScheme.primary,
+            onChanged: (val) {
+              setState(() => emailEnabled = val);
+              _saveSetting('emailEnabled', val);
+            },
+            activeThumbColor: colorScheme.primary,
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
             title: Text('Study Reminders',
                 style: TextStyle(color: colorScheme.onSurface)),
             value: studyReminders,
-            onChanged: (val) => setState(() => studyReminders = val),
-            activeColor: colorScheme.primary,
+            onChanged: (val) {
+              setState(() => studyReminders = val);
+              _saveSetting('studyReminders', val);
+            },
+            activeThumbColor: colorScheme.primary,
             contentPadding: EdgeInsets.zero,
           ),
           const SizedBox(height: 24),
@@ -616,7 +712,7 @@ class _PrivacySettingsSheetState extends State<_PrivacySettingsSheet> {
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2))
                 : Icon(Icons.arrow_forward_ios,
-                    size: 16, color: colorScheme.onSurface.withOpacity(0.5)),
+                    size: 16, color: colorScheme.onSurface.withValues(alpha: 0.5)),
             onTap: _isLoading ? null : _handleChangePassword,
           ),
           SwitchListTile(
@@ -625,10 +721,10 @@ class _PrivacySettingsSheetState extends State<_PrivacySettingsSheet> {
                 style: TextStyle(color: colorScheme.onSurface)),
             subtitle: Text('Help us improve UniHub',
                 style:
-                    TextStyle(color: colorScheme.onSurface.withOpacity(0.6))),
+                    TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.6))),
             value: analyticsEnabled,
             onChanged: (val) => setState(() => analyticsEnabled = val),
-            activeColor: colorScheme.primary,
+            activeThumbColor: colorScheme.primary,
           ),
           const SizedBox(height: 24),
           SizedBox(

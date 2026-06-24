@@ -14,12 +14,12 @@ class KeyTopicsSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E3F).withOpacity(0.8),
+        color: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 8))
         ],
@@ -32,7 +32,7 @@ class KeyTopicsSection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: const Color(0xFF4CAF50).withOpacity(0.2),
+                    color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8)),
                 child:
                     const Icon(Icons.topic, color: Color(0xFF4CAF50), size: 20),
@@ -54,10 +54,10 @@ class KeyTopicsSection extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4CAF50).withOpacity(0.15),
+                  color: const Color(0xFF4CAF50).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: const Color(0xFF4CAF50).withOpacity(0.4)),
+                      color: const Color(0xFF4CAF50).withValues(alpha: 0.4)),
                 ),
                 child: Text(topic,
                     style: const TextStyle(

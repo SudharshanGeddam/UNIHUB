@@ -23,9 +23,9 @@ class ExportButton extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: fullWidth ? 16 : 14),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
+          color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: color.withOpacity(0.5)),
+          border: Border.all(color: color.withValues(alpha: 0.5)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

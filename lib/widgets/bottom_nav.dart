@@ -16,7 +16,7 @@ class BottomNav extends StatelessWidget {
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -27,7 +27,7 @@ class BottomNav extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: Container(
-            color: Theme.of(context).colorScheme.surface.withOpacity(0.85),
+            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.85),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -94,7 +94,7 @@ class _NavItemState extends State<_NavItem> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: _isHovered
-                ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),
@@ -105,7 +105,7 @@ class _NavItemState extends State<_NavItem> {
                 widget.icon,
                 color: _isHovered
                     ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                 size: 26,
               ),
               const SizedBox(height: 4),
@@ -117,7 +117,7 @@ class _NavItemState extends State<_NavItem> {
                       : Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.6),
+                          .withValues(alpha: 0.6),
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),

@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // Avatar
                   CircleAvatar(
-                    backgroundColor: colorScheme.primary.withOpacity(0.2),
+                    backgroundColor: colorScheme.primary.withValues(alpha: 0.2),
                     radius: 28,
                     backgroundImage:
                         _userPhoto != null ? NetworkImage(_userPhoto!) : null,
@@ -127,13 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(
                           'Welcome back,',
                           style: TextStyle(
-                              color: colorScheme.onBackground.withOpacity(0.6),
+                              color: colorScheme.onSurface.withValues(alpha: 0.6),
                               fontSize: 13),
                         ),
                         Text(
                           _userName,
                           style: TextStyle(
-                            color: colorScheme.onBackground,
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -176,11 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   fillColor: colorScheme.surface,
                   filled: true,
                   prefixIcon: Icon(Icons.search_rounded,
-                      color: colorScheme.onSurface.withOpacity(0.4)),
+                      color: colorScheme.onSurface.withValues(alpha: 0.4)),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
                           icon: Icon(Icons.clear_rounded,
-                              color: colorScheme.onSurface.withOpacity(0.4),
+                              color: colorScheme.onSurface.withValues(alpha: 0.4),
                               size: 20),
                           onPressed: () {
                             _searchController.clear();
@@ -190,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       : null,
                   hintText: 'Search features...',
                   hintStyle:
-                      TextStyle(color: colorScheme.onSurface.withOpacity(0.4)),
+                      TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.4)),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
@@ -210,14 +210,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.search_off_rounded,
-                              color: colorScheme.onBackground.withOpacity(0.2),
+                              color: colorScheme.onSurface.withValues(alpha: 0.2),
                               size: 64),
                           const SizedBox(height: 16),
                           Text(
                             'No features match your search',
                             style: TextStyle(
                                 color:
-                                    colorScheme.onBackground.withOpacity(0.5),
+                                    colorScheme.onSurface.withValues(alpha: 0.5),
                                 fontSize: 16),
                           ),
                         ],
@@ -261,8 +261,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        colorScheme.tertiary.withOpacity(0.8),
-                        colorScheme.primary.withOpacity(0.8),
+                        colorScheme.tertiary.withValues(alpha: 0.8),
+                        colorScheme.primary.withValues(alpha: 0.8),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -270,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(24),
                     boxShadow: [
                       BoxShadow(
-                        color: colorScheme.primary.withOpacity(0.2),
+                        color: colorScheme.primary.withValues(alpha: 0.2),
                         blurRadius: 15,
                         offset: const Offset(0, 5),
                       ),
@@ -342,15 +342,15 @@ class _FeatureCardState extends State<_FeatureCard> {
             boxShadow: [
               BoxShadow(
                 color: _isHovered
-                    ? colorScheme.primary.withOpacity(0.15)
-                    : Colors.black.withOpacity(0.04),
+                    ? colorScheme.primary.withValues(alpha: 0.15)
+                    : Colors.black.withValues(alpha: 0.04),
                 blurRadius: _isHovered ? 20 : 10,
                 offset: Offset(0, _isHovered ? 8 : 4),
               ),
             ],
             border: Border.all(
               color: _isHovered
-                  ? colorScheme.primary.withOpacity(0.3)
+                  ? colorScheme.primary.withValues(alpha: 0.3)
                   : Colors.transparent,
               width: 1.5,
             ),
@@ -363,7 +363,7 @@ class _FeatureCardState extends State<_FeatureCard> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacity(0.1),
+                    color: colorScheme.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child:
@@ -382,7 +382,7 @@ class _FeatureCardState extends State<_FeatureCard> {
                 Text(
                   widget.description,
                   style: TextStyle(
-                    color: colorScheme.onSurface.withOpacity(0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 12,
                     height: 1.3,
                   ),

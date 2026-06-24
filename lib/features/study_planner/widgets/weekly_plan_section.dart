@@ -31,12 +31,12 @@ class WeeklyPlanSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E3F).withOpacity(0.8),
+        color: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 8))
         ],
@@ -67,11 +67,11 @@ class WeeklyPlanSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12)),
       child: Center(
           child: Text('No tasks generated. Try regenerating the plan.',
-              style: TextStyle(color: Colors.white.withOpacity(0.5)))),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.5)))),
     );
   }
 
@@ -90,12 +90,12 @@ class WeeklyPlanSection extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: isLast ? 0 : 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.06),
+        color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isExpanded
-              ? task.color.withOpacity(0.4)
-              : Colors.white.withOpacity(0.08),
+              ? task.color.withValues(alpha: 0.4)
+              : Colors.white.withValues(alpha: 0.08),
           width: isExpanded ? 1.5 : 1,
         ),
       ),
@@ -114,7 +114,7 @@ class WeeklyPlanSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: task.color.withOpacity(0.2),
+                      color: task.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(task.icon, color: task.color, size: 26),
@@ -137,7 +137,7 @@ class WeeklyPlanSection extends StatelessWidget {
                         Text(
                           topicsPreview,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                             fontSize: 13,
                             height: 1.3,
                           ),
@@ -156,7 +156,7 @@ class WeeklyPlanSection extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: task.color.withOpacity(0.15),
+                          color: task.color.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -174,7 +174,7 @@ class WeeklyPlanSection extends StatelessWidget {
                         duration: const Duration(milliseconds: 200),
                         child: Icon(
                           Icons.keyboard_arrow_down,
-                          color: Colors.white.withOpacity(0.4),
+                          color: Colors.white.withValues(alpha: 0.4),
                           size: 22,
                         ),
                       ),
@@ -200,7 +200,7 @@ class WeeklyPlanSection extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                             child: LinearProgressIndicator(
                               value: progress,
-                              backgroundColor: Colors.white.withOpacity(0.1),
+                              backgroundColor: Colors.white.withValues(alpha: 0.1),
                               valueColor:
                                   AlwaysStoppedAnimation<Color>(task.color),
                               minHeight: 5,
@@ -211,7 +211,7 @@ class WeeklyPlanSection extends StatelessWidget {
                         Text(
                           '$completedCount/$totalTopics',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -239,7 +239,7 @@ class WeeklyPlanSection extends StatelessWidget {
         child: Text(
           'No specific topics available',
           style: TextStyle(
-              color: Colors.white.withOpacity(0.4),
+              color: Colors.white.withValues(alpha: 0.4),
               fontSize: 13,
               fontStyle: FontStyle.italic),
         ),
@@ -266,13 +266,13 @@ class WeeklyPlanSection extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
                   decoration: BoxDecoration(
                     color: isCompleted
-                        ? task.color.withOpacity(0.12)
-                        : Colors.white.withOpacity(0.04),
+                        ? task.color.withValues(alpha: 0.12)
+                        : Colors.white.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isCompleted
-                          ? task.color.withOpacity(0.3)
-                          : Colors.white.withOpacity(0.06),
+                          ? task.color.withValues(alpha: 0.3)
+                          : Colors.white.withValues(alpha: 0.06),
                     ),
                   ),
                   child: Row(
@@ -288,13 +288,13 @@ class WeeklyPlanSection extends StatelessWidget {
                           border: Border.all(
                             color: isCompleted
                                 ? task.color
-                                : Colors.white.withOpacity(0.25),
+                                : Colors.white.withValues(alpha: 0.25),
                             width: 2,
                           ),
                           boxShadow: isCompleted
                               ? [
                                   BoxShadow(
-                                    color: task.color.withOpacity(0.3),
+                                    color: task.color.withValues(alpha: 0.3),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -315,14 +315,14 @@ class WeeklyPlanSection extends StatelessWidget {
                               topic.name,
                               style: TextStyle(
                                 color: isCompleted
-                                    ? Colors.white.withOpacity(0.5)
-                                    : Colors.white.withOpacity(0.95),
+                                    ? Colors.white.withValues(alpha: 0.5)
+                                    : Colors.white.withValues(alpha: 0.95),
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 decoration: isCompleted
                                     ? TextDecoration.lineThrough
                                     : null,
-                                decorationColor: Colors.white.withOpacity(0.4),
+                                decorationColor: Colors.white.withValues(alpha: 0.4),
                               ),
                             ),
                             if (topic.description.isNotEmpty) ...[
@@ -330,13 +330,13 @@ class WeeklyPlanSection extends StatelessWidget {
                               Text(
                                 topic.description,
                                 style: TextStyle(
-                                  color: Colors.white.withOpacity(0.35),
+                                  color: Colors.white.withValues(alpha: 0.35),
                                   fontSize: 12,
                                   decoration: isCompleted
                                       ? TextDecoration.lineThrough
                                       : null,
                                   decorationColor:
-                                      Colors.white.withOpacity(0.25),
+                                      Colors.white.withValues(alpha: 0.25),
                                 ),
                               ),
                             ],

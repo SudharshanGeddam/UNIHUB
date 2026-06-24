@@ -36,7 +36,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
   void initState() {
     super.initState();
     _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: Duration(milliseconds: 1500),
       vsync: this,
     );
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
@@ -58,7 +58,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
     });
     _pulseController.repeat(reverse: true);
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (_remainingSeconds > 0) {
         setState(() {
           _remainingSeconds--;
@@ -110,27 +110,27 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(20),
-              decoration: const BoxDecoration(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF7C4DFF), Color(0xFF9C7CFF)],
+                  colors: [Theme.of(context).colorScheme.primary, Color(0xFF9C7CFF)],
                 ),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.celebration,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 size: 48,
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
+            SizedBox(height: 20),
+            Text(
               'Great Job! 🎉',
               style: TextStyle(
                 fontSize: 24,
@@ -138,7 +138,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                 color: Color(0xFF1A1A2E),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Text(
               'You completed a $_selectedDuration min focus session on ${widget.subject}!',
               textAlign: TextAlign.center,
@@ -147,26 +147,26 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                 color: Colors.grey[600],
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: const BorderSide(color: Color(0xFF7C4DFF)),
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Take Break',
-                      style: TextStyle(color: Color(0xFF7C4DFF)),
+                      style: TextStyle(color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
@@ -174,15 +174,15 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                       _startTimer();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7C4DFF),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      padding: EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Continue',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: Theme.of(context).colorScheme.surface),
                     ),
                   ),
                 ),
@@ -208,7 +208,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
+          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.surface),
           onPressed: () {
             if (_isRunning) {
               _showExitConfirmation();
@@ -217,31 +217,31 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
             }
           },
         ),
-        title: const Text(
+        title: Text(
           'Focus Session',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
         actions: [
           Container(
-            margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            margin: EdgeInsets.only(right: 16),
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF7C4DFF).withOpacity(0.2),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
-                const Icon(Icons.local_fire_department,
+                Icon(Icons.local_fire_department,
                     color: Color(0xFFFF9800), size: 18),
-                const SizedBox(width: 4),
+                SizedBox(width: 4),
                 Text(
                   '$_completedSessions',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.surface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -253,48 +253,48 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             // Subject and focus type
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              padding: const EdgeInsets.all(16),
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.08),
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF7C4DFF).withOpacity(0.2),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.menu_book,
-                      color: Color(0xFF7C4DFF),
+                      color: Theme.of(context).colorScheme.primary,
                       size: 24,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           widget.subject,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.surface,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4),
                         Text(
                           widget.focusType,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.6),
+                            color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
                             fontSize: 14,
                           ),
                         ),
@@ -304,7 +304,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                 ],
               ),
             ),
-            const Spacer(),
+            Spacer(),
             // Timer display
             ScaleTransition(
               scale: _pulseAnimation,
@@ -316,12 +316,12 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                   gradient: LinearGradient(
                     colors: _isRunning
                         ? [
-                            const Color(0xFF7C4DFF),
-                            const Color(0xFF9C7CFF),
+                            Theme.of(context).colorScheme.primary,
+                            Color(0xFF9C7CFF),
                           ]
                         : [
-                            const Color(0xFF2A2A4E),
-                            const Color(0xFF3A3A5E),
+                            Color(0xFF2A2A4E),
+                            Color(0xFF3A3A5E),
                           ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -329,7 +329,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                   boxShadow: _isRunning
                       ? [
                           BoxShadow(
-                            color: const Color(0xFF7C4DFF).withOpacity(0.5),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
@@ -342,20 +342,20 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                     children: [
                       Text(
                         _formatTime(_remainingSeconds),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.surface,
                           fontSize: 64,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'monospace',
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         _isRunning
                             ? (_isPaused ? 'PAUSED' : 'FOCUSING')
                             : 'READY',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.7),
+                          color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 4,
@@ -366,21 +366,21 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                 ),
               ),
             ),
-            const Spacer(),
+            Spacer(),
             // Duration selector (only when not running)
             if (!_isRunning)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
                     Text(
                       'Session Duration',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.6),
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: _durationOptions.map((duration) {
@@ -393,26 +393,26 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                             });
                           },
                           child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 6),
-                            padding: const EdgeInsets.symmetric(
+                            margin: EdgeInsets.symmetric(horizontal: 6),
+                            padding: EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 10,
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? const Color(0xFF7C4DFF)
-                                  : Colors.white.withOpacity(0.1),
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context).colorScheme.surface.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                               border: isSelected
                                   ? null
                                   : Border.all(
-                                      color: Colors.white.withOpacity(0.2),
+                                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.2),
                                     ),
                             ),
                             child: Text(
                               '${duration}m',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.surface,
                                 fontWeight: isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
@@ -425,10 +425,10 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                   ],
                 ),
               ),
-            const SizedBox(height: 40),
+            SizedBox(height: 40),
             // Control buttons
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 30),
+              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 30),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -439,7 +439,7 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                       onPressed: _resetTimer,
                       isSecondary: true,
                     ),
-                    const SizedBox(width: 24),
+                    SizedBox(width: 24),
                     // Pause/Resume button
                     _buildControlButton(
                       icon: _isPaused ? Icons.play_arrow : Icons.pause,
@@ -460,27 +460,27 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
             ),
             // Tips section
             Container(
-              margin: const EdgeInsets.all(20),
-              padding: const EdgeInsets.all(16),
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.08),
+                color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.lightbulb_outline,
                     color: Color(0xFFFFD54F),
                     size: 24,
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       _isRunning
                           ? 'Stay focused! Avoid checking your phone.'
                           : 'Find a quiet place and eliminate distractions.',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
                         fontSize: 14,
                       ),
                     ),
@@ -509,28 +509,28 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
           shape: BoxShape.circle,
           gradient: isSecondary
               ? null
-              : const LinearGradient(
-                  colors: [Color(0xFF7C4DFF), Color(0xFF9C7CFF)],
+              : LinearGradient(
+                  colors: [Theme.of(context).colorScheme.primary, Color(0xFF9C7CFF)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-          color: isSecondary ? Colors.white.withOpacity(0.1) : null,
+          color: isSecondary ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.1) : null,
           border: isSecondary
-              ? Border.all(color: Colors.white.withOpacity(0.2))
+              ? Border.all(color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.2))
               : null,
           boxShadow: isSecondary
               ? []
               : [
                   BoxShadow(
-                    color: const Color(0xFF7C4DFF).withOpacity(0.4),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
                     blurRadius: 20,
-                    offset: const Offset(0, 8),
+                    offset: Offset(0, 8),
                   ),
                 ],
         ),
         child: Icon(
           icon,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           size: isLarge ? 48 : 32,
         ),
       ),
@@ -541,9 +541,9 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
+        title: Text(
           'End Session?',
           style: TextStyle(
             color: Color(0xFF1A1A2E),
@@ -557,9 +557,9 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'Keep Going',
-              style: TextStyle(color: Color(0xFF7C4DFF)),
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
           ),
           ElevatedButton(
@@ -573,9 +573,9 @@ class _FocusSessionScreenState extends State<FocusSessionScreen>
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text(
+            child: Text(
               'End Session',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.surface),
             ),
           ),
         ],

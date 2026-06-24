@@ -3,23 +3,24 @@ import 'package:unihub/features/community/models/community_post.dart';
 
 class PostCard extends StatelessWidget {
   final CommunityPost post;
+  final VoidCallback? onLike;
 
-  const PostCard({super.key, required this.post});
+  const PostCard({super.key, required this.post, this.onLike});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E3F).withOpacity(0.8),
+        color: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
             spreadRadius: 0,
@@ -40,12 +41,12 @@ class PostCard extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: [
                         post.avatarColor,
-                        post.avatarColor.withOpacity(0.7),
+                        post.avatarColor.withValues(alpha: 0.7),
                       ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: post.avatarColor.withOpacity(0.4),
+                        color: post.avatarColor.withValues(alpha: 0.4),
                         blurRadius: 12,
                         spreadRadius: 0,
                       ),
@@ -80,7 +81,7 @@ class PostCard extends StatelessWidget {
                       Text(
                         post.timeAgo,
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
+                          color: Colors.white.withValues(alpha: 0.5),
                           fontSize: 12,
                         ),
                       ),
@@ -93,10 +94,10 @@ class PostCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: post.avatarColor.withOpacity(0.2),
+                    color: post.avatarColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: post.avatarColor.withOpacity(0.3),
+                      color: post.avatarColor.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -155,7 +156,7 @@ class PostCard extends StatelessWidget {
                 Text(
                   post.description,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 13,
                     height: 1.4,
                   ),
@@ -189,7 +190,7 @@ class PostCard extends StatelessWidget {
 
           // Divider
           Divider(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             height: 1,
             thickness: 1,
           ),
@@ -202,6 +203,7 @@ class PostCard extends StatelessWidget {
                 _InteractionButton(
                   icon: Icons.favorite_border,
                   count: post.likes,
+                  onTap: onLike,
                 ),
                 const SizedBox(width: 16),
                 _InteractionButton(
@@ -212,7 +214,7 @@ class PostCard extends StatelessWidget {
                 Icon(
                   Icons.share_outlined,
                   size: 18,
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withValues(alpha: 0.5),
                 ),
                 const Spacer(),
                 Container(
@@ -220,13 +222,13 @@ class PostCard extends StatelessWidget {
                     gradient: LinearGradient(
                       colors: [
                         post.actionColor,
-                        post.actionColor.withOpacity(0.8),
+                        post.actionColor.withValues(alpha: 0.8),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: post.actionColor.withOpacity(0.4),
+                        color: post.actionColor.withValues(alpha: 0.4),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -281,7 +283,7 @@ class PostCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C4DFF).withOpacity(0.4),
+            color: const Color(0xFF7C4DFF).withValues(alpha: 0.4),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -297,7 +299,7 @@ class PostCard extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
             ),
@@ -309,7 +311,7 @@ class PostCard extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.3),
+                color: Colors.orange.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
             ),
@@ -327,10 +329,10 @@ class PostCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -366,26 +368,35 @@ class PostCard extends StatelessWidget {
 class _InteractionButton extends StatelessWidget {
   final IconData icon;
   final int count;
+  final VoidCallback? onTap;
 
   const _InteractionButton({
     required this.icon,
     required this.count,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: Colors.white.withOpacity(0.6)),
-        const SizedBox(width: 4),
-        Text(
-          count.toString(),
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.7),
-            fontSize: 13,
-          ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: Colors.white.withValues(alpha: 0.6)),
+            const SizedBox(width: 4),
+            Text(
+              count.toString(),
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.7),
+                fontSize: 13,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

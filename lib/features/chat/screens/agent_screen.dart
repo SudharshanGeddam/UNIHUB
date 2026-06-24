@@ -11,6 +11,7 @@ import 'package:unihub/features/chat/services/chat_service.dart';
 import 'package:unihub/features/notes_scanner/services/document_analysis_service.dart';
 import 'package:unihub/core/services/ai_client.dart';
 import 'package:unihub/core/widgets/api_key_missing_banner.dart';
+import 'package:unihub/features/chat/repositories/chat_repository.dart';
 
 class AgentScreen extends StatefulWidget {
   const AgentScreen({super.key});
@@ -24,6 +25,7 @@ class _AgentScreenState extends State<AgentScreen> {
   final _scrollController = ScrollController();
   final _chatService = ChatService();
   final _docService = DocumentAnalysisService();
+  final _chatRepository = ChatRepository();
 
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
@@ -42,6 +44,29 @@ class _AgentScreenState extends State<AgentScreen> {
           "Hi! I'm UniHub AI 🎓\n\nI can help you with:\n• **Study planning** and scheduling\n• **Academic doubts** and explanations\n• **Exam preparation** tips\n• **Document analysis** - Upload PDFs, notes, or study materials!\n\nTap the **+** button to upload documents or use quick actions.\n\nHow can I assist you today?",
       isUser: false,
     ));
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    try {
+      final history = await _chatRepository.getChatHistory().first;
+      if (history.isNotEmpty && mounted) {
+        setState(() {
+          _messages.addAll(history);
+        });
+        
+        // Pass history to AI service
+        final aiHistory = history.map((m) => {
+          "role": m.isUser ? "user" : "assistant",
+          "content": m.text,
+        }).toList();
+        _chatService.initChat(aiHistory);
+        
+        _scrollToBottom();
+      }
+    } catch (e) {
+      debugPrint('Failed to load chat history: $e');
+    }
   }
 
   @override
@@ -67,7 +92,9 @@ class _AgentScreenState extends State<AgentScreen> {
     final message = _messageController.text.trim();
     if (message.isEmpty &&
         _uploadedFileContent == null &&
-        _uploadedFileBytes == null) return;
+        _uploadedFileBytes == null) {
+      return;
+    }
 
     final hasDocument =
         _uploadedFileContent != null || _uploadedFileBytes != null;
@@ -113,6 +140,13 @@ class _AgentScreenState extends State<AgentScreen> {
       });
 
       _scrollToBottom();
+      
+      // Save to repository
+      try {
+        await _chatRepository.saveChatMessage(message: message.isEmpty && hasDocument ? 'Analyzed document: $fileName' : message, response: response);
+      } catch (e) {
+        debugPrint('Failed to save chat message: $e');
+      }
     } catch (e) {
       String errorMsg;
       final errorStr = e.toString();
@@ -260,7 +294,7 @@ class _AgentScreenState extends State<AgentScreen> {
             Text('Clear Chat', style: TextStyle(color: colorScheme.onSurface)),
         content: Text(
           'Are you sure you want to clear the chat history?',
-          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7)),
+          style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.7)),
         ),
         actions: [
           TextButton(
@@ -277,6 +311,7 @@ class _AgentScreenState extends State<AgentScreen> {
                 ));
               });
               _chatService.resetChat();
+              _chatRepository.clearChatHistory(); // Added clearing DB history
               Navigator.pop(context);
             },
             child: const Text('Clear', style: TextStyle(color: Colors.red)),
@@ -295,11 +330,11 @@ class _AgentScreenState extends State<AgentScreen> {
         appBar: AppBar(
           title: Text('UniHub AI',
               style: TextStyle(
-                  color: colorScheme.onBackground,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.bold)),
           centerTitle: true,
-          backgroundColor: colorScheme.background,
-          leading: BackButton(color: colorScheme.onBackground),
+          backgroundColor: colorScheme.surface,
+          leading: BackButton(color: colorScheme.onSurface),
         ),
         body: const Center(child: ApiKeyMissingBanner(featureName: 'AI Chat')),
       );
@@ -310,14 +345,14 @@ class _AgentScreenState extends State<AgentScreen> {
         title: Text(
           'UniHub AI',
           style: TextStyle(
-              color: colorScheme.onBackground, fontWeight: FontWeight.bold),
+              color: colorScheme.onSurface, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: colorScheme.background,
-        leading: BackButton(color: colorScheme.onBackground),
+        backgroundColor: colorScheme.surface,
+        leading: BackButton(color: colorScheme.onSurface),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_outline, color: colorScheme.onBackground),
+            icon: Icon(Icons.delete_outline, color: colorScheme.onSurface),
             onPressed: _clearChat,
             tooltip: 'Clear chat',
           ),
@@ -346,7 +381,7 @@ class _AgentScreenState extends State<AgentScreen> {
                   const BorderRadius.vertical(top: Radius.circular(30)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -5),
                 ),
@@ -363,10 +398,10 @@ class _AgentScreenState extends State<AgentScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: colorScheme.primary.withOpacity(0.1),
+                        color: colorScheme.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: colorScheme.primary.withOpacity(0.2),
+                          color: colorScheme.primary.withValues(alpha: 0.2),
                         ),
                       ),
                       child: Row(
@@ -419,7 +454,7 @@ class _AgentScreenState extends State<AgentScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: Colors.orange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Row(
@@ -448,7 +483,7 @@ class _AgentScreenState extends State<AgentScreen> {
                         decoration: BoxDecoration(
                           color: _uploadedFileName != null
                               ? colorScheme.primary
-                              : colorScheme.primary.withOpacity(0.1),
+                              : colorScheme.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: IconButton(
@@ -475,9 +510,9 @@ class _AgentScreenState extends State<AgentScreen> {
                                 ? 'Ask about the document...'
                                 : 'Ask UniHub AI...',
                             hintStyle: TextStyle(
-                                color: colorScheme.onSurface.withOpacity(0.5)),
+                                color: colorScheme.onSurface.withValues(alpha: 0.5)),
                             filled: true,
-                            fillColor: colorScheme.primary.withOpacity(0.05),
+                            fillColor: colorScheme.primary.withValues(alpha: 0.05),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
                               borderSide: BorderSide.none,
@@ -601,7 +636,7 @@ class _AgentScreenState extends State<AgentScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.description,
-                    color: colorScheme.onSurface.withOpacity(0.7)),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7)),
                 const SizedBox(width: 8),
                 Flexible(
                   child: Text(
@@ -620,7 +655,7 @@ class _AgentScreenState extends State<AgentScreen> {
             Text(
               'What would you like to do with this document?',
               style: TextStyle(
-                  color: colorScheme.onSurface.withOpacity(0.7), fontSize: 14),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7), fontSize: 14),
             ),
             const SizedBox(height: 20),
             QuickActionTile(

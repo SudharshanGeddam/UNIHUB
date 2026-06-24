@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:unihub/features/reminders/models/reminder_model.dart';
 
 class ReminderRepository {
   final FirebaseFirestore _firestore;
@@ -17,25 +18,24 @@ class ReminderRepository {
     return uid;
   }
 
-  Future<void> addReminder({
-    required String title,
-    required String description,
-    required DateTime dueDate,
-  }) async {
+  Future<void> addReminder(Reminder reminder) async {
     await _firestore
         .collection('users')
         .doc(_userId)
         .collection('reminders')
         .add({
-      'title': title,
-      'description': description,
-      'dueDate': Timestamp.fromDate(dueDate),
-      'isCompleted': false,
+      'title': reminder.title,
+      'description': reminder.description,
+      'dueDate': Timestamp.fromDate(reminder.dueDate),
+      'type': reminder.type.toString(),
+      'category': reminder.category.toString(),
+      'isCompleted': reminder.isCompleted,
+      'isAiSuggestion': reminder.isAiSuggestion,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
-  Stream<List<Map<String, dynamic>>> getReminders() {
+  Stream<List<Reminder>> getReminders() {
     try {
       return _firestore
           .collection('users')
@@ -47,7 +47,7 @@ class ReminderRepository {
         return snapshot.docs.map((doc) {
           final data = doc.data();
           data['id'] = doc.id;
-          return data;
+          return Reminder.fromMap(data);
         }).toList();
       });
     } catch (e) {

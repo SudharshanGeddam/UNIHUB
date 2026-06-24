@@ -12,12 +12,10 @@ abstract final class AppTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: const Color(0xFF6366F1), // Soft Indigo
       brightness: Brightness.light,
-      background: const Color(0xFFF8FAFC), // Slate 50
       surface: Colors.white,
       primary: const Color(0xFF6366F1),
       secondary: const Color(0xFF10B981), // Emerald
       tertiary: const Color(0xFF8B5CF6), // Violet
-      onBackground: const Color(0xFF0F172A), // Slate 900
       onSurface: const Color(0xFF1E293B), // Slate 800
     );
 
@@ -25,17 +23,17 @@ abstract final class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       textTheme: _buildTextTheme(ThemeData.light().textTheme),
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.background,
-        foregroundColor: colorScheme.onBackground,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
       ),
       cardTheme: CardThemeData(
         color: colorScheme.surface,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.05),
+        shadowColor: Colors.black.withValues(alpha: 0.05),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -72,12 +70,10 @@ abstract final class AppTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: const Color(0xFF818CF8),
       brightness: Brightness.dark,
-      background: const Color(0xFF0F172A), // Slate 900
       surface: const Color(0xFF1E293B), // Slate 800
       primary: const Color(0xFF818CF8), // Indigo 400
       secondary: const Color(0xFF34D399), // Emerald 400
       tertiary: const Color(0xFFA78BFA), // Violet 400
-      onBackground: const Color(0xFFF8FAFC), // Slate 50
       onSurface: const Color(0xFFF1F5F9), // Slate 100
     );
 
@@ -85,17 +81,17 @@ abstract final class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       textTheme: _buildTextTheme(ThemeData.dark().textTheme),
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: colorScheme.surface,
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.background,
-        foregroundColor: colorScheme.onBackground,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         centerTitle: true,
       ),
       cardTheme: CardThemeData(
         color: colorScheme.surface,
         elevation: 4,
-        shadowColor: Colors.black.withOpacity(0.2),
+        shadowColor: Colors.black.withValues(alpha: 0.2),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(

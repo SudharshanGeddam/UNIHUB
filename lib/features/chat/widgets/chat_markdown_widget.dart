@@ -49,22 +49,22 @@ class ChatMarkdownWidget extends StatelessWidget {
         ),
         code: TextStyle(
           color: colorScheme.primary,
-          backgroundColor: colorScheme.primary.withOpacity(0.1),
+          backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
           fontSize: 15,
           fontFamily: 'monospace',
           fontWeight: FontWeight.w500,
         ),
         codeblockDecoration: BoxDecoration(
-          color: colorScheme.primary.withOpacity(0.05),
+          color: colorScheme.primary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: colorScheme.primary.withOpacity(0.2),
+            color: colorScheme.primary.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
         codeblockPadding: const EdgeInsets.all(12),
         blockquote: TextStyle(
-          color: textColor.withOpacity(0.7),
+          color: textColor.withValues(alpha: 0.7),
           fontSize: 15,
           fontStyle: FontStyle.italic,
         ),
@@ -138,10 +138,10 @@ class _MathCodeBuilder extends md.MarkdownElementBuilder {
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withOpacity(0.05),
+        color: colorScheme.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: colorScheme.primary.withOpacity(0.2),
+          color: colorScheme.primary.withValues(alpha: 0.2),
           width: 1,
         ),
       ),

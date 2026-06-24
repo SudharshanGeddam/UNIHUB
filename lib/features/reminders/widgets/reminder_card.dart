@@ -24,8 +24,8 @@ class ReminderCard extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color(0xFFFF5252).withOpacity(0.8),
-              const Color(0xFFFF1744).withOpacity(0.8),
+              const Color(0xFFFF5252).withValues(alpha: 0.8),
+              const Color(0xFFFF1744).withValues(alpha: 0.8),
             ],
           ),
           borderRadius: BorderRadius.circular(20),
@@ -37,20 +37,20 @@ class ReminderCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 14),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E3F).withOpacity(0.8),
+          color: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
             BoxShadow(
-              color: config.iconColor.withOpacity(0.1),
+              color: config.iconColor.withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, 2),
             ),
@@ -72,7 +72,7 @@ class ReminderCard extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       colors: [
                         config.iconColor,
-                        config.iconColor.withOpacity(0.3),
+                        config.iconColor.withValues(alpha: 0.3),
                       ],
                     ),
                   ),
@@ -110,7 +110,7 @@ class ReminderCard extends StatelessWidget {
                             reminder.description,
                             style: TextStyle(
                               fontSize: 13,
-                              color: Colors.white.withOpacity(0.65),
+                              color: Colors.white.withValues(alpha: 0.65),
                               height: 1.4,
                             ),
                           ),
@@ -120,14 +120,14 @@ class ReminderCard extends StatelessWidget {
                               Icon(
                                 Icons.access_time_rounded,
                                 size: 14,
-                                color: Colors.white.withOpacity(0.4),
+                                color: Colors.white.withValues(alpha: 0.4),
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 reminder.timeAgo,
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: Colors.white.withOpacity(0.4),
+                                  color: Colors.white.withValues(alpha: 0.4),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -155,18 +155,18 @@ class ReminderCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            config.iconColor.withOpacity(0.25),
-            config.iconColor.withOpacity(0.1),
+            config.iconColor.withValues(alpha: 0.25),
+            config.iconColor.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: config.iconColor.withOpacity(0.3),
+          color: config.iconColor.withValues(alpha: 0.3),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: config.iconColor.withOpacity(0.2),
+            color: config.iconColor.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -186,18 +186,18 @@ class ReminderCard extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF7C4DFF).withOpacity(0.3),
-            const Color(0xFF9C6AFF).withOpacity(0.2),
+            const Color(0xFF7C4DFF).withValues(alpha: 0.3),
+            const Color(0xFF9C6AFF).withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: const Color(0xFF7C4DFF).withOpacity(0.4),
+          color: const Color(0xFF7C4DFF).withValues(alpha: 0.4),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF7C4DFF).withOpacity(0.2),
+            color: const Color(0xFF7C4DFF).withValues(alpha: 0.2),
             blurRadius: 8,
           ),
         ],
@@ -208,7 +208,7 @@ class ReminderCard extends StatelessWidget {
           Icon(
             Icons.auto_awesome,
             size: 12,
-            color: const Color(0xFF7C4DFF).withOpacity(0.9),
+            color: const Color(0xFF7C4DFF).withValues(alpha: 0.9),
           ),
           const SizedBox(width: 4),
           const Text(
@@ -230,25 +230,25 @@ class ReminderCard extends StatelessWidget {
         return _IconConfig(
           icon: Icons.school_rounded,
           iconColor: const Color(0xFF7C4DFF),
-          backgroundColor: const Color(0xFF7C4DFF).withOpacity(0.15),
+          backgroundColor: const Color(0xFF7C4DFF).withValues(alpha: 0.15),
         );
       case ReminderType.studySession:
         return _IconConfig(
           icon: Icons.auto_stories_rounded,
           iconColor: const Color(0xFFB794FF),
-          backgroundColor: const Color(0xFFB794FF).withOpacity(0.15),
+          backgroundColor: const Color(0xFFB794FF).withValues(alpha: 0.15),
         );
       case ReminderType.labSchedule:
         return _IconConfig(
           icon: Icons.science_rounded,
           iconColor: const Color(0xFFFFB74D),
-          backgroundColor: const Color(0xFFFFB74D).withOpacity(0.15),
+          backgroundColor: const Color(0xFFFFB74D).withValues(alpha: 0.15),
         );
       case ReminderType.assignmentDue:
         return _IconConfig(
           icon: Icons.assignment_rounded,
           iconColor: const Color(0xFFFF7043),
-          backgroundColor: const Color(0xFFFF7043).withOpacity(0.15),
+          backgroundColor: const Color(0xFFFF7043).withValues(alpha: 0.15),
         );
     }
   }

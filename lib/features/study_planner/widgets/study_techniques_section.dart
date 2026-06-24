@@ -16,12 +16,12 @@ class StudyTechniquesSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E3F).withOpacity(0.8),
+        color: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 8))
         ],
@@ -34,7 +34,7 @@ class StudyTechniquesSection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: const Color(0xFFFF9800).withOpacity(0.2),
+                    color: const Color(0xFFFF9800).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8)),
                 child: const Icon(Icons.psychology,
                     color: Color(0xFFFF9800), size: 20),
@@ -59,7 +59,7 @@ class StudyTechniquesSection extends StatelessWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                        color: const Color(0xFFFF9800).withOpacity(0.2),
+                        color: const Color(0xFFFF9800).withValues(alpha: 0.2),
                         shape: BoxShape.circle),
                     child: Center(
                         child: Text('${index + 1}',
@@ -77,7 +77,7 @@ class StudyTechniquesSection extends StatelessWidget {
               ),
             );
           }),
-          Divider(height: 24, color: Colors.white.withOpacity(0.1)),
+          Divider(height: 24, color: Colors.white.withValues(alpha: 0.1)),
           Row(
             children: [
               const Icon(Icons.coffee, color: Color(0xFFBCAAA4), size: 20),
@@ -86,7 +86,7 @@ class StudyTechniquesSection extends StatelessWidget {
                 child: Text(
                   breakRecommendation,
                   style: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 13,
                       fontStyle: FontStyle.italic),
                 ),

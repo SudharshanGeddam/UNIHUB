@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:unihub/features/community/models/community_post.dart';
+import 'package:unihub/features/community/repositories/community_repository.dart';
 import 'package:unihub/features/community/widgets/post_card.dart';
+import 'package:unihub/features/community/widgets/create_post_sheet.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -14,135 +16,59 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   int _selectedTabIndex = 0;
   final List<String> _tabs = ['All', 'Academics', 'Events', 'Lost & Found'];
-
-  final List<CommunityPost> _allPosts = [
-    CommunityPost(
-      id: '1',
-      authorName: 'Computer Science Club',
-      authorAvatar: 'CS',
-      avatarColor: const Color(0xFF7C4DFF),
-      timeAgo: '2 hours ago',
-      category: 'Events',
-      title: 'AI & Machine Learning Workshop',
-      description:
-          'Join us for an exciting hands-on workshop on AI fundamentals. Learn about neural networks, deep learning, and practical applications!',
-      scheduledTime: 'Tomorrow, 3:00 PM',
-      scheduledLocation: 'Auditorium A',
-      imageUrl: 'tech_festival',
-      likes: 24,
-      comments: 8,
-      actionText: 'Register',
-      actionColor: const Color(0xFF7C4DFF),
-    ),
-    CommunityPost(
-      id: '2',
-      authorName: 'Academic Office',
-      authorAvatar: 'AO',
-      avatarColor: const Color(0xFF2196F3),
-      timeAgo: '5 hours ago',
-      category: 'Academics',
-      title: 'Mid-term Exam Schedule Released',
-      description:
-          'The mid-term examination schedule for all departments has been published. Please check your student portal for detailed timings and venues.',
-      likes: 45,
-      comments: 12,
-      actionText: 'View Details',
-      actionColor: const Color(0xFF2196F3),
-    ),
-    CommunityPost(
-      id: '3',
-      authorName: 'Alex Kumar',
-      authorAvatar: 'AK',
-      avatarColor: const Color(0xFFFF7043),
-      timeAgo: '1 day ago',
-      category: 'Lost & Found',
-      title: 'Lost: Blue Notebook',
-      description:
-          'Lost my Data Structures notebook near the library. It has my name on the cover. Please contact me if found!',
-      likes: 3,
-      comments: 5,
-      actionText: 'Help Find',
-      actionColor: const Color(0xFFFF7043),
-    ),
-    CommunityPost(
-      id: '4',
-      authorName: 'Sports Committee',
-      authorAvatar: 'SC',
-      avatarColor: const Color(0xFF4CAF50),
-      timeAgo: '3 hours ago',
-      category: 'Events',
-      title: 'Annual Sports Day Registration',
-      description:
-          'Register now for the annual sports day! Events include cricket, football, basketball, athletics, and more. Limited slots available.',
-      scheduledTime: 'Next Monday, 8:00 AM',
-      scheduledLocation: 'Main Ground',
-      likes: 67,
-      comments: 23,
-      actionText: 'Register',
-      actionColor: const Color(0xFF4CAF50),
-    ),
-    CommunityPost(
-      id: '5',
-      authorName: 'Library Admin',
-      authorAvatar: 'LA',
-      avatarColor: const Color(0xFF9C27B0),
-      timeAgo: '6 hours ago',
-      category: 'Academics',
-      title: 'Extended Library Hours',
-      description:
-          'During exam season, the library will remain open until 11 PM. Additional study rooms are also available for booking.',
-      likes: 89,
-      comments: 15,
-      actionText: 'View Details',
-      actionColor: const Color(0xFF9C27B0),
-    ),
-    CommunityPost(
-      id: '6',
-      authorName: 'Priya Sharma',
-      authorAvatar: 'PS',
-      avatarColor: const Color(0xFFE91E63),
-      timeAgo: '2 days ago',
-      category: 'Lost & Found',
-      title: 'Found: Student ID Card',
-      description:
-          'Found a student ID card near the cafeteria. Name starts with "R". Contact me to claim it.',
-      likes: 12,
-      comments: 8,
-      actionText: 'Help Find',
-      actionColor: const Color(0xFFE91E63),
-    ),
-  ];
-
-  List<CommunityPost> get _filteredPosts {
-    if (_selectedTabIndex == 0) return _allPosts;
-    final category = _tabs[_selectedTabIndex];
-    return _allPosts.where((post) => post.category == category).toList();
-  }
+  final _repository = CommunityRepository();
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(colorScheme),
             _buildFilterTabs(colorScheme),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
-                itemCount: _filteredPosts.length,
-                itemBuilder: (context, index) {
-                  return PostCard(post: _filteredPosts[index])
-                      .animate()
-                      .fadeIn(duration: 350.ms, delay: (index * 80).ms)
-                      .slideY(
-                          begin: 0.1,
-                          end: 0,
-                          duration: 350.ms,
-                          delay: (index * 80).ms);
+              child: StreamBuilder<List<CommunityPost>>(
+                stream: _repository.getPosts(
+                  category: _selectedTabIndex == 0 ? null : _tabs[_selectedTabIndex],
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: colorScheme.onSurface)));
+                  }
+                  
+                  final posts = snapshot.data ?? [];
+                  
+                  if (posts.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No posts in this category yet.',
+                        style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5)),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+                    itemCount: posts.length,
+                    itemBuilder: (context, index) {
+                      return PostCard(
+                        post: posts[index],
+                        onLike: () => _repository.likePost(posts[index].id),
+                      ).animate()
+                          .fadeIn(duration: 350.ms, delay: (index * 80).ms)
+                          .slideY(
+                              begin: 0.1,
+                              end: 0,
+                              duration: 350.ms,
+                              delay: (index * 80).ms);
+                    },
+                  );
                 },
               ),
             ),
@@ -151,12 +77,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Create post coming soon!',
-                  style: TextStyle(color: colorScheme.onPrimary)),
-              backgroundColor: colorScheme.primary,
-            ),
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const CreatePostSheet(),
           );
         },
         backgroundColor: colorScheme.primary,
@@ -184,13 +109,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colorScheme.onSurface.withOpacity(0.1),
+                  color: colorScheme.onSurface.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
               child: Icon(
                 Icons.arrow_back_ios_new,
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
                 size: 18,
               ),
             ),
@@ -205,7 +130,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     letterSpacing: 0.3,
                   ),
                 ),
@@ -214,7 +139,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   'Connect with your campus',
                   style: TextStyle(
                     fontSize: 13,
-                    color: colorScheme.onBackground.withOpacity(0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -226,13 +151,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: colorScheme.onSurface.withOpacity(0.1),
+                color: colorScheme.onSurface.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
             child: Icon(
               Icons.search_rounded,
-              color: colorScheme.onBackground,
+              color: colorScheme.onSurface,
               size: 20,
             ),
           ),
@@ -265,13 +190,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     border: Border.all(
                       color: _selectedTabIndex == index
                           ? Colors.transparent
-                          : colorScheme.onSurface.withOpacity(0.1),
+                          : colorScheme.onSurface.withValues(alpha: 0.1),
                       width: 1,
                     ),
                     boxShadow: _selectedTabIndex == index
                         ? [
                             BoxShadow(
-                              color: colorScheme.primary.withOpacity(0.4),
+                              color: colorScheme.primary.withValues(alpha: 0.4),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -283,7 +208,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     style: TextStyle(
                       color: _selectedTabIndex == index
                           ? colorScheme.onPrimary
-                          : colorScheme.onSurface.withOpacity(0.7),
+                          : colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: _selectedTabIndex == index
                           ? FontWeight.w600
                           : FontWeight.w500,

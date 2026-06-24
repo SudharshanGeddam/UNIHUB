@@ -8,10 +8,15 @@ class ChatService {
   ChatService({AIClient? aiClient})
       : _aiClient = aiClient ?? AIClient.tryGetInstance();
 
-  ChatSession get _activeChat {
+  ChatSession _getOrCreateActiveChat([List<Map<String, dynamic>>? history]) {
     if (_aiClient == null) throw Exception('API_KEY not configured');
-    _chat ??= _aiClient!.startChat();
+    _chat ??= _aiClient!.startChat(history: history);
     return _chat!;
+  }
+
+  void initChat(List<Map<String, dynamic>> history) {
+    if (_aiClient == null) return;
+    _chat = _aiClient!.startChat(history: history);
   }
 
   void resetChat() {
@@ -21,7 +26,7 @@ class ChatService {
 
   Future<String> chat(String message) async {
     try {
-      final response = await _activeChat.sendMessage(message);
+      final response = await _getOrCreateActiveChat().sendMessage(message);
       return response;
     } catch (e) {
       if (e.toString().contains('API_KEY')) {

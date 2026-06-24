@@ -44,16 +44,16 @@ class MathMarkdownWidget extends StatelessWidget {
         ),
         code: TextStyle(
           color: Colors.cyan.shade200,
-          backgroundColor: Colors.black.withOpacity(0.4),
+          backgroundColor: Colors.black.withValues(alpha: 0.4),
           fontSize: 14,
           fontFamily: 'monospace',
           fontWeight: FontWeight.w500,
         ),
         codeblockDecoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.4),
+          color: Colors.black.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.cyan.withOpacity(0.3),
+            color: Colors.cyan.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -101,10 +101,10 @@ class _StyledCodeBuilder extends md.MarkdownElementBuilder {
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
+        color: Colors.black.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: Colors.cyan.withOpacity(0.3),
+          color: Colors.cyan.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -156,7 +156,7 @@ class LatexElementBuilder extends md.MarkdownElementBuilder {
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.2),
+          color: Colors.black.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Math.tex(

@@ -13,6 +13,7 @@ import 'package:unihub/features/study_planner/models/study_plan_model.dart';
 import 'package:unihub/features/study_planner/screens/focus_session_screen.dart';
 import 'package:unihub/features/study_planner/screens/study_planner_results_screen.dart';
 import 'package:unihub/features/study_planner/screens/study_planner_screen.dart';
+import 'package:unihub/features/study_planner/screens/saved_study_plans_screen.dart';
 
 abstract final class AppRoutes {
   static const login = '/login';
@@ -20,6 +21,7 @@ abstract final class AppRoutes {
   static const chat = '/chat';
   static const studyPlanner = '/study-planner';
   static const studyPlannerResults = '/study-planner/results';
+  static const savedStudyPlans = '/study-planner/saved';
   static const notesScanner = '/notes-scanner';
   static const reminders = '/reminders';
   static const community = '/community';
@@ -96,6 +98,11 @@ GoRouter createAppRouter(BuildContext context) {
                 ),
               );
             },
+          ),
+          GoRoute(
+            path: 'saved',
+            name: 'saved-study-plans',
+            pageBuilder: (context, state) => _fadeTransition(const SavedStudyPlansScreen()),
           ),
         ],
       ),

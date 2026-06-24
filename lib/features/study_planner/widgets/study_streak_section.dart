@@ -14,12 +14,12 @@ class StudyStreakSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E3F).withOpacity(0.8),
+        color: const Color(0xFF1E1E3F).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 20,
               offset: const Offset(0, 8)),
         ],
@@ -43,7 +43,7 @@ class StudyStreakSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                        color: const Color(0xFFFF9800).withOpacity(0.3),
+                        color: const Color(0xFFFF9800).withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 4))
                   ],
@@ -85,7 +85,7 @@ class StudyStreakSection extends StatelessWidget {
                     child: Text(day,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                             fontSize: 12,
                             fontWeight: FontWeight.w500)),
                   ))
@@ -121,11 +121,11 @@ class StudyStreakSection extends StatelessWidget {
   Widget _buildStreakCell({required double fillLevel, bool isToday = false}) {
     Color cellColor;
     if (fillLevel == 0) {
-      cellColor = Colors.white.withOpacity(0.08);
+      cellColor = Colors.white.withValues(alpha: 0.08);
     } else if (fillLevel < 0.4) {
-      cellColor = const Color(0xFF7C4DFF).withOpacity(0.3);
+      cellColor = const Color(0xFF7C4DFF).withValues(alpha: 0.3);
     } else if (fillLevel < 0.7) {
-      cellColor = const Color(0xFF7C4DFF).withOpacity(0.6);
+      cellColor = const Color(0xFF7C4DFF).withValues(alpha: 0.6);
     } else {
       cellColor = const Color(0xFF7C4DFF);
     }
@@ -140,7 +140,7 @@ class StudyStreakSection extends StatelessWidget {
         boxShadow: fillLevel > 0.7
             ? [
                 BoxShadow(
-                    color: const Color(0xFF7C4DFF).withOpacity(0.4),
+                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 2))
               ]

@@ -4,7 +4,7 @@ import 'package:unihub/features/reminders/models/reminder_model.dart';
 void main() {
   group('Reminder Model Formatting', () {
     test('timeAgo formats minutes correctly', () {
-      final reminder = Reminder(
+      final reminder = Reminder(dueDate: DateTime.now(), 
         id: '1',
         title: 'Test',
         description: 'Test desc',
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('timeAgo formats hours correctly', () {
-      final reminder = Reminder(
+      final reminder = Reminder(dueDate: DateTime.now(), 
         id: '2',
         title: 'Test',
         description: 'Test desc',
@@ -30,7 +30,7 @@ void main() {
     });
 
     test('timeAgo formats days correctly', () {
-      final reminder = Reminder(
+      final reminder = Reminder(dueDate: DateTime.now(), 
         id: '3',
         title: 'Test',
         description: 'Test desc',

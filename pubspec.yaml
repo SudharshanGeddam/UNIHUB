@@ -61,6 +61,7 @@ dependencies:
   google_fonts: ^8.1.0
   shared_preferences: ^2.5.5
 
+  markdown: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

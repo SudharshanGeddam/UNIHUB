@@ -21,8 +21,8 @@ class ApiKeyMissingBanner extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.warning.withOpacity(0.15),
-        border: Border.all(color: AppColors.warning.withOpacity(0.5)),
+        color: AppColors.warning.withValues(alpha: 0.15),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

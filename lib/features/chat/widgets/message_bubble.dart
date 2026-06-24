@@ -31,7 +31,7 @@ class MessageBubble extends StatelessWidget {
           boxShadow: [
             if (!message.isUser)
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 5,
                 offset: const Offset(0, 2),
               ),
@@ -48,8 +48,8 @@ class MessageBubble extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: message.isUser
-                      ? Colors.white.withOpacity(0.2)
-                      : colorScheme.primary.withOpacity(0.1),
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(

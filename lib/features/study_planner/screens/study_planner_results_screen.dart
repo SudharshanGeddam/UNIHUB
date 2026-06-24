@@ -7,6 +7,7 @@ import 'package:unihub/features/study_planner/widgets/weekly_plan_section.dart';
 import 'package:unihub/features/study_planner/widgets/key_topics_section.dart';
 import 'package:unihub/features/study_planner/widgets/study_techniques_section.dart';
 import 'package:unihub/features/study_planner/widgets/focus_mode_section.dart';
+import 'package:unihub/features/study_planner/repositories/study_plan_repository.dart';
 
 class StudyPlannerResults extends StatefulWidget {
   final String subject;
@@ -35,6 +36,35 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
   final Map<int, bool> _expandedTasks = {};
   // Track completed topics: taskIndex -> Set of topic indices
   final Map<int, Set<int>> _completedTopics = {};
+  bool _isSaving = false;
+
+  Future<void> _savePlan() async {
+    setState(() => _isSaving = true);
+    try {
+      await StudyPlanRepository().saveStudyPlan(
+        title: '${widget.subject} Plan',
+        subject: widget.subject,
+        availableTime: widget.availableTime,
+        focusType: widget.focusType,
+        plan: widget.studyPlan,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Study plan saved successfully!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save plan: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -73,7 +103,7 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: Stack(
         children: [
           // Decorative circles
@@ -87,8 +117,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    colorScheme.primary.withOpacity(0.15),
-                    colorScheme.primary.withOpacity(0.0),
+                    colorScheme.primary.withValues(alpha: 0.15),
+                    colorScheme.primary.withValues(alpha: 0.0),
                   ],
                 ),
               ),
@@ -104,8 +134,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    colorScheme.tertiary.withOpacity(0.15),
-                    colorScheme.tertiary.withOpacity(0.0),
+                    colorScheme.tertiary.withValues(alpha: 0.15),
+                    colorScheme.tertiary.withValues(alpha: 0.0),
                   ],
                 ),
               ),
@@ -121,8 +151,8 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    colorScheme.secondary.withOpacity(0.15),
-                    colorScheme.secondary.withOpacity(0.0),
+                    colorScheme.secondary.withValues(alpha: 0.15),
+                    colorScheme.secondary.withValues(alpha: 0.0),
                   ],
                 ),
               ),
@@ -211,7 +241,7 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.onSurface.withOpacity(0.1)),
+              border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
             ),
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
@@ -223,7 +253,7 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
               'AI Study Planner',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
               ),
@@ -233,12 +263,18 @@ class _StudyPlannerResultsState extends State<StudyPlannerResults>
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.onSurface.withOpacity(0.1)),
+              border: Border.all(color: colorScheme.onSurface.withValues(alpha: 0.1)),
             ),
             child: IconButton(
-              icon: Icon(Icons.settings_outlined,
-                  color: colorScheme.onSurface.withOpacity(0.7)),
-              onPressed: () {},
+              icon: _isSaving 
+                  ? const SizedBox(
+                      width: 20, 
+                      height: 20, 
+                      child: CircularProgressIndicator(strokeWidth: 2)
+                    )
+                  : Icon(Icons.bookmark_add_outlined,
+                      color: colorScheme.onSurface.withValues(alpha: 0.7)),
+              onPressed: _isSaving ? null : _savePlan,
             ),
           ),
         ],
